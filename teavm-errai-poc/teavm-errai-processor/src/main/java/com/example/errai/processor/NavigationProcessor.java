@@ -3,6 +3,7 @@ package com.example.errai.processor;
 import com.example.errai.api.Page;
 import com.example.errai.api.PageShowing;
 import com.example.errai.api.PageHidden;
+import com.example.errai.api.PageState;
 import com.squareup.javapoet.*;
 import com.google.auto.service.AutoService;
 
@@ -12,12 +13,13 @@ import javax.lang.model.element.*;
 import javax.lang.model.util.ElementFilter;
 import javax.tools.Diagnostic;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 @AutoService(Processor.class)
-@SupportedAnnotationTypes("com.example.errai.api.Page")
+@SupportedAnnotationTypes({"com.example.errai.api.Page", "com.example.errai.api.PageState"})
 @SupportedSourceVersion(SourceVersion.RELEASE_11)
 public class NavigationProcessor extends AbstractProcessor {
 
@@ -60,13 +62,30 @@ public class NavigationProcessor extends AbstractProcessor {
                 .addModifiers(Modifier.PRIVATE)
                 .build());
 
+        // goTo(role) - default implementation delegation
+        MethodSpec.Builder goToSimple = MethodSpec.methodBuilder("goTo")
+                .addModifiers(Modifier.PUBLIC)
+                .addParameter(String.class, "role")
+                .addAnnotation(Override.class)
+                .addStatement("goTo(role, $T.emptyMap())", Collections.class);
+        navBuilder.addMethod(goToSimple.build());
+
+        // goTo(role, state)
         MethodSpec.Builder goToMethod = MethodSpec.methodBuilder("goTo")
                 .addModifiers(Modifier.PUBLIC)
                 .addParameter(String.class, "role")
+                .addParameter(ParameterizedTypeName.get(Map.class, String.class, String.class), "state")
                 .addAnnotation(Override.class);
 
         goToMethod.addStatement("$T body = $T.current().getDocument().getBody()", htmlElementClass, windowClass);
         goToMethod.addStatement("body.setInnerHTML(\"\")"); // Clear body
+
+        // Update URL hash
+        goToMethod.addStatement("$T hash = new $T(\"#\" + role)", StringBuilder.class, StringBuilder.class);
+        goToMethod.beginControlFlow("for ($T entry : state.entrySet())", ParameterizedTypeName.get(Map.Entry.class, String.class, String.class));
+        goToMethod.addStatement("hash.append(\";\").append(entry.getKey()).append(\"=\").append(entry.getValue())");
+        goToMethod.endControlFlow();
+        goToMethod.addStatement("$T.current().getHistory().pushState(null, null, hash.toString())", windowClass);
 
         goToMethod.beginControlFlow("switch (role)");
 
@@ -76,27 +95,39 @@ public class NavigationProcessor extends AbstractProcessor {
             String role = pageAnno.role();
             if (role.isEmpty()) role = typeElement.getSimpleName().toString();
 
+            // Sanitize role for java variable name
+            String varName = role.replaceAll("[^a-zA-Z0-9_]", "_");
+
             goToMethod.addCode("case $S:\n", role);
 
             // Instantiate
             ClassName factoryClass = ClassName.bestGuess(typeElement.getQualifiedName().toString() + "_Factory");
             ClassName pageClass = ClassName.get(typeElement);
-            goToMethod.addStatement("  $T page_$L = $T.getInstance()", pageClass, role, factoryClass);
+            goToMethod.addStatement("  $T page_$L = $T.getInstance()", pageClass, varName, factoryClass);
+
+            // Inject PageState
+            for (VariableElement field : ElementFilter.fieldsIn(typeElement.getEnclosedElements())) {
+                PageState pageState = field.getAnnotation(PageState.class);
+                if (pageState != null) {
+                    String paramName = pageState.value();
+                    if (paramName.isEmpty()) paramName = field.getSimpleName().toString();
+
+                    goToMethod.addStatement("  if (state.containsKey($S)) page_$L.$L = state.get($S)",
+                        paramName, varName, field.getSimpleName(), paramName);
+                }
+            }
 
             // Check for @PageShowing
             for (ExecutableElement method : ElementFilter.methodsIn(typeElement.getEnclosedElements())) {
                 if (method.getAnnotation(PageShowing.class) != null) {
-                    goToMethod.addStatement("  page_$L.$L()", role, method.getSimpleName());
+                    goToMethod.addStatement("  page_$L.$L()", varName, method.getSimpleName());
                 }
             }
 
             // Append element
-            // Assumes the page has an 'element' field (populated by TemplatedProcessor or manually)
-            // Use Reflection-like access or just assume public field 'element' for PoC
-            // We know our TemplatedProcessor adds 'public HTMLElement element'
-            goToMethod.addStatement("  if (page_$L.element != null) body.appendChild(page_$L.element)", role, role);
+            goToMethod.addStatement("  if (page_$L.element != null) body.appendChild(page_$L.element)", varName, varName);
 
-            goToMethod.addStatement("  this.currentPage = page_$L", role);
+            goToMethod.addStatement("  this.currentPage = page_$L", varName);
 
             goToMethod.addStatement("  break");
         }
