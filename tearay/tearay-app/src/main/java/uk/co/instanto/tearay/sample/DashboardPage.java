@@ -18,6 +18,9 @@ public class DashboardPage {
     @Inject
     public HelloService service;
 
+    @PageState
+    public String username;
+
     public HTMLElement element;
 
     @Inject @DataField
@@ -48,7 +51,7 @@ public class DashboardPage {
         row.element.appendChild(col1.element);
 
         Card card = new Card();
-        card.setTitle("Welcome");
+        card.setTitle("Welcome " + (username != null ? username : "Guest"));
         card.setText(service.getGreeting());
         col1.element.appendChild(card.element);
 
