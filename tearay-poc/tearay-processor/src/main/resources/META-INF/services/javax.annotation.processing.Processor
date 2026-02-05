@@ -1,0 +1,3 @@
+uk.co.instanto.tearay.processor.TemplatedProcessor
+uk.co.instanto.tearay.processor.IOCProcessor
+uk.co.instanto.tearay.processor.NavigationProcessor

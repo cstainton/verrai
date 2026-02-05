@@ -1,0 +1,81 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>uk.co.instanto.tearay</groupId>
+    <artifactId>tearay-poc</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>tearay-app</artifactId>
+  <packaging>war</packaging>
+
+  <dependencies>
+    <dependency>
+      <groupId>uk.co.instanto.tearay</groupId>
+      <artifactId>tearay-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <!-- Processor is needed during compilation -->
+    <dependency>
+      <groupId>uk.co.instanto.tearay</groupId>
+      <artifactId>tearay-processor</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.teavm</groupId>
+      <artifactId>teavm-classlib</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.teavm</groupId>
+      <artifactId>teavm-jso</artifactId>
+    </dependency>
+     <dependency>
+      <groupId>org.teavm</groupId>
+      <artifactId>teavm-jso-apis</artifactId>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <!-- Compiler Plugin: Runs the Annotation Processor -->
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.1</version>
+        <configuration>
+           <!-- The processor is on the classpath (scope provided), so it should be picked up automatically
+                However, explicit configuration is often safer. -->
+        </configuration>
+      </plugin>
+      <!-- TeaVM Plugin -->
+      <plugin>
+        <groupId>org.teavm</groupId>
+        <artifactId>teavm-maven-plugin</artifactId>
+        <version>${teavm.version}</version>
+        <executions>
+          <execution>
+            <id>web-client</id>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+            <configuration>
+              <mainClass>uk.co.instanto.tearay.sample.App</mainClass>
+              <targetDirectory>${project.build.directory}/generated/teavm</targetDirectory>
+              <minifying>false</minifying>
+              <debugInformationGenerated>true</debugInformationGenerated>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>3.2.3</version>
+        <configuration>
+            <failOnMissingWebXml>false</failOnMissingWebXml>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
