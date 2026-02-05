@@ -79,6 +79,12 @@
         <version>3.2.3</version>
         <configuration>
             <failOnMissingWebXml>false</failOnMissingWebXml>
+            <webResources>
+                <resource>
+                    <directory>${project.build.directory}/generated/teavm</directory>
+                    <targetPath>tearay</targetPath>
+                </resource>
+            </webResources>
         </configuration>
       </plugin>
       <!-- Assembly Plugin for GitHub Pages -->
