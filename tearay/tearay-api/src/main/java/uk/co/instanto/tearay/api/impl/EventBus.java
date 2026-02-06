@@ -17,16 +17,21 @@ public class EventBus {
         return instance;
     }
 
-    public <T> void subscribe(Class<T> type, Consumer<T> listener) {
-        subscribers.computeIfAbsent(type, k -> new ArrayList<>())
-                   .add((Consumer<Object>) listener);
+    @SuppressWarnings("unchecked")
+    public <T> Runnable subscribe(Class<T> type, Consumer<T> listener) {
+        List<Consumer<Object>> list = subscribers.computeIfAbsent(type, k -> new ArrayList<>());
+        Consumer<Object> castListener = (Consumer<Object>) listener;
+        list.add(castListener);
+
+        return () -> list.remove(castListener);
     }
 
     public void fire(Object event) {
         if (event == null) return;
         List<Consumer<Object>> listeners = subscribers.get(event.getClass());
         if (listeners != null) {
-            for (Consumer<Object> listener : listeners) {
+            // Copy to avoid concurrent modification if listener unsubscribes during fire
+            for (Consumer<Object> listener : new ArrayList<>(listeners)) {
                 listener.accept(event);
             }
         }

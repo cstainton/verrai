@@ -10,6 +10,7 @@ import uk.co.instanto.tearay.api.Page;
 import uk.co.instanto.tearay.api.cdi.Observes;
 import uk.co.instanto.tearay.api.cdi.Event;
 import uk.co.instanto.tearay.api.impl.EventBus;
+import uk.co.instanto.tearay.api.impl.BeanLifecycleManager;
 import uk.co.instanto.tearay.api.impl.SessionContext;
 import com.squareup.javapoet.*;
 import com.google.auto.service.AutoService;
@@ -197,10 +198,14 @@ public class IOCProcessor extends AbstractProcessor {
              for (VariableElement param : method.getParameters()) {
                  if (param.getAnnotation(Observes.class) != null) {
                      TypeMirror eventType = param.asType();
-                     createMethod.addStatement("$T.getInstance().subscribe($T.class, (e) -> bean.$L(e))",
+                     createMethod.addStatement("$T subscription = $T.getInstance().subscribe($T.class, (e) -> bean.$L(e))",
+                         Runnable.class,
                          eventBusClass,
                          TypeName.get(eventType),
                          method.getSimpleName());
+
+                     // Register with BeanLifecycleManager
+                     createMethod.addStatement("$T.getInstance().register(bean, subscription)", ClassName.get(BeanLifecycleManager.class));
                  }
              }
         }
