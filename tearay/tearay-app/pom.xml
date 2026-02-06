@@ -41,6 +41,16 @@
       <artifactId>tearay-widgets</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.teavm</groupId>
+      <artifactId>teavm-junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
