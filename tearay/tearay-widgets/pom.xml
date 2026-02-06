@@ -14,5 +14,15 @@
       <groupId>org.teavm</groupId>
       <artifactId>teavm-jso-apis</artifactId>
     </dependency>
+    <dependency>
+      <groupId>uk.co.instanto.tearay</groupId>
+      <artifactId>tearay-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>javax.inject</groupId>
+      <artifactId>javax.inject</artifactId>
+      <version>1</version>
+    </dependency>
   </dependencies>
 </project>

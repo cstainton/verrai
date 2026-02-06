@@ -16,6 +16,7 @@ import com.google.auto.service.AutoService;
 
 import javax.annotation.processing.*;
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.*;
 import javax.lang.model.type.DeclaredType;
@@ -41,7 +42,7 @@ public class IOCProcessor extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        // Collect all beans: @ApplicationScoped, @Dependent, @SessionScoped, @EntryPoint, @Templated, and @Page
+        // Collect all beans
         Set<Element> beans = roundEnv.getElementsAnnotatedWith(ApplicationScoped.class).stream().collect(Collectors.toSet());
         beans.addAll(roundEnv.getElementsAnnotatedWith(Dependent.class));
         beans.addAll(roundEnv.getElementsAnnotatedWith(SessionScoped.class));
@@ -59,7 +60,7 @@ public class IOCProcessor extends AbstractProcessor {
             }
         }
 
-        // Handle Bootstrapper generation if EntryPoint is present
+        // Handle Bootstrapper
         Set<? extends Element> entryPoints = roundEnv.getElementsAnnotatedWith(EntryPoint.class);
         if (!entryPoints.isEmpty()) {
             try {
@@ -76,17 +77,15 @@ public class IOCProcessor extends AbstractProcessor {
         String packageName = processingEnv.getElementUtils().getPackageOf(typeElement).getQualifiedName().toString();
         String factoryName = typeElement.getSimpleName() + "_Factory";
         ClassName typeName = ClassName.get(typeElement);
-        ClassName factoryClassName = ClassName.get(packageName, factoryName);
 
         boolean isDependent = typeElement.getAnnotation(Dependent.class) != null;
         boolean isSessionScoped = typeElement.getAnnotation(SessionScoped.class) != null;
         boolean isApplicationScoped = typeElement.getAnnotation(ApplicationScoped.class) != null;
         boolean isEntryPoint = typeElement.getAnnotation(EntryPoint.class) != null;
         boolean isPage = typeElement.getAnnotation(Page.class) != null;
-        boolean isTemplated = typeElement.getAnnotation(Templated.class) != null;
 
-        // Singleton if (@ApplicationScoped OR @EntryPoint OR @Page) AND NOT @Dependent AND NOT @SessionScoped
         boolean isSingleton = (isApplicationScoped || isEntryPoint || isPage) && !isDependent && !isSessionScoped;
+        boolean isTemplated = typeElement.getAnnotation(Templated.class) != null;
 
         TypeSpec.Builder factoryBuilder = TypeSpec.classBuilder(factoryName)
                 .addModifiers(Modifier.PUBLIC);
@@ -142,9 +141,7 @@ public class IOCProcessor extends AbstractProcessor {
                     TypeMirror genericType = null;
                     if (fieldType instanceof DeclaredType) {
                         List<? extends TypeMirror> args = ((DeclaredType) fieldType).getTypeArguments();
-                        if (!args.isEmpty()) {
-                            genericType = args.get(0);
-                        }
+                        if (!args.isEmpty()) genericType = args.get(0);
                     }
 
                     TypeSpec eventImpl = TypeSpec.anonymousClassBuilder("")
@@ -159,6 +156,28 @@ public class IOCProcessor extends AbstractProcessor {
                             .build();
 
                     createMethod.addStatement("bean.$L = $L", field.getSimpleName(), eventImpl);
+
+                } else if (fieldTypeStr.startsWith(Provider.class.getName())) {
+                    // Inject Provider<T>
+                    TypeMirror genericType = null;
+                    if (fieldType instanceof DeclaredType) {
+                        List<? extends TypeMirror> args = ((DeclaredType) fieldType).getTypeArguments();
+                        if (!args.isEmpty()) genericType = args.get(0);
+                    }
+
+                    if (genericType != null) {
+                        String genericTypeStr = genericType.toString();
+                        ClassName dependencyFactory;
+                        if (genericTypeStr.startsWith("uk.co.instanto.tearay.widgets.")) {
+                             // Provider for Widgets (direct new)
+                             ClassName widgetClass = ClassName.bestGuess(genericTypeStr);
+                             createMethod.addStatement("bean.$L = () -> new $T()", field.getSimpleName(), widgetClass);
+                        } else {
+                             // Provider for Managed Bean
+                             dependencyFactory = ClassName.bestGuess(genericTypeStr + "_Factory");
+                             createMethod.addStatement("bean.$L = () -> $T.getInstance()", field.getSimpleName(), dependencyFactory);
+                        }
+                    }
 
                 } else {
                     ClassName dependencyFactory = ClassName.bestGuess(fieldTypeStr + "_Factory");
