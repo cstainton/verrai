@@ -126,10 +126,10 @@ public class IOCProcessor extends AbstractProcessor {
         ClassName eventBusClass = ClassName.get(EventBus.class);
         ClassName eventInterfaceClass = ClassName.get(Event.class);
 
-        // Injection
-        for (VariableElement field : ElementFilter.fieldsIn(typeElement.getEnclosedElements())) {
+        // Injection (collect fields from hierarchy)
+        for (VariableElement field : collectFields(typeElement)) {
             if (field.getAnnotation(Inject.class) != null) {
-                TypeMirror fieldType = field.asType();
+                TypeMirror fieldType = processingEnv.getTypeUtils().asMemberOf((DeclaredType) typeElement.asType(), field);
                 String fieldTypeStr = fieldType.toString();
 
                 if (fieldTypeStr.equals("uk.co.instanto.tearay.api.Navigation")) {
@@ -223,6 +223,18 @@ public class IOCProcessor extends AbstractProcessor {
         JavaFile.builder(packageName, factoryBuilder.build())
                 .build()
                 .writeTo(processingEnv.getFiler());
+    }
+
+    private List<VariableElement> collectFields(TypeElement typeElement) {
+        List<VariableElement> fields = new java.util.ArrayList<>(ElementFilter.fieldsIn(typeElement.getEnclosedElements()));
+        TypeMirror superclass = typeElement.getSuperclass();
+        if (superclass.getKind() == javax.lang.model.type.TypeKind.DECLARED) {
+            TypeElement superType = (TypeElement) ((DeclaredType) superclass).asElement();
+            if (!superType.getQualifiedName().toString().equals("java.lang.Object")) {
+                fields.addAll(collectFields(superType));
+            }
+        }
+        return fields;
     }
 
     private void generateBootstrapper(TypeElement entryPoint) throws IOException {

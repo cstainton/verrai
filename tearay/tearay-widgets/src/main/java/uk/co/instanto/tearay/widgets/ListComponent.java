@@ -9,7 +9,7 @@ import java.util.List;
 public abstract class ListComponent<M, W extends Widget & TakesValue<M>> extends Widget implements TakesValue<List<M>> {
 
     @Inject
-    protected Provider<W> itemProvider;
+    public Provider<W> itemProvider;
 
     private List<M> items;
 
