@@ -108,7 +108,7 @@ public class NavigationProcessor extends AbstractProcessor {
                 .addAnnotation(Override.class);
 
         goToMethod.addStatement("$T body = $T.current().getDocument().getBody()", htmlElementClass, windowClass);
-        goToMethod.addStatement("body.setInnerHTML(\"\")"); // Clear body
+        goToMethod.addStatement("body.setInnerText(\"\")"); // Clear body
 
         // Update URL hash
         goToMethod.addStatement("$T hash = new $T(\"#\" + role)", StringBuilder.class, StringBuilder.class);
