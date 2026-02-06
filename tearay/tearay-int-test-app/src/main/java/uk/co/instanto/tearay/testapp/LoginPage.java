@@ -5,6 +5,9 @@ import uk.co.instanto.tearay.api.Templated;
 import uk.co.instanto.tearay.api.DataField;
 import uk.co.instanto.tearay.api.Navigation;
 import uk.co.instanto.tearay.api.PageShowing;
+import uk.co.instanto.tearay.api.EventHandler;
+import uk.co.instanto.tearay.testapp.service.AuthService;
+import uk.co.instanto.tearay.testapp.service.UserContext;
 import org.teavm.jso.dom.html.HTMLElement;
 import org.teavm.jso.dom.html.HTMLButtonElement;
 import org.teavm.jso.browser.Window;
@@ -20,7 +23,10 @@ public class LoginPage {
     public Navigation navigation;
 
     @Inject
-    public AppSecurityProvider securityProvider;
+    public AuthService authService;
+
+    @Inject
+    public UserContext userContext;
 
     public HTMLElement element;
 
@@ -30,20 +36,28 @@ public class LoginPage {
     @DataField
     public HTMLButtonElement adminLoginBtn;
 
-    @PageShowing
-    public void onShow() {
-        loginBtn.addEventListener("click", e -> {
-            securityProvider.setRoles("user");
+    @EventHandler("loginBtn")
+    public void onLoginClick() {
+        // Hardcoded "test" user login
+        if (authService.login("test", "password")) {
+            userContext.set("test");
             Map<String, String> params = new HashMap<>();
-            params.put("username", "RegularUser");
+            params.put("username", "test");
             navigation.goTo("dashboard", params);
-        });
+        } else {
+            Window.alert("Login Failed");
+        }
+    }
 
-        adminLoginBtn.addEventListener("click", e -> {
-            securityProvider.setRoles("admin");
-            Map<String, String> params = new HashMap<>();
-            params.put("username", "Administrator");
-            navigation.goTo("dashboard", params);
-        });
+    @EventHandler("adminLoginBtn")
+    public void onAdminLoginClick() {
+        // Simulate failure for non-test user
+        if (authService.login("admin", "password")) {
+             // Should fail
+             userContext.set("admin");
+             navigation.goTo("dashboard");
+        } else {
+             Window.alert("Login Failed: User 'admin' not allowed");
+        }
     }
 }

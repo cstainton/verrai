@@ -4,6 +4,8 @@ import org.teavm.jso.dom.html.HTMLElement;
 import org.teavm.jso.browser.Window;
 import uk.co.instanto.tearay.widgets.*;
 import uk.co.instanto.tearay.api.*;
+import uk.co.instanto.tearay.api.cdi.*;
+import uk.co.instanto.tearay.testapp.service.UserContext;
 import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +20,9 @@ public class DashboardPage {
     @Inject
     public HelloService service;
 
+    @Inject
+    public UserContext userContext;
+
     @PageState
     public String username;
 
@@ -28,6 +33,12 @@ public class DashboardPage {
 
     @PageShowing
     public void onShow() {
+        // Check session
+        if (!userContext.isLoggedIn()) {
+            navigation.goTo("login");
+            return;
+        }
+
         // Clear previous content if re-used
         container.element.setInnerHTML("");
 
@@ -51,7 +62,7 @@ public class DashboardPage {
         row.element.appendChild(col1.element);
 
         Card card = new Card();
-        card.setTitle("Welcome " + (username != null ? username : "Guest"));
+        card.setTitle("Welcome " + userContext.getUsername());
         card.setText(service.getGreeting());
         col1.element.appendChild(card.element);
 
@@ -66,53 +77,22 @@ public class DashboardPage {
         });
         card.addContent(profileBtn);
 
-        // Radio Group
-        RadioButton r1 = new RadioButton("options", "Option A");
-        RadioButton r2 = new RadioButton("options", "Option B");
-        r1.addChangeHandler(e -> Window.alert("Selected: Option A"));
-        r2.addChangeHandler(e -> Window.alert("Selected: Option B"));
-        col1.element.appendChild(r1.element);
-        col1.element.appendChild(r2.element);
-
         // Col 2: Alert & Logout
         Column col2 = new Column().span(6);
         row.element.appendChild(col2.element);
 
         Alert alert = new Alert();
         alert.setType(Alert.Type.INFO);
-        alert.setText("This is an info alert from the Widget library!");
+        alert.setText("Session Active for: " + userContext.getUsername());
         col2.element.appendChild(alert.element);
 
         Button logoutBtn = new Button();
         logoutBtn.setText("Logout");
         logoutBtn.setType(Button.Type.DANGER);
-        logoutBtn.addClickListener(e -> navigation.goTo("login"));
-        col2.element.appendChild(logoutBtn.element);
-
-        // Slider demo
-        Slider slider = new Slider();
-        slider.setMin(0);
-        slider.setMax(100);
-        slider.setValue(50);
-        slider.addChangeHandler(e -> alert.setText("Slider value: " + slider.getValue()));
-        col2.element.appendChild(slider.element);
-
-        // Switch
-        Switch toggle = new Switch("Enable Notifications");
-        toggle.addChangeHandler(e -> alert.setText("Notifications: " + (toggle.isChecked() ? "ON" : "OFF")));
-        col2.element.appendChild(toggle.element);
-
-        // Checkbox
-        Checkbox agree = new Checkbox("I agree to the terms");
-        agree.addChangeHandler(e -> {
-            if (agree.getValue()) {
-                logoutBtn.setType(Button.Type.DANGER);
-                logoutBtn.setText("Logout (Enabled)");
-            } else {
-                logoutBtn.setType(Button.Type.WARNING);
-                logoutBtn.setText("Logout (Disabled)");
-            }
+        logoutBtn.addClickListener(e -> {
+            userContext.clear();
+            navigation.goTo("login");
         });
-        col2.element.appendChild(agree.element);
+        col2.element.appendChild(logoutBtn.element);
     }
 }
