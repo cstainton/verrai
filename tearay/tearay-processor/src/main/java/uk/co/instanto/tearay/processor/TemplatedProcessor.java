@@ -16,6 +16,7 @@ import javax.tools.Diagnostic;
 import javax.tools.FileObject;
 import javax.tools.StandardLocation;
 import java.io.IOException;
+import java.util.List;
 import java.util.Set;
 
 @AutoService(Processor.class)
@@ -70,14 +71,15 @@ public class TemplatedProcessor extends AbstractProcessor {
 
         // Assign root if a field "element" exists (Convention for this PoC)
         // In a real framework, we'd look for an interface like IsWidget or a specific annotation.
-        for (VariableElement field : ElementFilter.fieldsIn(typeElement.getEnclosedElements())) {
+        List<VariableElement> fields = ElementFilter.fieldsIn(typeElement.getEnclosedElements());
+        for (VariableElement field : fields) {
              if (field.getSimpleName().toString().equals("element") &&
                  com.squareup.javapoet.TypeName.get(field.asType()).equals(htmlElementClass)) {
                  bindMethod.addStatement("target.element = root");
              }
         }
 
-        for (VariableElement field : ElementFilter.fieldsIn(typeElement.getEnclosedElements())) {
+        for (VariableElement field : fields) {
             DataField dataField = field.getAnnotation(DataField.class);
             if (dataField != null) {
                 String dataFieldName = dataField.value();
