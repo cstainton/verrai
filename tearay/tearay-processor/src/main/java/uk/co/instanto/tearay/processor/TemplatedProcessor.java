@@ -93,60 +93,53 @@ public class TemplatedProcessor extends AbstractProcessor {
                 bindMethod.beginControlFlow("if (el_$L != null)", field.getSimpleName());
 
                 // Check if the field type is HTMLElement
-                if (processingEnv.getTypeUtils().isAssignable(field.asType(), processingEnv.getElementUtils().getTypeElement("org.teavm.jso.dom.html.HTMLElement").asType())) {
+                TypeElement htmlElementType = processingEnv.getElementUtils().getTypeElement("org.teavm.jso.dom.html.HTMLElement");
+                if (htmlElementType != null && processingEnv.getTypeUtils().isAssignable(field.asType(), htmlElementType.asType())) {
                     bindMethod.addStatement("target.$L = ($T) el_$L",
                         field.getSimpleName(),
                         com.squareup.javapoet.TypeName.get(field.asType()),
                         field.getSimpleName());
                 } else {
-                    // Assume it is a nested component.
-                    // 1. Check if the component is injected. (If not, we might need to instantiate it, but let's assume IOC handles it)
-                    // The IOCProcessor injects the bean. Here we just need to SWAP the element.
-                    // But wait, if we are in the Binder, 'target' is already instantiated.
-                    // 'target.field' should be populated by IOC if it has @Inject.
+                    // Check if the component has a public 'element' field of type HTMLElement (or subtype)
+                    VariableElement elementField = findPublicElementField(field.asType());
 
-                    // Logic:
-                    // 1. Get the component instance from the field.
-                    // 2. Access its 'element' field (Convention!).
-                    // 3. Replace 'el_field' with 'component.element' in the DOM.
+                    if (elementField != null) {
+                        bindMethod.beginControlFlow("if (target.$L != null)", field.getSimpleName());
+                        // Access target.field.element
+                        bindMethod.addStatement("$T widgetElement = target.$L.element", htmlElementClass, field.getSimpleName());
+                        bindMethod.beginControlFlow("if (widgetElement != null)");
 
-                    bindMethod.beginControlFlow("if (target.$L != null)", field.getSimpleName());
-                    // We need to access target.field.element.
-                    // Since we don't know the exact type structure at compile time easily without reflection or strict rules,
-                    // we will cast to a convention or assume public field 'element'.
-                    // For this PoC, we assume the component has a public 'element' field of type HTMLElement.
-                    // We can't easily check fields of other classes in APT without full TypeMirror resolution, which is doable but verbose.
-                    // Let's generate code that assumes it exists.
+                        // Merge attributes from placeholder to widget
+                        // 1. Merge CSS classes
+                        bindMethod.addStatement("String currentClasses = widgetElement.getClassName()");
+                        bindMethod.addStatement("String placeholderClasses = el_$L.getClassName()", field.getSimpleName());
+                        bindMethod.beginControlFlow("if (placeholderClasses != null && !placeholderClasses.isEmpty())");
+                        bindMethod.addStatement("widgetElement.setClassName((currentClasses != null ? currentClasses + \" \" : \"\") + placeholderClasses)");
+                        bindMethod.endControlFlow();
 
-                    bindMethod.addStatement("$T widgetElement = target.$L.element", htmlElementClass, field.getSimpleName());
-                    bindMethod.beginControlFlow("if (widgetElement != null)");
+                        // 2. Copy ID if present on placeholder
+                        bindMethod.addStatement("String placeholderId = el_$L.getAttribute(\"id\")", field.getSimpleName());
+                        bindMethod.beginControlFlow("if (placeholderId != null && !placeholderId.isEmpty())");
+                        bindMethod.addStatement("widgetElement.setAttribute(\"id\", placeholderId)");
+                        bindMethod.endControlFlow();
 
-                    // Merge attributes from placeholder to widget
-                    // 1. Merge CSS classes
-                    bindMethod.addStatement("String currentClasses = widgetElement.getClassName()");
-                    bindMethod.addStatement("String placeholderClasses = el_$L.getClassName()", field.getSimpleName());
-                    bindMethod.beginControlFlow("if (placeholderClasses != null && !placeholderClasses.isEmpty())");
-                    bindMethod.addStatement("widgetElement.setClassName((currentClasses != null ? currentClasses + \" \" : \"\") + placeholderClasses)");
-                    bindMethod.endControlFlow();
+                        // 3. Copy Style
+                        bindMethod.addStatement("String placeholderStyle = el_$L.getAttribute(\"style\")", field.getSimpleName());
+                        bindMethod.beginControlFlow("if (placeholderStyle != null && !placeholderStyle.isEmpty())");
+                        // Simple concatenation for style string; robust parsing is too complex for this PoC
+                        bindMethod.addStatement("String currentStyle = widgetElement.getAttribute(\"style\")");
+                        bindMethod.addStatement("widgetElement.setAttribute(\"style\", (currentStyle != null ? currentStyle + \";\" : \"\") + placeholderStyle)");
+                        bindMethod.endControlFlow();
 
-                    // 2. Copy ID if present on placeholder
-                    bindMethod.addStatement("String placeholderId = el_$L.getAttribute(\"id\")", field.getSimpleName());
-                    bindMethod.beginControlFlow("if (placeholderId != null && !placeholderId.isEmpty())");
-                    bindMethod.addStatement("widgetElement.setAttribute(\"id\", placeholderId)");
-                    bindMethod.endControlFlow();
+                        bindMethod.addStatement("el_$L.getParentNode().replaceChild(widgetElement, el_$L)", field.getSimpleName(), field.getSimpleName());
+                        bindMethod.endControlFlow();
 
-                    // 3. Copy Style
-                    bindMethod.addStatement("String placeholderStyle = el_$L.getAttribute(\"style\")", field.getSimpleName());
-                    bindMethod.beginControlFlow("if (placeholderStyle != null && !placeholderStyle.isEmpty())");
-                    // Simple concatenation for style string; robust parsing is too complex for this PoC
-                    bindMethod.addStatement("String currentStyle = widgetElement.getAttribute(\"style\")");
-                    bindMethod.addStatement("widgetElement.setAttribute(\"style\", (currentStyle != null ? currentStyle + \";\" : \"\") + placeholderStyle)");
-                    bindMethod.endControlFlow();
-
-                    bindMethod.addStatement("el_$L.getParentNode().replaceChild(widgetElement, el_$L)", field.getSimpleName(), field.getSimpleName());
-                    bindMethod.endControlFlow();
-
-                    bindMethod.endControlFlow();
+                        bindMethod.endControlFlow();
+                    } else {
+                         processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
+                            "Field '" + field.getSimpleName() + "' annotated with @DataField must be an HTMLElement or a component with a public 'element' field of type HTMLElement.",
+                            field);
+                    }
                 }
 
                 bindMethod.endControlFlow();
@@ -181,5 +174,36 @@ public class TemplatedProcessor extends AbstractProcessor {
                  return null;
              }
          }
+    }
+
+    private VariableElement findPublicElementField(javax.lang.model.type.TypeMirror typeMirror) {
+        if (typeMirror.getKind() != javax.lang.model.type.TypeKind.DECLARED) {
+            return null;
+        }
+        TypeElement typeElement = (TypeElement) ((javax.lang.model.type.DeclaredType) typeMirror).asElement();
+        if (typeElement == null) {
+            return null;
+        }
+
+        // Check fields in this class
+        for (VariableElement field : ElementFilter.fieldsIn(typeElement.getEnclosedElements())) {
+            if (field.getSimpleName().toString().equals("element") &&
+                field.getModifiers().contains(javax.lang.model.element.Modifier.PUBLIC)) {
+
+                // Check if it is HTMLElement or subtype
+                 TypeElement htmlElementType = processingEnv.getElementUtils().getTypeElement("org.teavm.jso.dom.html.HTMLElement");
+                 if (htmlElementType != null && processingEnv.getTypeUtils().isAssignable(field.asType(), htmlElementType.asType())) {
+                    return field;
+                 }
+            }
+        }
+
+        // Check superclass
+        javax.lang.model.type.TypeMirror superclass = typeElement.getSuperclass();
+        if (superclass.getKind() != javax.lang.model.type.TypeKind.NONE) {
+            return findPublicElementField(superclass);
+        }
+
+        return null;
     }
 }
