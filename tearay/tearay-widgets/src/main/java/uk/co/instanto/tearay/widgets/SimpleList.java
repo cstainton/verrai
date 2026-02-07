@@ -6,16 +6,16 @@ import org.teavm.jso.dom.xml.Element;
 import java.util.List;
 import java.util.ArrayList;
 
-public class ListWidget extends Widget {
+public class SimpleList extends Widget {
 
     private boolean ordered = false;
     private HTMLElement listElement;
 
-    public ListWidget() {
+    public SimpleList() {
         this(false);
     }
 
-    public ListWidget(boolean ordered) {
+    public SimpleList(boolean ordered) {
         this.ordered = ordered;
         this.listElement = Window.current().getDocument().createElement(ordered ? "ol" : "ul");
         // Bootstrap List Group classes

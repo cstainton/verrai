@@ -28,7 +28,7 @@ public class DashboardPage {
     public Container container;
 
     @Inject @DataField
-    public ListWidget taskList;
+    public TaskListWidget taskList;
 
     @Inject @DataField
     public TableWidget userTable;
@@ -37,7 +37,7 @@ public class DashboardPage {
     public void onShow() {
         // Clear previous content if re-used
         container.element.setInnerText("");
-        taskList.clear();
+        taskList.setValue(null); // Clear list
         userTable.clearBody();
 
         // Navbar
@@ -124,10 +124,12 @@ public class DashboardPage {
         });
         col2.element.appendChild(agree.element);
 
-        // Populate List Widget
-        taskList.addItem("Review Code PR #101");
-        taskList.addItem("Update Documentation");
-        taskList.addItem("Deploy to Staging");
+        // Populate List Widget (Model Binding)
+        java.util.List<Task> tasks = new java.util.ArrayList<>();
+        tasks.add(new Task("Review Code PR #101", false));
+        tasks.add(new Task("Update Documentation", true));
+        tasks.add(new Task("Deploy to Staging", false));
+        taskList.setValue(tasks);
 
         // Populate Table Widget
         userTable.setHeaders("ID", "Name", "Role", "Status");
