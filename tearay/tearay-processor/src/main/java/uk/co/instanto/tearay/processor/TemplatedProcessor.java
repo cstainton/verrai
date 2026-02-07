@@ -158,6 +158,43 @@ public class TemplatedProcessor extends AbstractProcessor {
             }
             bindMethod.addStatement("  break");
         }
+
+        if (!dataFields.isEmpty()) {
+            bindMethod.addStatement("$T<$T> nodes = root.querySelectorAll($S)",
+                    nodeListClass,
+                    WildcardTypeName.subtypeOf(elementClass),
+                    "[data-field]");
+
+            bindMethod.beginControlFlow("for (int i = 0; i < nodes.getLength(); i++)");
+            bindMethod.addStatement("$T candidate = ($T) nodes.item(i)", htmlElementClass, htmlElementClass);
+            bindMethod.addStatement("String attr = candidate.getAttribute($S)", "data-field");
+
+            bindMethod.beginControlFlow("switch (attr)");
+
+            for (VariableElement field : dataFields) {
+                DataField dataField = field.getAnnotation(DataField.class);
+                String name = dataField.value();
+                if (name.isEmpty()) {
+                    name = field.getSimpleName().toString();
+                }
+
+                // Query element
+                bindMethod.addStatement("$T el_$L = ($T) root.querySelector($S)",
+                        htmlElementClass, field.getSimpleName(), htmlElementClass, "[data-field='" + name + "']");
+
+                bindMethod.beginControlFlow("if (el_$L != null)", field.getSimpleName());
+
+                // Check if field is HTMLElement
+                 TypeElement htmlElementType = processingEnv.getElementUtils().getTypeElement("org.teavm.jso.dom.html.HTMLElement");
+                 if (htmlElementType != null && processingEnv.getTypeUtils().isAssignable(field.asType(), htmlElementType.asType())) {
+                bindMethod.addCode("case $S:\n", name);
+                bindMethod.addStatement("  el_$L = candidate", field.getSimpleName());
+                bindMethod.addStatement("  break");
+            }
+
+            bindMethod.endControlFlow(); // switch
+            bindMethod.endControlFlow(); // for
+        }
         bindMethod.endControlFlow(); // switch
         bindMethod.endControlFlow(); // for
 
