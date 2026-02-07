@@ -186,38 +186,55 @@ public class TemplatedProcessor extends AbstractProcessor {
                     String setterName = "set" + capProp;
 
                     // Validate Property Existence
-                    boolean getterFound = false;
-                    boolean setterFound = false;
+                    ExecutableElement getterMethod = null;
+                    ExecutableElement setterMethod = null;
                     String finalGetter = null;
 
                     // Scan methods (including inherited)
                     for (ExecutableElement method : ElementFilter.methodsIn(processingEnv.getElementUtils().getAllMembers(modelType))) {
                         String methodName = method.getSimpleName().toString();
                         if (methodName.equals(getterName) && method.getParameters().isEmpty()) {
-                            getterFound = true;
+                            getterMethod = method;
                             finalGetter = getterName;
                         } else if (methodName.equals(isGetterName) && method.getParameters().isEmpty()) {
-                            getterFound = true;
+                            getterMethod = method;
                             finalGetter = isGetterName;
                         }
                         if (methodName.equals(setterName) && method.getParameters().size() == 1) {
-                            setterFound = true;
+                            setterMethod = method;
                         }
                     }
 
-                    if (!getterFound) {
+                    if (getterMethod == null) {
                         processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
                             "Property '" + propertyName + "' not found in model " + modelType.getSimpleName() + ". Missing getter: " + getterName + "() or " + isGetterName + "()",
                             field);
                         continue;
-                    }
-                    if (!setterFound) {
+                    } else if (!getterMethod.getModifiers().contains(javax.lang.model.element.Modifier.PUBLIC)) {
                         processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
-                            "Property '" + propertyName + "' is read-only in model " + modelType.getSimpleName() + ". Missing setter: " + setterName + "(...)",
+                            "Getter '" + finalGetter + "()' for property '" + propertyName + "' in model " + modelType.getSimpleName() + " is not public.",
                             field);
                         continue;
                     }
 
+                    if (setterMethod == null) {
+                        processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
+                            "Property '" + propertyName + "' is read-only in model " + modelType.getSimpleName() + ". Missing setter: " + setterName + "(...)",
+                            field);
+                        continue;
+                    } else if (!setterMethod.getModifiers().contains(javax.lang.model.element.Modifier.PUBLIC)) {
+                        processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
+                            "Setter '" + setterName + "(...)' for property '" + propertyName + "' in model " + modelType.getSimpleName() + " is not public.",
+                            field);
+                        continue;
+                    }
+
+                    // Check Type Compatibility
+                    // Ideally we check TakesValue<V> on the widget type against Property Type P
+                    // However, resolving generic arguments on interface implementations is complex in AP.
+                    // For MVP, checking direct assignment compatibility (P assignable to V) is tricky if V is boxed and P is primitive.
+                    // Instead, we will rely on generated code to fail compilation if types mismatch,
+                    // OR we can check simple cases where we know the widget type (e.g. TextBox -> String).
 
                     bindMethod.beginControlFlow("if (target.$L != null && target.$L != null)", modelField.getSimpleName(), field.getSimpleName());
 
