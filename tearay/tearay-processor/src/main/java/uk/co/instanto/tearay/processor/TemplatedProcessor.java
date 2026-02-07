@@ -2,6 +2,8 @@ package uk.co.instanto.tearay.processor;
 
 import uk.co.instanto.tearay.api.DataField;
 import uk.co.instanto.tearay.api.Templated;
+import uk.co.instanto.tearay.api.RootElement;
+import uk.co.instanto.tearay.api.IsWidget;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
@@ -68,13 +70,28 @@ public class TemplatedProcessor extends AbstractProcessor {
         String escapedHtml = htmlContent.replace("\n", " ");
         bindMethod.addStatement("root.setInnerHTML($S)", escapedHtml);
 
-        // Assign root if a field "element" exists (Convention for this PoC)
-        // In a real framework, we'd look for an interface like IsWidget or a specific annotation.
+        // Assign root if a field "element" exists (Convention for this PoC) or if annotated with @RootElement
+        boolean rootAssigned = false;
+        // 1. Check for @RootElement
         for (VariableElement field : ElementFilter.fieldsIn(typeElement.getEnclosedElements())) {
-             if (field.getSimpleName().toString().equals("element") &&
-                 com.squareup.javapoet.TypeName.get(field.asType()).equals(htmlElementClass)) {
-                 bindMethod.addStatement("target.element = root");
+             if (field.getAnnotation(RootElement.class) != null) {
+                 if (com.squareup.javapoet.TypeName.get(field.asType()).equals(htmlElementClass)) {
+                     bindMethod.addStatement("target.$L = root", field.getSimpleName());
+                     rootAssigned = true;
+                     break;
+                 }
              }
+        }
+
+        // 2. Fallback to convention "element"
+        if (!rootAssigned) {
+            for (VariableElement field : ElementFilter.fieldsIn(typeElement.getEnclosedElements())) {
+                 if (field.getSimpleName().toString().equals("element") &&
+                     com.squareup.javapoet.TypeName.get(field.asType()).equals(htmlElementClass)) {
+                     bindMethod.addStatement("target.element = root");
+                     break;
+                 }
+            }
         }
 
         for (VariableElement field : ElementFilter.fieldsIn(typeElement.getEnclosedElements())) {
@@ -118,7 +135,16 @@ public class TemplatedProcessor extends AbstractProcessor {
                     // We can't easily check fields of other classes in APT without full TypeMirror resolution, which is doable but verbose.
                     // Let's generate code that assumes it exists.
 
-                    bindMethod.addStatement("$T widgetElement = target.$L.element", htmlElementClass, field.getSimpleName());
+                    boolean isWidget = processingEnv.getTypeUtils().isAssignable(field.asType(),
+                        processingEnv.getElementUtils().getTypeElement("uk.co.instanto.tearay.api.IsWidget").asType());
+
+                    if (isWidget) {
+                        bindMethod.addStatement("$T widgetElement = target.$L.getElement()", htmlElementClass, field.getSimpleName());
+                    } else {
+                        // Fallback to convention
+                        bindMethod.addStatement("$T widgetElement = target.$L.element", htmlElementClass, field.getSimpleName());
+                    }
+
                     bindMethod.beginControlFlow("if (widgetElement != null)");
 
                     // Merge attributes from placeholder to widget
