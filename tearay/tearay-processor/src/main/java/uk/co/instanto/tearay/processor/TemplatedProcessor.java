@@ -86,28 +86,46 @@ public class TemplatedProcessor extends AbstractProcessor {
              }
         }
 
+        List<VariableElement> dataFields = new ArrayList<>();
         for (VariableElement field : fields) {
             DataField dataField = field.getAnnotation(DataField.class);
             if (dataField != null) {
-                String dataFieldName = dataField.value();
-                if (dataFieldName.isEmpty()) {
-                    dataFieldName = field.getSimpleName().toString();
-                }
-                bindMethod.addCode("case $S:\n", dataFieldName);
-                bindMethod.addStatement("  if (el_$L == null) el_$L = ($T) candidate", field.getSimpleName(), field.getSimpleName(), htmlElementClass);
-                bindMethod.addStatement("  break");
-            }
-            bindMethod.endControlFlow(); // switch
-            bindMethod.endControlFlow(); // for
-
-            for (VariableElement field : dataFields) {
-                // Reuse existing binding logic structure but check el_field != null
-                bindMethod.addStatement("$T el_$L = root.querySelector($S)",
-                    htmlElementClass,
-                    field.getSimpleName(),
-                    "[data-field='" + dataFieldName + "']");
+                dataFields.add(field);
             }
         }
+
+        for (VariableElement field : dataFields) {
+            bindMethod.addStatement("$T el_$L = null", htmlElementClass, field.getSimpleName());
+        }
+
+        bindMethod.addStatement("$T candidates = root.querySelectorAll($S)", nodeListClass, "[data-field]");
+        bindMethod.beginControlFlow("for (int i = 0; i < candidates.getLength(); i++)");
+        bindMethod.addStatement("$T candidate = ($T) candidates.item(i)", htmlElementClass, htmlElementClass);
+        bindMethod.addStatement("String key = candidate.getAttribute($S)", "data-field");
+        bindMethod.beginControlFlow("switch (key)");
+
+        Map<String, List<VariableElement>> fieldsByDataField = new HashMap<>();
+        for (VariableElement field : dataFields) {
+            DataField dataField = field.getAnnotation(DataField.class);
+            String dataFieldName = dataField.value();
+            if (dataFieldName.isEmpty()) {
+                dataFieldName = field.getSimpleName().toString();
+            }
+            if (!fieldsByDataField.containsKey(dataFieldName)) {
+                fieldsByDataField.put(dataFieldName, new ArrayList<>());
+            }
+            fieldsByDataField.get(dataFieldName).add(field);
+        }
+
+        for (Map.Entry<String, List<VariableElement>> entry : fieldsByDataField.entrySet()) {
+            bindMethod.addCode("case $S:\n", entry.getKey());
+            for (VariableElement field : entry.getValue()) {
+                bindMethod.addStatement("  el_$L = candidate", field.getSimpleName());
+            }
+            bindMethod.addStatement("  break");
+        }
+        bindMethod.endControlFlow(); // switch
+        bindMethod.endControlFlow(); // for
 
         // 2. Move to DocumentFragment to avoid reflows during manipulation
         ClassName fragmentClass = ClassName.get("org.teavm.jso.dom.xml", "DocumentFragment");
