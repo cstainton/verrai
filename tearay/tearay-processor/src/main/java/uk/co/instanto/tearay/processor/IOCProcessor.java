@@ -6,6 +6,9 @@ import uk.co.instanto.tearay.api.EntryPoint;
 import uk.co.instanto.tearay.api.PostConstruct;
 import uk.co.instanto.tearay.api.Templated;
 import uk.co.instanto.tearay.api.Page;
+import uk.co.instanto.tearay.processor.model.BeanDefinition;
+import uk.co.instanto.tearay.processor.visitor.BeanVisitor;
+import uk.co.instanto.tearay.processor.visitor.FactoryWriter;
 import com.squareup.javapoet.*;
 import com.google.auto.service.AutoService;
 
@@ -17,7 +20,9 @@ import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
 import javax.tools.Diagnostic;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -60,10 +65,12 @@ public class IOCProcessor extends AbstractProcessor {
             }
         }
 
+        BeanVisitor factoryWriter = new FactoryWriter(processingEnv);
+
         for (Element element : beans) {
             if (element.getKind() != ElementKind.CLASS) continue;
             try {
-                processBean((TypeElement) element, resolutionMap);
+                processBean((TypeElement) element, resolutionMap, factoryWriter);
             } catch (Exception e) {
                 processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "Error processing bean " + element + ": " + e.getMessage(), element);
                 e.printStackTrace();
@@ -83,100 +90,29 @@ public class IOCProcessor extends AbstractProcessor {
         return false;
     }
 
-    private void processBean(TypeElement typeElement, Map<String, TypeElement> resolutionMap) throws IOException {
-        String packageName = processingEnv.getElementUtils().getPackageOf(typeElement).getQualifiedName().toString();
-        String factoryName = typeElement.getSimpleName() + "_Factory";
-        ClassName typeName = ClassName.get(typeElement);
-        ClassName factoryClassName = ClassName.get(packageName, factoryName);
-
+    private void processBean(TypeElement typeElement, Map<String, TypeElement> resolutionMap, BeanVisitor visitor) {
         boolean isSingleton = typeElement.getAnnotation(ApplicationScoped.class) != null ||
                               typeElement.getAnnotation(EntryPoint.class) != null;
-        // Dependent beans are not singletons (default behavior, but explicit check good for clarity)
         boolean isTemplated = typeElement.getAnnotation(Templated.class) != null;
 
-        TypeSpec.Builder factoryBuilder = TypeSpec.classBuilder(factoryName)
-                .addModifiers(Modifier.PUBLIC);
-
-        // Singleton Instance Holder
-        if (isSingleton) {
-            factoryBuilder.addField(FieldSpec.builder(typeName, "instance")
-                    .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
-                    .build());
-        }
-
-        MethodSpec.Builder getMethod = MethodSpec.methodBuilder("getInstance")
-                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                .returns(typeName);
-
-        if (isSingleton) {
-            getMethod.beginControlFlow("if (instance == null)")
-                    .addStatement("instance = createInstance()")
-                    .endControlFlow()
-                    .addStatement("return instance");
-        } else {
-            getMethod.addStatement("return createInstance()");
-        }
-
-        factoryBuilder.addMethod(getMethod.build());
-
-        // createInstance method
-        MethodSpec.Builder createMethod = MethodSpec.methodBuilder("createInstance")
-                .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
-                .returns(typeName);
-
-        createMethod.addStatement("$T bean = new $T()", typeName, typeName);
-
-        // Injection
+        List<VariableElement> injectionPoints = new ArrayList<>();
         for (VariableElement field : ElementFilter.fieldsIn(typeElement.getEnclosedElements())) {
             if (field.getAnnotation(Inject.class) != null) {
-                TypeMirror fieldType = field.asType();
-                String fieldTypeName = fieldType.toString();
-                 if (fieldTypeName.contains("<")) {
-                    fieldTypeName = fieldTypeName.substring(0, fieldTypeName.indexOf("<"));
-                }
-
-                // Assumes fieldType is a class that has a generated factory.
-                // For interfaces, this simple PoC fails (would need a resolution map).
-                // We assume concrete classes for now.
-                ClassName dependencyFactory;
-                if (fieldTypeName.equals("uk.co.instanto.tearay.api.Navigation")) {
-                    dependencyFactory = ClassName.get("uk.co.instanto.tearay.impl", "NavigationImpl_Factory");
-                    createMethod.addStatement("bean.$L = $T.getInstance()", field.getSimpleName(), dependencyFactory);
-                } else if (fieldTypeName.startsWith("uk.co.instanto.tearay.widgets.")) {
-                    // Direct instantiation for widgets
-                    createMethod.addStatement("bean.$L = new $T()", field.getSimpleName(), ClassName.bestGuess(fieldTypeName));
-                } else if (resolutionMap.containsKey(fieldTypeName)) {
-                     // Found in resolution map - use the implementation's factory
-                     TypeElement implElement = resolutionMap.get(fieldTypeName);
-                     String implPackage = processingEnv.getElementUtils().getPackageOf(implElement).getQualifiedName().toString();
-                     dependencyFactory = ClassName.get(implPackage, implElement.getSimpleName() + "_Factory");
-                     createMethod.addStatement("bean.$L = $T.getInstance()", field.getSimpleName(), dependencyFactory);
-                } else {
-                    dependencyFactory = ClassName.bestGuess(fieldTypeName + "_Factory");
-                    createMethod.addStatement("bean.$L = $T.getInstance()", field.getSimpleName(), dependencyFactory);
-                }
+                injectionPoints.add(field);
             }
         }
 
-        // Templated Binding
-        if (isTemplated) {
-            ClassName binderClass = ClassName.get(packageName, typeElement.getSimpleName() + "_Binder");
-            createMethod.addStatement("$T.bind(bean)", binderClass);
-        }
-
-        // PostConstruct
+        List<ExecutableElement> postConstructMethods = new ArrayList<>();
         for (ExecutableElement method : ElementFilter.methodsIn(typeElement.getEnclosedElements())) {
             if (method.getAnnotation(PostConstruct.class) != null) {
-                createMethod.addStatement("bean.$L()", method.getSimpleName());
+                postConstructMethods.add(method);
             }
         }
 
-        createMethod.addStatement("return bean");
-        factoryBuilder.addMethod(createMethod.build());
+        BeanDefinition beanDef = new BeanDefinition(typeElement, isSingleton, isTemplated,
+                injectionPoints, postConstructMethods, resolutionMap);
 
-        JavaFile.builder(packageName, factoryBuilder.build())
-                .build()
-                .writeTo(processingEnv.getFiler());
+        visitor.visit(beanDef);
     }
 
     private void generateBootstrapper(TypeElement entryPoint) throws IOException {
