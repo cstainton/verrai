@@ -19,6 +19,8 @@ import javax.tools.StandardLocation;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Set;
 
 @AutoService(Processor.class)
@@ -81,6 +83,7 @@ public class TemplatedProcessor extends AbstractProcessor {
 
         // Collect data fields
         List<VariableElement> dataFields = new ArrayList<>();
+        // 1. Find all placeholders
         for (VariableElement field : ElementFilter.fieldsIn(typeElement.getEnclosedElements())) {
             if (field.getAnnotation(DataField.class) != null) {
                 dataFields.add(field);
@@ -116,6 +119,24 @@ public class TemplatedProcessor extends AbstractProcessor {
 
             for (VariableElement field : dataFields) {
                 // Reuse existing binding logic structure but check el_field != null
+                bindMethod.addStatement("$T el_$L = root.querySelector($S)",
+                    htmlElementClass,
+                    field.getSimpleName(),
+                    "[data-field='" + dataFieldName + "']");
+            }
+        }
+
+        // 2. Move to DocumentFragment to avoid reflows during manipulation
+        ClassName fragmentClass = ClassName.get("org.teavm.jso.dom.xml", "DocumentFragment");
+        bindMethod.addStatement("$T fragment = doc.createDocumentFragment()", fragmentClass);
+        bindMethod.beginControlFlow("while (root.hasChildNodes())");
+        bindMethod.addStatement("fragment.appendChild(root.getFirstChild())");
+        bindMethod.endControlFlow();
+
+        // 3. Process fields
+        for (VariableElement field : ElementFilter.fieldsIn(typeElement.getEnclosedElements())) {
+            DataField dataField = field.getAnnotation(DataField.class);
+            if (dataField != null) {
                 bindMethod.beginControlFlow("if (el_$L != null)", field.getSimpleName());
 
                 // Check if the field type is HTMLElement
@@ -127,7 +148,6 @@ public class TemplatedProcessor extends AbstractProcessor {
                 } else {
                     // Assume it is a nested component.
                     bindMethod.beginControlFlow("if (target.$L != null)", field.getSimpleName());
-
                     bindMethod.addStatement("$T widgetElement = target.$L.element", htmlElementClass, field.getSimpleName());
                     bindMethod.beginControlFlow("if (widgetElement != null)");
 
@@ -149,6 +169,7 @@ public class TemplatedProcessor extends AbstractProcessor {
                     bindMethod.addStatement("widgetElement.setAttribute(\"style\", (currentStyle != null ? currentStyle + \";\" : \"\") + placeholderStyle)");
                     bindMethod.endControlFlow();
 
+                    // Replace in DOM (now in Fragment)
                     bindMethod.addStatement("el_$L.getParentNode().replaceChild(widgetElement, el_$L)", field.getSimpleName(), field.getSimpleName());
                     bindMethod.endControlFlow();
 
@@ -159,6 +180,7 @@ public class TemplatedProcessor extends AbstractProcessor {
             }
         }
 
+        bindMethod.addStatement("root.appendChild(fragment)");
         bindMethod.addStatement("return root");
 
         TypeSpec binderClass = TypeSpec.classBuilder(binderName)
@@ -171,15 +193,27 @@ public class TemplatedProcessor extends AbstractProcessor {
                 .writeTo(processingEnv.getFiler());
     }
 
+    private final Map<String, String> templateCache = new HashMap<>();
+
     private String readTemplate(TypeElement typeElement, String templateName) {
          String packageName = processingEnv.getElementUtils().getPackageOf(typeElement).getQualifiedName().toString();
+         String cacheKey = packageName + ":" + templateName;
+         if (templateCache.containsKey(cacheKey)) {
+             return templateCache.get(cacheKey);
+         }
+
+         // Try SOURCE_PATH first as it is more likely for sources
          try {
              FileObject resource = processingEnv.getFiler().getResource(StandardLocation.SOURCE_PATH, packageName, templateName);
-             return resource.getCharContent(true).toString();
+             String content = resource.getCharContent(true).toString();
+             templateCache.put(cacheKey, content);
+             return content;
          } catch (Exception e) {
              try {
                  FileObject resource = processingEnv.getFiler().getResource(StandardLocation.CLASS_PATH, packageName, templateName);
-                 return resource.getCharContent(true).toString();
+                 String content = resource.getCharContent(true).toString();
+                 templateCache.put(cacheKey, content);
+                 return content;
              } catch (Exception ex) {
                  processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "Could not find template: " + templateName + " in package " + packageName, typeElement);
                  return null;
