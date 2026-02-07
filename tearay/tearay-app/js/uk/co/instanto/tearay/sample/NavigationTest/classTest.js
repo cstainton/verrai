@@ -2334,7 +2334,7 @@
         var $body, var$4, $hash, $entry, var$7, var$8, var$9, var$10, $page_dashboard, $page_user_profile, $page_login;
         $body = $rt_globals.window.document.body;
         var$4 = "";
-        $body.innerHTML = var$4;
+        $body.innerText = var$4;
         $hash = new jl_StringBuilder;
         var$4 = jl_StringBuilder__init_();
         jl_StringBuilder_append($rt_nullCheck(jl_StringBuilder_append0(var$4, 35)), $role);
