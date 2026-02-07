@@ -1687,7 +1687,7 @@
         jl_Object__init_0(var$0);
     }
     function otj_TestEntryPoint$LauncherImpl1_launch(var$0, var$1) {
-        ucits_DITest_testDashboardInjection($rt_nullCheck($rt_castToClass(var$1, ucits_DITest)));
+        ucits_DITest_testAppInjection($rt_nullCheck($rt_castToClass(var$1, ucits_DITest)));
     }
     var otj_TestEntryPoint$LauncherImpl0 = $rt_classWithoutFields();
     function otj_TestEntryPoint$LauncherImpl0__init_() {
@@ -1699,7 +1699,7 @@
         jl_Object__init_0(var$0);
     }
     function otj_TestEntryPoint$LauncherImpl0_launch(var$0, var$1) {
-        ucits_DITest_testAppInjection($rt_nullCheck($rt_castToClass(var$1, ucits_DITest)));
+        ucits_DITest_testDashboardInjection($rt_nullCheck($rt_castToClass(var$1, ucits_DITest)));
     }
     var ucitw_Button = $rt_classWithoutFields(ucitw_Widget);
     function ucitw_Button__init_() {
@@ -5280,7 +5280,7 @@
     });
     $rt_stringPool(["Either src or dest is null", "String is null", "String is empty", "String contains invalid digits: ", "String contains digits out of radix ", ": ", "The value is too big for int type: ", "Illegal radix: ", "btn ", "alert ", "null", ";", "=", "dashboard", "user-profile", "login", "username", "admin", "userId", "name", "Unknown page role: ", "N/A", "Unknown Source", ")", "App instance should not be null", "Navigation should be injected", "DashboardPage should not be null", "HelloService should be injected",
     "Container widget should be injected", "Hello", "col-", "PRIMARY", "btn-primary", "SUCCESS", "btn-success", "DANGER", "btn-danger", "WARNING", "btn-warning", "INFO", "btn-info", "", "Tearay App", "Home", "Profile", "Guest", "Welcome ", "Go to User Profile", "options", "Option A", "Option B", "This is an info alert from the Widget library!", "Logout", "Enable Notifications", "I agree to the terms", "Logout (Disabled)", "Logout (Enabled)", "OFF", "ON", "Notifications: ", "Slider value: ", "12345", "TeaVM User",
-    "0", " sticky-top", "uk.co.instanto.tearay.sample.DITest.testAppInjection()V", "uk.co.instanto.tearay.sample.DITest.testDashboardInjection()V", "Invalid test name", "Hello from Injected Service! Time: ", "Administrator", "user", "RegularUser", "object", "function", "string", "number", "undefined", "\n", "\tat ", "Caused by: ", "alert-primary", "alert-success", "alert-danger", "alert-warning", "alert-info"]);
+    "0", " sticky-top", "uk.co.instanto.tearay.sample.DITest.testDashboardInjection()V", "uk.co.instanto.tearay.sample.DITest.testAppInjection()V", "Invalid test name", "Hello from Injected Service! Time: ", "Administrator", "user", "RegularUser", "object", "function", "string", "number", "undefined", "\n", "\tat ", "Caused by: ", "alert-primary", "alert-success", "alert-danger", "alert-warning", "alert-info"]);
     jl_String.prototype.toString = function() {
         return $rt_ustr(this);
     };

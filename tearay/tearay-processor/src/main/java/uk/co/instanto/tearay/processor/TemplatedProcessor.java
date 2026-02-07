@@ -175,85 +175,115 @@ public class TemplatedProcessor extends AbstractProcessor {
             for (VariableElement field : fields) {
                 Bound bound = field.getAnnotation(Bound.class);
                 if (bound != null) {
-                    String propertyName = bound.property();
-                    if (propertyName.isEmpty()) {
-                        propertyName = field.getSimpleName().toString();
+                    String propertyPath = bound.property();
+                    if (propertyPath.isEmpty()) {
+                        propertyPath = field.getSimpleName().toString();
                     }
-                    boundProperties.add(propertyName);
+                    boundProperties.add(propertyPath);
 
-                    // Capitalize for getter/setter
-                    String capProp = propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1);
-                    String getterName = "get" + capProp;
-                    String isGetterName = "is" + capProp;
-                    String setterName = "set" + capProp;
-
-                    // Validate Property Existence
-                    ExecutableElement getterMethod = null;
-                    ExecutableElement setterMethod = null;
+                    String[] segments = propertyPath.split("\\.");
+                    TypeElement currentType = modelType;
+                    StringBuilder getterChain = new StringBuilder();
+                    StringBuilder checkChain = new StringBuilder();
                     String finalGetter = null;
+                    String finalSetter = null;
+                    boolean valid = true;
 
-                    // Scan methods (including inherited)
-                    for (ExecutableElement method : ElementFilter.methodsIn(processingEnv.getElementUtils().getAllMembers(modelType))) {
-                        String methodName = method.getSimpleName().toString();
-                        if (methodName.equals(getterName) && method.getParameters().isEmpty()) {
-                            getterMethod = method;
-                            finalGetter = getterName;
-                        } else if (methodName.equals(isGetterName) && method.getParameters().isEmpty()) {
-                            getterMethod = method;
-                            finalGetter = isGetterName;
+                    // Validate Path
+                    for (int i = 0; i < segments.length; i++) {
+                        String segment = segments[i];
+                        boolean isLast = (i == segments.length - 1);
+
+                        String capProp = segment.substring(0, 1).toUpperCase() + segment.substring(1);
+                        String getterName = "get" + capProp;
+                        String isGetterName = "is" + capProp;
+                        String setterName = "set" + capProp;
+
+                        ExecutableElement getterMethod = null;
+                        ExecutableElement setterMethod = null;
+
+                        for (ExecutableElement method : ElementFilter.methodsIn(processingEnv.getElementUtils().getAllMembers(currentType))) {
+                            String methodName = method.getSimpleName().toString();
+                            if ((methodName.equals(getterName) || methodName.equals(isGetterName)) && method.getParameters().isEmpty()) {
+                                getterMethod = method;
+                            }
+                            if (isLast && methodName.equals(setterName) && method.getParameters().size() == 1) {
+                                setterMethod = method;
+                            }
                         }
-                        if (methodName.equals(setterName) && method.getParameters().size() == 1) {
-                            setterMethod = method;
+
+                        if (getterMethod == null) {
+                            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
+                                "Property '" + segment + "' not found in " + currentType.getSimpleName() + ". Missing getter.", field);
+                            valid = false;
+                            break;
+                        }
+
+                        if (!getterMethod.getModifiers().contains(javax.lang.model.element.Modifier.PUBLIC)) {
+                             processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
+                                "Getter for '" + segment + "' in " + currentType.getSimpleName() + " is not public.", field);
+                             valid = false;
+                             break;
+                        }
+
+                        if (isLast) {
+                            finalGetter = getterMethod.getSimpleName().toString();
+                            if (setterMethod == null) {
+                                 processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
+                                    "Property '" + segment + "' in " + currentType.getSimpleName() + " is read-only. Missing setter.", field);
+                                 valid = false;
+                            } else if (!setterMethod.getModifiers().contains(javax.lang.model.element.Modifier.PUBLIC)) {
+                                 processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
+                                    "Setter for '" + segment + "' in " + currentType.getSimpleName() + " is not public.", field);
+                                 valid = false;
+                            } else {
+                                finalSetter = setterMethod.getSimpleName().toString();
+                            }
+                        } else {
+                            // Move to next type
+                            javax.lang.model.type.TypeMirror returnType = getterMethod.getReturnType();
+                            if (returnType.getKind() == javax.lang.model.type.TypeKind.DECLARED) {
+                                currentType = (TypeElement) ((javax.lang.model.type.DeclaredType) returnType).asElement();
+                                getterChain.append(".").append(getterMethod.getSimpleName()).append("()");
+                                checkChain.append(" && target.").append(modelField.getSimpleName()).append(getterChain).append(" != null");
+                            } else {
+                                processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
+                                    "Property '" + segment + "' in " + currentType.getSimpleName() + " is not an object, cannot access nested property.", field);
+                                valid = false;
+                                break;
+                            }
                         }
                     }
 
-                    if (getterMethod == null) {
-                        processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
-                            "Property '" + propertyName + "' not found in model " + modelType.getSimpleName() + ". Missing getter: " + getterName + "() or " + isGetterName + "()",
-                            field);
-                        continue;
-                    } else if (!getterMethod.getModifiers().contains(javax.lang.model.element.Modifier.PUBLIC)) {
-                        processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
-                            "Getter '" + finalGetter + "()' for property '" + propertyName + "' in model " + modelType.getSimpleName() + " is not public.",
-                            field);
-                        continue;
+                    if (valid) {
+                         // Generate code
+                         // Null check: target.model != null && target.model.getProp() != null ...
+                         bindMethod.beginControlFlow("if (target.$L != null" + checkChain + " && target.$L != null)", modelField.getSimpleName(), field.getSimpleName());
+
+                         // Initial Set
+                         bindMethod.addStatement("target.$L.setValue(target.$L$L.$L())",
+                            field.getSimpleName(), modelField.getSimpleName(), getterChain, finalGetter);
+
+                         // Change Handler
+                         bindMethod.addCode("((uk.co.instanto.tearay.api.IsWidget)target.$L).getElement().addEventListener(\"change\", e -> {\n", field.getSimpleName());
+                         bindMethod.addStatement("  target.$L$L.$L(target.$L.getValue())", modelField.getSimpleName(), getterChain, finalSetter, field.getSimpleName());
+                         bindMethod.addCode("});\n");
+
+                         bindMethod.endControlFlow();
                     }
-
-                    if (setterMethod == null) {
-                        processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
-                            "Property '" + propertyName + "' is read-only in model " + modelType.getSimpleName() + ". Missing setter: " + setterName + "(...)",
-                            field);
-                        continue;
-                    } else if (!setterMethod.getModifiers().contains(javax.lang.model.element.Modifier.PUBLIC)) {
-                        processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
-                            "Setter '" + setterName + "(...)' for property '" + propertyName + "' in model " + modelType.getSimpleName() + " is not public.",
-                            field);
-                        continue;
-                    }
-
-                    // Check Type Compatibility
-                    // Ideally we check TakesValue<V> on the widget type against Property Type P
-                    // However, resolving generic arguments on interface implementations is complex in AP.
-                    // For MVP, checking direct assignment compatibility (P assignable to V) is tricky if V is boxed and P is primitive.
-                    // Instead, we will rely on generated code to fail compilation if types mismatch,
-                    // OR we can check simple cases where we know the widget type (e.g. TextBox -> String).
-
-                    bindMethod.beginControlFlow("if (target.$L != null && target.$L != null)", modelField.getSimpleName(), field.getSimpleName());
-
-                    // 1. Initial set
-                    bindMethod.addStatement("target.$L.setValue(target.$L.$L())",
-                        field.getSimpleName(), modelField.getSimpleName(), finalGetter);
-
-                    // 2. Change handler
-                    bindMethod.addCode("((uk.co.instanto.tearay.api.IsWidget)target.$L).getElement().addEventListener(\"change\", e -> {\n", field.getSimpleName());
-                    bindMethod.addStatement("  target.$L.$L(target.$L.getValue())", modelField.getSimpleName(), setterName, field.getSimpleName());
-                    bindMethod.addCode("});\n");
-
-                    bindMethod.endControlFlow();
                 }
             }
 
-            // Detect Unbound Properties
+            // Detect Unbound Properties (Top Level)
+            java.util.Set<String> topLevelBound = new java.util.HashSet<>();
+            for(String p : boundProperties) {
+                if (p.contains(".")) {
+                    topLevelBound.add(p.substring(0, p.indexOf(".")));
+                } else {
+                    topLevelBound.add(p);
+                }
+            }
+
             java.util.Set<String> allProperties = new java.util.HashSet<>();
             for (ExecutableElement method : ElementFilter.methodsIn(processingEnv.getElementUtils().getAllMembers(modelType))) {
                 String methodName = method.getSimpleName().toString();
@@ -261,7 +291,6 @@ public class TemplatedProcessor extends AbstractProcessor {
                     if (methodName.startsWith("get") && methodName.length() > 3) {
                          String prop = methodName.substring(3);
                          prop = prop.substring(0, 1).toLowerCase() + prop.substring(1);
-                         // Check for corresponding setter
                          boolean setterExists = false;
                          String targetSetter = "set" + methodName.substring(3);
                          for (ExecutableElement m : ElementFilter.methodsIn(processingEnv.getElementUtils().getAllMembers(modelType))) {
@@ -276,7 +305,6 @@ public class TemplatedProcessor extends AbstractProcessor {
                     } else if (methodName.startsWith("is") && methodName.length() > 2) {
                          String prop = methodName.substring(2);
                          prop = prop.substring(0, 1).toLowerCase() + prop.substring(1);
-                          // Check for corresponding setter
                          boolean setterExists = false;
                          String targetSetter = "set" + methodName.substring(2);
                          for (ExecutableElement m : ElementFilter.methodsIn(processingEnv.getElementUtils().getAllMembers(modelType))) {
@@ -292,7 +320,7 @@ public class TemplatedProcessor extends AbstractProcessor {
                 }
             }
 
-            allProperties.removeAll(boundProperties);
+            allProperties.removeAll(topLevelBound);
             if (!allProperties.isEmpty()) {
                 processingEnv.getMessager().printMessage(Diagnostic.Kind.WARNING,
                     "The following properties in model " + modelType.getSimpleName() + " are not bound: " + allProperties,
