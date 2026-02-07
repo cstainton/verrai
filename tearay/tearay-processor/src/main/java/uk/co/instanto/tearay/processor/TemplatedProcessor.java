@@ -4,6 +4,10 @@ import uk.co.instanto.tearay.api.DataField;
 import uk.co.instanto.tearay.api.Templated;
 import uk.co.instanto.tearay.api.RootElement;
 import uk.co.instanto.tearay.api.IsWidget;
+import uk.co.instanto.tearay.api.Bound;
+import uk.co.instanto.tearay.api.Model;
+import uk.co.instanto.tearay.api.TakesValue;
+
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
@@ -90,6 +94,7 @@ public class TemplatedProcessor extends AbstractProcessor {
         ClassName documentClass = ClassName.get("org.teavm.jso.dom.html", "HTMLDocument");
         ClassName nodeListClass = ClassName.get("org.teavm.jso.dom.xml", "NodeList");
         ClassName elementClass = ClassName.get("org.teavm.jso.dom.xml", "Element");
+        ClassName fragmentClass = ClassName.get("org.teavm.jso.dom.xml", "DocumentFragment");
 
         MethodSpec.Builder bindMethod = MethodSpec.methodBuilder("bind")
                 .addModifiers(javax.lang.model.element.Modifier.PUBLIC, javax.lang.model.element.Modifier.STATIC)
@@ -184,36 +189,37 @@ public class TemplatedProcessor extends AbstractProcessor {
         bindMethod.endControlFlow(); // switch
         bindMethod.endControlFlow(); // for
 
-        // 2. Move to DocumentFragment to avoid reflows during manipulation
-        ClassName fragmentClass = ClassName.get("org.teavm.jso.dom.xml", "DocumentFragment");
+        // Move to DocumentFragment
         bindMethod.addStatement("$T fragment = doc.createDocumentFragment()", fragmentClass);
         bindMethod.beginControlFlow("while (root.hasChildNodes())");
         bindMethod.addStatement("fragment.appendChild(root.getFirstChild())");
         bindMethod.endControlFlow();
 
-        // 3. Process fields
-        for (VariableElement field : ElementFilter.fieldsIn(typeElement.getEnclosedElements())) {
+        // Process @DataField replacements
+        for (VariableElement field : fields) {
             DataField dataField = field.getAnnotation(DataField.class);
             if (dataField != null) {
                 bindMethod.beginControlFlow("if (el_$L != null)", field.getSimpleName());
 
                 // Check if the field type is HTMLElement
                 TypeElement htmlElementType = processingEnv.getElementUtils().getTypeElement("org.teavm.jso.dom.html.HTMLElement");
-                if (htmlElementType != null && processingEnv.getTypeUtils().isAssignable(field.asType(), htmlElementType.asType())) {
+                boolean isHtmlElement = htmlElementType != null && processingEnv.getTypeUtils().isAssignable(field.asType(), htmlElementType.asType());
+
+                if (isHtmlElement) {
                     bindMethod.addStatement("target.$L = ($T) el_$L",
                         field.getSimpleName(),
                         com.squareup.javapoet.TypeName.get(field.asType()),
                         field.getSimpleName());
                 } else {
-                    // Assume it is a nested component.
+                    // Nested component
                     bindMethod.beginControlFlow("if (target.$L != null)", field.getSimpleName());
                     bindMethod.addStatement("$T widgetElement = target.$L.element", htmlElementClass, field.getSimpleName());
                     bindMethod.beginControlFlow("if (widgetElement != null)");
 
-                    // Merge attributes
-                    bindMethod.addStatement("String currentClasses = widgetElement.getClassName()");
+                    // Merge attributes (simplified)
                     bindMethod.addStatement("String placeholderClasses = el_$L.getClassName()", field.getSimpleName());
                     bindMethod.beginControlFlow("if (placeholderClasses != null && !placeholderClasses.isEmpty())");
+                    bindMethod.addStatement("String currentClasses = widgetElement.getClassName()");
                     bindMethod.addStatement("widgetElement.setClassName((currentClasses != null ? currentClasses + \" \" : \"\") + placeholderClasses)");
                     bindMethod.endControlFlow();
 
@@ -228,14 +234,181 @@ public class TemplatedProcessor extends AbstractProcessor {
                     bindMethod.addStatement("widgetElement.setAttribute(\"style\", (currentStyle != null ? currentStyle + \";\" : \"\") + placeholderStyle)");
                     bindMethod.endControlFlow();
 
-                    // Replace in DOM (now in Fragment)
+                    // Replace in DOM
                     bindMethod.addStatement("el_$L.getParentNode().replaceChild(widgetElement, el_$L)", field.getSimpleName(), field.getSimpleName());
                     bindMethod.endControlFlow();
-
                     bindMethod.endControlFlow();
                 }
-
                 bindMethod.endControlFlow();
+            }
+        }
+
+        // DATA BINDING LOGIC
+        VariableElement modelField = null;
+        for (VariableElement field : fields) {
+            if (field.getAnnotation(Model.class) != null) {
+                modelField = field;
+                break;
+            }
+        }
+
+        if (modelField != null) {
+            TypeElement modelType = (TypeElement) processingEnv.getTypeUtils().asElement(modelField.asType());
+            java.util.Set<String> boundProperties = new java.util.HashSet<>();
+
+            for (VariableElement field : fields) {
+                Bound bound = field.getAnnotation(Bound.class);
+                if (bound != null) {
+                    String propertyPath = bound.property();
+                    if (propertyPath.isEmpty()) {
+                        propertyPath = field.getSimpleName().toString();
+                    }
+                    boundProperties.add(propertyPath);
+
+                    String[] segments = propertyPath.split("\\.");
+                    TypeElement currentType = modelType;
+                    StringBuilder getterChain = new StringBuilder();
+                    StringBuilder checkChain = new StringBuilder();
+                    String finalGetter = null;
+                    String finalSetter = null;
+                    boolean valid = true;
+
+                    // Validate Path
+                    for (int i = 0; i < segments.length; i++) {
+                        String segment = segments[i];
+                        boolean isLast = (i == segments.length - 1);
+
+                        String capProp = segment.substring(0, 1).toUpperCase() + segment.substring(1);
+                        String getterName = "get" + capProp;
+                        String isGetterName = "is" + capProp;
+                        String setterName = "set" + capProp;
+
+                        ExecutableElement getterMethod = null;
+                        ExecutableElement setterMethod = null;
+
+                        for (ExecutableElement method : ElementFilter.methodsIn(processingEnv.getElementUtils().getAllMembers(currentType))) {
+                            String methodName = method.getSimpleName().toString();
+                            if ((methodName.equals(getterName) || methodName.equals(isGetterName)) && method.getParameters().isEmpty()) {
+                                getterMethod = method;
+                            }
+                            if (isLast && methodName.equals(setterName) && method.getParameters().size() == 1) {
+                                setterMethod = method;
+                            }
+                        }
+
+                        if (getterMethod == null) {
+                            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
+                                "Property '" + segment + "' not found in " + currentType.getSimpleName() + ". Missing getter.", field);
+                            valid = false;
+                            break;
+                        }
+
+                        if (!getterMethod.getModifiers().contains(javax.lang.model.element.Modifier.PUBLIC)) {
+                             processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
+                                "Getter for '" + segment + "' in " + currentType.getSimpleName() + " is not public.", field);
+                             valid = false;
+                             break;
+                        }
+
+                        if (isLast) {
+                            finalGetter = getterMethod.getSimpleName().toString();
+                            if (setterMethod == null) {
+                                 processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
+                                    "Property '" + segment + "' in " + currentType.getSimpleName() + " is read-only. Missing setter.", field);
+                                 valid = false;
+                            } else if (!setterMethod.getModifiers().contains(javax.lang.model.element.Modifier.PUBLIC)) {
+                                 processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
+                                    "Setter for '" + segment + "' in " + currentType.getSimpleName() + " is not public.", field);
+                                 valid = false;
+                            } else {
+                                finalSetter = setterMethod.getSimpleName().toString();
+                            }
+                        } else {
+                            // Move to next type
+                            javax.lang.model.type.TypeMirror returnType = getterMethod.getReturnType();
+                            if (returnType.getKind() == javax.lang.model.type.TypeKind.DECLARED) {
+                                currentType = (TypeElement) ((javax.lang.model.type.DeclaredType) returnType).asElement();
+                                getterChain.append(".").append(getterMethod.getSimpleName()).append("()");
+                                checkChain.append(" && target.").append(modelField.getSimpleName()).append(getterChain).append(" != null");
+                            } else {
+                                processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
+                                    "Property '" + segment + "' in " + currentType.getSimpleName() + " is not an object, cannot access nested property.", field);
+                                valid = false;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (valid) {
+                         // Generate code
+                         // Null check: target.model != null && target.model.getProp() != null ...
+                         bindMethod.beginControlFlow("if (target.$L != null" + checkChain + " && target.$L != null)", modelField.getSimpleName(), field.getSimpleName());
+
+                         // Initial Set
+                         bindMethod.addStatement("target.$L.setValue(target.$L$L.$L())",
+                            field.getSimpleName(), modelField.getSimpleName(), getterChain, finalGetter);
+
+                         // Change Handler
+                         bindMethod.addCode("((uk.co.instanto.tearay.api.IsWidget)target.$L).getElement().addEventListener(\"change\", e -> {\n", field.getSimpleName());
+                         bindMethod.addStatement("  target.$L$L.$L(target.$L.getValue())", modelField.getSimpleName(), getterChain, finalSetter, field.getSimpleName());
+                         bindMethod.addCode("});\n");
+
+                         bindMethod.endControlFlow();
+                    }
+                }
+            }
+
+            // Detect Unbound Properties (Top Level)
+            java.util.Set<String> topLevelBound = new java.util.HashSet<>();
+            for(String p : boundProperties) {
+                if (p.contains(".")) {
+                    topLevelBound.add(p.substring(0, p.indexOf(".")));
+                } else {
+                    topLevelBound.add(p);
+                }
+            }
+
+            java.util.Set<String> allProperties = new java.util.HashSet<>();
+            for (ExecutableElement method : ElementFilter.methodsIn(processingEnv.getElementUtils().getAllMembers(modelType))) {
+                String methodName = method.getSimpleName().toString();
+                if (method.getParameters().isEmpty() && !method.getModifiers().contains(javax.lang.model.element.Modifier.STATIC) && method.getModifiers().contains(javax.lang.model.element.Modifier.PUBLIC)) {
+                    if (methodName.startsWith("get") && methodName.length() > 3) {
+                         String prop = methodName.substring(3);
+                         prop = prop.substring(0, 1).toLowerCase() + prop.substring(1);
+                         boolean setterExists = false;
+                         String targetSetter = "set" + methodName.substring(3);
+                         for (ExecutableElement m : ElementFilter.methodsIn(processingEnv.getElementUtils().getAllMembers(modelType))) {
+                             if (m.getSimpleName().toString().equals(targetSetter) && m.getParameters().size() == 1) {
+                                 setterExists = true;
+                                 break;
+                             }
+                         }
+                         if (setterExists && !prop.equals("class")) {
+                             allProperties.add(prop);
+                         }
+                    } else if (methodName.startsWith("is") && methodName.length() > 2) {
+                         String prop = methodName.substring(2);
+                         prop = prop.substring(0, 1).toLowerCase() + prop.substring(1);
+                         boolean setterExists = false;
+                         String targetSetter = "set" + methodName.substring(2);
+                         for (ExecutableElement m : ElementFilter.methodsIn(processingEnv.getElementUtils().getAllMembers(modelType))) {
+                             if (m.getSimpleName().toString().equals(targetSetter) && m.getParameters().size() == 1) {
+                                 setterExists = true;
+                                 break;
+                             }
+                         }
+                         if (setterExists) {
+                             allProperties.add(prop);
+                         }
+                    }
+                }
+            }
+
+            allProperties.removeAll(topLevelBound);
+            if (!allProperties.isEmpty()) {
+                processingEnv.getMessager().printMessage(Diagnostic.Kind.WARNING,
+                    "The following properties in model " + modelType.getSimpleName() + " are not bound: " + allProperties,
+                    typeElement);
             }
         }
 
@@ -261,7 +434,6 @@ public class TemplatedProcessor extends AbstractProcessor {
              return templateCache.get(cacheKey);
          }
 
-         // Try SOURCE_PATH first as it is more likely for sources
          try {
              FileObject resource = processingEnv.getFiler().getResource(StandardLocation.SOURCE_PATH, packageName, templateName);
              String content = resource.getCharContent(true).toString();
@@ -278,36 +450,5 @@ public class TemplatedProcessor extends AbstractProcessor {
                  return null;
              }
          }
-    }
-
-    private VariableElement findPublicElementField(javax.lang.model.type.TypeMirror typeMirror) {
-        if (typeMirror.getKind() != javax.lang.model.type.TypeKind.DECLARED) {
-            return null;
-        }
-        TypeElement typeElement = (TypeElement) ((javax.lang.model.type.DeclaredType) typeMirror).asElement();
-        if (typeElement == null) {
-            return null;
-        }
-
-        // Check fields in this class
-        for (VariableElement field : ElementFilter.fieldsIn(typeElement.getEnclosedElements())) {
-            if (field.getSimpleName().toString().equals("element") &&
-                field.getModifiers().contains(javax.lang.model.element.Modifier.PUBLIC)) {
-
-                // Check if it is HTMLElement or subtype
-                 TypeElement htmlElementType = processingEnv.getElementUtils().getTypeElement("org.teavm.jso.dom.html.HTMLElement");
-                 if (htmlElementType != null && processingEnv.getTypeUtils().isAssignable(field.asType(), htmlElementType.asType())) {
-                    return field;
-                 }
-            }
-        }
-
-        // Check superclass
-        javax.lang.model.type.TypeMirror superclass = typeElement.getSuperclass();
-        if (superclass.getKind() != javax.lang.model.type.TypeKind.NONE) {
-            return findPublicElementField(superclass);
-        }
-
-        return null;
     }
 }
