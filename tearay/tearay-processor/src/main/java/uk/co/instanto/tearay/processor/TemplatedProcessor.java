@@ -17,6 +17,7 @@ import javax.tools.Diagnostic;
 import javax.tools.FileObject;
 import javax.tools.StandardLocation;
 import java.io.IOException;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -74,38 +75,18 @@ public class TemplatedProcessor extends AbstractProcessor {
         bindMethod.addStatement("root.setInnerHTML($S)", escapedHtml);
 
         // Assign root if a field "element" exists (Convention for this PoC)
-        for (VariableElement field : ElementFilter.fieldsIn(typeElement.getEnclosedElements())) {
+        // In a real framework, we'd look for an interface like IsWidget or a specific annotation.
+        List<VariableElement> fields = ElementFilter.fieldsIn(typeElement.getEnclosedElements());
+        for (VariableElement field : fields) {
              if (field.getSimpleName().toString().equals("element") &&
                  com.squareup.javapoet.TypeName.get(field.asType()).equals(htmlElementClass)) {
                  bindMethod.addStatement("target.element = root");
              }
         }
 
-        // Collect data fields
-        List<VariableElement> dataFields = new ArrayList<>();
-        // 1. Find all placeholders
-        for (VariableElement field : ElementFilter.fieldsIn(typeElement.getEnclosedElements())) {
-            if (field.getAnnotation(DataField.class) != null) {
-                dataFields.add(field);
-            }
-        }
-
-        if (!dataFields.isEmpty()) {
-            // Traverse DOM once
-            // Declare variables
-            for (VariableElement field : dataFields) {
-                 bindMethod.addStatement("$T el_$L = null", htmlElementClass, field.getSimpleName());
-            }
-
-            // Use wildcard ? extends Element to handle NodeList<HTMLElement> returned by querySelectorAll on HTMLElement
-            bindMethod.addStatement("$T<? extends $T> candidates = root.querySelectorAll($S)", nodeListClass, elementClass, "[data-field]");
-            bindMethod.beginControlFlow("for (int i = 0; i < candidates.getLength(); i++)");
-            bindMethod.addStatement("$T candidate = candidates.get(i)", elementClass);
-            bindMethod.addStatement("$T key = candidate.getAttribute($S)", String.class, "data-field");
-            bindMethod.beginControlFlow("switch (key)");
-
-            for (VariableElement field : dataFields) {
-                DataField dataField = field.getAnnotation(DataField.class);
+        for (VariableElement field : fields) {
+            DataField dataField = field.getAnnotation(DataField.class);
+            if (dataField != null) {
                 String dataFieldName = dataField.value();
                 if (dataFieldName.isEmpty()) {
                     dataFieldName = field.getSimpleName().toString();
