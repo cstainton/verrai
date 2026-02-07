@@ -4697,7 +4697,6 @@
     }
     function ucitw_Slider_addChangeHandler($this, $listener) {
         $this.$element.addEventListener("change", otji_JS_function($listener, "handleEvent"));
-        $this.$element.addEventListener("input", otji_JS_function($listener, "handleEvent"));
     }
     function jl_Class() {
         var a = this; jl_Object.call(a);
