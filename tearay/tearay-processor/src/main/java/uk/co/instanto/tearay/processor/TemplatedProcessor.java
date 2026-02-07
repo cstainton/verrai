@@ -169,6 +169,8 @@ public class TemplatedProcessor extends AbstractProcessor {
         }
 
         if (modelField != null) {
+            TypeElement modelType = (TypeElement) processingEnv.getTypeUtils().asElement(modelField.asType());
+
             for (VariableElement field : fields) {
                 Bound bound = field.getAnnotation(Bound.class);
                 if (bound != null) {
@@ -179,22 +181,53 @@ public class TemplatedProcessor extends AbstractProcessor {
 
                     // Capitalize for getter/setter
                     String capProp = propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1);
-                    String getter = "get" + capProp; // simplify: assume get
-                    String setter = "set" + capProp;
+                    String getterName = "get" + capProp;
+                    String isGetterName = "is" + capProp;
+                    String setterName = "set" + capProp;
+
+                    // Validate Property Existence
+                    boolean getterFound = false;
+                    boolean setterFound = false;
+                    String finalGetter = null;
+
+                    // Scan methods (including inherited)
+                    for (ExecutableElement method : ElementFilter.methodsIn(processingEnv.getElementUtils().getAllMembers(modelType))) {
+                        String methodName = method.getSimpleName().toString();
+                        if (methodName.equals(getterName) && method.getParameters().isEmpty()) {
+                            getterFound = true;
+                            finalGetter = getterName;
+                        } else if (methodName.equals(isGetterName) && method.getParameters().isEmpty()) {
+                            getterFound = true;
+                            finalGetter = isGetterName;
+                        }
+                        if (methodName.equals(setterName) && method.getParameters().size() == 1) {
+                            setterFound = true;
+                        }
+                    }
+
+                    if (!getterFound) {
+                        processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
+                            "Property '" + propertyName + "' not found in model " + modelType.getSimpleName() + ". Missing getter: " + getterName + "() or " + isGetterName + "()",
+                            field);
+                        continue;
+                    }
+                    if (!setterFound) {
+                        processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
+                            "Property '" + propertyName + "' is read-only in model " + modelType.getSimpleName() + ". Missing setter: " + setterName + "(...)",
+                            field);
+                        continue;
+                    }
+
 
                     bindMethod.beginControlFlow("if (target.$L != null && target.$L != null)", modelField.getSimpleName(), field.getSimpleName());
 
                     // 1. Initial set
-                    // Try to detect boolean for isProp? No, stick to getProp for now or rely on user using getProp.
-                    // Actually, boolean fields often use isProp.
-                    // Ideally we check model type. But for MVP we assume getProp.
-
                     bindMethod.addStatement("target.$L.setValue(target.$L.$L())",
-                        field.getSimpleName(), modelField.getSimpleName(), getter);
+                        field.getSimpleName(), modelField.getSimpleName(), finalGetter);
 
                     // 2. Change handler
                     bindMethod.addCode("((uk.co.instanto.tearay.api.IsWidget)target.$L).getElement().addEventListener(\"change\", e -> {\n", field.getSimpleName());
-                    bindMethod.addStatement("  target.$L.$L(target.$L.getValue())", modelField.getSimpleName(), setter, field.getSimpleName());
+                    bindMethod.addStatement("  target.$L.$L(target.$L.getValue())", modelField.getSimpleName(), setterName, field.getSimpleName());
                     bindMethod.addCode("});\n");
 
                     bindMethod.endControlFlow();
