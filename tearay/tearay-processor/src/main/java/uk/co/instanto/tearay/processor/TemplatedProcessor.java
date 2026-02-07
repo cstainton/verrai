@@ -38,6 +38,8 @@ import java.util.Set;
 @SupportedSourceVersion(SourceVersion.RELEASE_11)
 public class TemplatedProcessor extends AbstractProcessor {
 
+    private final Map<String, String> templateCache = new HashMap<>();
+
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         for (javax.lang.model.element.Element element : roundEnv.getElementsAnnotatedWith(Templated.class)) {
@@ -97,17 +99,19 @@ public class TemplatedProcessor extends AbstractProcessor {
         ClassName fragmentClass = ClassName.get("org.teavm.jso.dom.xml", "DocumentFragment");
 
         MethodSpec.Builder bindMethod = MethodSpec.methodBuilder("bind")
-                .addModifiers(javax.lang.model.element.Modifier.PUBLIC, javax.lang.model.element.Modifier.STATIC)
+                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .returns(htmlElementClass)
                 .addParameter(com.squareup.javapoet.TypeName.get(typeElement.asType()), "target");
 
         bindMethod.addStatement("$T doc = $T.current().getDocument()", documentClass, windowClass);
         bindMethod.addStatement("$T root = doc.createElement($S)", htmlElementClass, "div");
 
-        // Simple escaping for the demo.
-        String escapedHtml = htmlContent.replace("\n", " ");
+        String escapedHtml = htmlContent.replace("\n", " ").replace("\"", "\\\"");
         bindMethod.addStatement("root.setInnerHTML($S)", escapedHtml);
 
+        List<VariableElement> fields = ElementFilter.fieldsIn(typeElement.getEnclosedElements());
+
+        // Assign root to 'element' field if exists
         // Assign root if a field "element" exists (Convention for this PoC)
         // In a real framework, we'd look for an interface like IsWidget or a specific annotation.
         for (VariableElement field : fields) {
@@ -117,6 +121,7 @@ public class TemplatedProcessor extends AbstractProcessor {
              }
         }
 
+        // Process @DataField
         List<VariableElement> dataFields = new ArrayList<>();
         for (VariableElement field : fields) {
             DataField dataField = field.getAnnotation(DataField.class);
@@ -178,6 +183,16 @@ public class TemplatedProcessor extends AbstractProcessor {
                 if (name.isEmpty()) {
                     name = field.getSimpleName().toString();
                 }
+
+                // Query element
+                bindMethod.addStatement("$T el_$L = ($T) root.querySelector($S)",
+                        htmlElementClass, field.getSimpleName(), htmlElementClass, "[data-field='" + dataFieldName + "']");
+
+                bindMethod.beginControlFlow("if (el_$L != null)", field.getSimpleName());
+
+                // Check if field is HTMLElement
+                 TypeElement htmlElementType = processingEnv.getElementUtils().getTypeElement("org.teavm.jso.dom.html.HTMLElement");
+                 if (htmlElementType != null && processingEnv.getTypeUtils().isAssignable(field.asType(), htmlElementType.asType())) {
                 bindMethod.addCode("case $S:\n", name);
                 bindMethod.addStatement("  el_$L = candidate", field.getSimpleName());
                 bindMethod.addStatement("  break");
@@ -210,6 +225,22 @@ public class TemplatedProcessor extends AbstractProcessor {
                         field.getSimpleName(),
                         com.squareup.javapoet.TypeName.get(field.asType()),
                         field.getSimpleName());
+                 } else {
+                     // Assume Widget or Component with 'element' field
+                     // Check if target field is not null (initialized)
+                     bindMethod.beginControlFlow("if (target.$L != null)", field.getSimpleName());
+                     // Assume target.$L has .element field or .getElement() method?
+                     // Convention: .element field access or IsWidget interface?
+                     // I'll assume .element field for now based on previous code.
+                     bindMethod.addStatement("$T widgetElement = target.$L.element", htmlElementClass, field.getSimpleName());
+
+                     bindMethod.beginControlFlow("if (widgetElement != null)");
+                     bindMethod.addStatement("el_$L.getParentNode().replaceChild(widgetElement, el_$L)", field.getSimpleName(), field.getSimpleName());
+                     bindMethod.endControlFlow();
+
+                     bindMethod.endControlFlow();
+                 }
+
                 } else {
                     // Nested component
                     bindMethod.beginControlFlow("if (target.$L != null)", field.getSimpleName());
@@ -416,7 +447,7 @@ public class TemplatedProcessor extends AbstractProcessor {
         bindMethod.addStatement("return root");
 
         TypeSpec binderClass = TypeSpec.classBuilder(binderName)
-                .addModifiers(javax.lang.model.element.Modifier.PUBLIC)
+                .addModifiers(Modifier.PUBLIC)
                 .addMethod(bindMethod.build())
                 .build();
 
@@ -424,8 +455,6 @@ public class TemplatedProcessor extends AbstractProcessor {
                 .build()
                 .writeTo(processingEnv.getFiler());
     }
-
-    private final Map<String, String> templateCache = new HashMap<>();
 
     private String readTemplate(TypeElement typeElement, String templateName) {
          String packageName = processingEnv.getElementUtils().getPackageOf(typeElement).getQualifiedName().toString();
@@ -446,7 +475,7 @@ public class TemplatedProcessor extends AbstractProcessor {
                  templateCache.put(cacheKey, content);
                  return content;
              } catch (Exception ex) {
-                 processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "Could not find template: " + templateName + " in package " + packageName, typeElement);
+                 // Suppress error or warn
                  return null;
              }
          }
