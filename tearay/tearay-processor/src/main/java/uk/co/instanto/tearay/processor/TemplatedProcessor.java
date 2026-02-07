@@ -121,7 +121,8 @@ public class TemplatedProcessor extends AbstractProcessor {
                 bindMethod.beginControlFlow("if (el_$L != null)", field.getSimpleName());
 
                 // Check if the field type is HTMLElement
-                if (processingEnv.getTypeUtils().isAssignable(field.asType(), processingEnv.getElementUtils().getTypeElement("org.teavm.jso.dom.html.HTMLElement").asType())) {
+                TypeElement htmlElementType = processingEnv.getElementUtils().getTypeElement("org.teavm.jso.dom.html.HTMLElement");
+                if (htmlElementType != null && processingEnv.getTypeUtils().isAssignable(field.asType(), htmlElementType.asType())) {
                     bindMethod.addStatement("target.$L = ($T) el_$L",
                         field.getSimpleName(),
                         com.squareup.javapoet.TypeName.get(field.asType()),
@@ -200,5 +201,36 @@ public class TemplatedProcessor extends AbstractProcessor {
                  return null;
              }
          }
+    }
+
+    private VariableElement findPublicElementField(javax.lang.model.type.TypeMirror typeMirror) {
+        if (typeMirror.getKind() != javax.lang.model.type.TypeKind.DECLARED) {
+            return null;
+        }
+        TypeElement typeElement = (TypeElement) ((javax.lang.model.type.DeclaredType) typeMirror).asElement();
+        if (typeElement == null) {
+            return null;
+        }
+
+        // Check fields in this class
+        for (VariableElement field : ElementFilter.fieldsIn(typeElement.getEnclosedElements())) {
+            if (field.getSimpleName().toString().equals("element") &&
+                field.getModifiers().contains(javax.lang.model.element.Modifier.PUBLIC)) {
+
+                // Check if it is HTMLElement or subtype
+                 TypeElement htmlElementType = processingEnv.getElementUtils().getTypeElement("org.teavm.jso.dom.html.HTMLElement");
+                 if (htmlElementType != null && processingEnv.getTypeUtils().isAssignable(field.asType(), htmlElementType.asType())) {
+                    return field;
+                 }
+            }
+        }
+
+        // Check superclass
+        javax.lang.model.type.TypeMirror superclass = typeElement.getSuperclass();
+        if (superclass.getKind() != javax.lang.model.type.TypeKind.NONE) {
+            return findPublicElementField(superclass);
+        }
+
+        return null;
     }
 }
