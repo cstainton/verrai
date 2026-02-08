@@ -7,9 +7,13 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>tearay-ui</artifactId>
+  <artifactId>tearay-widgets-material</artifactId>
 
   <dependencies>
+    <dependency>
+      <groupId>org.teavm</groupId>
+      <artifactId>teavm-jso-apis</artifactId>
+    </dependency>
     <dependency>
       <groupId>uk.co.instanto.tearay</groupId>
       <artifactId>tearay-api</artifactId>
@@ -17,22 +21,9 @@
     </dependency>
     <dependency>
       <groupId>uk.co.instanto.tearay</groupId>
-      <artifactId>tearay-widgets-bootstrap</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>uk.co.instanto.tearay</groupId>
       <artifactId>tearay-processor</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.teavm</groupId>
-      <artifactId>teavm-jso</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.teavm</groupId>
-      <artifactId>teavm-jso-apis</artifactId>
     </dependency>
   </dependencies>
 </project>

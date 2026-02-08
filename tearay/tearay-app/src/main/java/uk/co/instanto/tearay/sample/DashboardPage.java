@@ -2,7 +2,7 @@ package uk.co.instanto.tearay.sample;
 
 import org.teavm.jso.dom.html.HTMLElement;
 import org.teavm.jso.browser.Window;
-import uk.co.instanto.tearay.widgets.*;
+import uk.co.instanto.tearay.bootstrap.*;
 import uk.co.instanto.tearay.api.*;
 import javax.inject.Inject;
 import java.util.HashMap;

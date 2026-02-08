@@ -44,7 +44,12 @@
     </dependency>
     <dependency>
       <groupId>uk.co.instanto.tearay</groupId>
-      <artifactId>tearay-widgets</artifactId>
+      <artifactId>tearay-widgets-bootstrap</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>uk.co.instanto.tearay</groupId>
+      <artifactId>tearay-widgets-material</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

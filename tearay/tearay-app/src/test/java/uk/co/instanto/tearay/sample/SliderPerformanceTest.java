@@ -7,7 +7,7 @@ import org.teavm.jso.browser.Window;
 import org.teavm.jso.dom.events.Event;
 import org.teavm.junit.SkipJVM;
 import org.teavm.junit.TeaVMTestRunner;
-import uk.co.instanto.tearay.widgets.Slider;
+import uk.co.instanto.tearay.bootstrap.Slider;
 import static org.junit.Assert.*;
 
 @RunWith(TeaVMTestRunner.class)
