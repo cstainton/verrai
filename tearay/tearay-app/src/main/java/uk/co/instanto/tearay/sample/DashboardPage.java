@@ -98,18 +98,6 @@ public class DashboardPage {
         logoutBtn.addClickListener(e -> navigation.goTo("login"));
         col2.element.appendChild(logoutBtn.element);
 
-        Button featuresBtn = new Button();
-        featuresBtn.setText("Feature Demo");
-        featuresBtn.setType(Button.Type.INFO);
-        featuresBtn.addClickListener(e -> navigation.goTo("features"));
-        col2.element.appendChild(featuresBtn.element);
-
-        Button validationBtn = new Button();
-        validationBtn.setText("Validation Demo");
-        validationBtn.setType(Button.Type.SUCCESS);
-        validationBtn.addClickListener(e -> navigation.goTo("validation"));
-        col2.element.appendChild(validationBtn.element);
-
         Button qualifierBtn = new Button();
         qualifierBtn.setText("Qualifier Demo");
         qualifierBtn.setType(Button.Type.WARNING);
