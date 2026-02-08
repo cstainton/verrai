@@ -284,6 +284,8 @@ public class TemplatedProcessor extends AbstractProcessor {
                     String finalSetter = null;
                     boolean valid = true;
 
+                    ExecutableElement lastGetter = null;
+
                     // Validate Path
                     for (int i = 0; i < segments.length; i++) {
                         String segment = segments[i];
@@ -322,6 +324,7 @@ public class TemplatedProcessor extends AbstractProcessor {
                         }
 
                         if (isLast) {
+                            lastGetter = getterMethod;
                             finalGetter = getterMethod.getSimpleName().toString();
                             if (setterMethod == null) {
                                  processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
@@ -351,9 +354,56 @@ public class TemplatedProcessor extends AbstractProcessor {
                     }
 
                     if (valid) {
-                         // Generate code
+                         // Determine types
+                         TypeMirror modelPropType = lastGetter.getReturnType();
+                         TypeMirror widgetValueType = getTakesValueType(field.asType());
+
+                         boolean needsConversion = false;
+                         if (widgetValueType != null && !processingEnv.getTypeUtils().isAssignable(modelPropType, widgetValueType) && !processingEnv.getTypeUtils().isAssignable(widgetValueType, modelPropType)) {
+                             needsConversion = true;
+                         }
+
                          // Null check: target.model != null && target.model.getProp() != null ...
                          bindMethod.beginControlFlow("if (target.$L != null" + checkChain + " && target.$L != null)", modelField.getSimpleName(), field.getSimpleName());
+
+                         if (needsConversion) {
+                             String modelTypeLiteral = getTypeLiteral(modelPropType);
+                             String widgetTypeLiteral = getTypeLiteral(widgetValueType);
+
+                             bindMethod.addStatement("$T converter = $T.get($L, $L)",
+                                 uk.co.instanto.tearay.api.binding.Converter.class,
+                                 uk.co.instanto.tearay.api.binding.ConverterRegistry.class,
+                                 modelTypeLiteral, widgetTypeLiteral);
+
+                             bindMethod.beginControlFlow("if (converter != null)");
+
+                             // Converted Init
+                             bindMethod.addStatement("target.$L.setValue(($T) converter.toWidget(target.$L$L.$L()))",
+                                field.getSimpleName(),
+                                com.squareup.javapoet.TypeName.get(widgetValueType),
+                                modelField.getSimpleName(), getterChain, finalGetter);
+
+                             // Converted Handler
+                             bindMethod.addCode("((uk.co.instanto.tearay.api.IsWidget)target.$L).getElement().addEventListener(\"change\", e -> {\n", field.getSimpleName());
+
+                             com.squareup.javapoet.TypeName modelTypeName = com.squareup.javapoet.TypeName.get(modelPropType);
+                             com.squareup.javapoet.TypeName boxedModelTypeName = modelPropType.getKind().isPrimitive() ? modelTypeName.box() : modelTypeName;
+
+                             bindMethod.addStatement("$T value = ($T) converter.toModel(target.$L.getValue())",
+                                boxedModelTypeName, boxedModelTypeName, field.getSimpleName());
+
+                             if (modelPropType.getKind().isPrimitive()) {
+                                 bindMethod.beginControlFlow("if (value != null)");
+                                 bindMethod.addStatement("target.$L$L.$L(value)", modelField.getSimpleName(), getterChain, finalSetter);
+                                 bindMethod.endControlFlow();
+                             } else {
+                                 bindMethod.addStatement("target.$L$L.$L(value)", modelField.getSimpleName(), getterChain, finalSetter);
+                             }
+
+                             bindMethod.addCode("});\n");
+
+                             bindMethod.nextControlFlow("else");
+                         }
 
                          // Initial Set
                          bindMethod.addStatement("target.$L.setValue(target.$L$L.$L())",
@@ -363,6 +413,11 @@ public class TemplatedProcessor extends AbstractProcessor {
                          bindMethod.addCode("((uk.co.instanto.tearay.api.IsWidget)target.$L).getElement().addEventListener(\"change\", e -> {\n", field.getSimpleName());
                          bindMethod.addStatement("  target.$L$L.$L(target.$L.getValue())", modelField.getSimpleName(), getterChain, finalSetter, field.getSimpleName());
                          bindMethod.addCode("});\n");
+
+                         if (needsConversion) {
+                             bindMethod.endControlFlow(); // end else
+                             bindMethod.endControlFlow(); // end if (converter != null)
+                         }
 
                          bindMethod.endControlFlow();
                     }
@@ -468,5 +523,44 @@ public class TemplatedProcessor extends AbstractProcessor {
              fields.addAll(getAllFields((TypeElement) ((DeclaredType) superclass).asElement()));
         }
         return fields;
+    }
+
+    private TypeMirror getTakesValueType(TypeMirror widgetType) {
+        TypeElement takesValueElement = processingEnv.getElementUtils().getTypeElement("uk.co.instanto.tearay.api.TakesValue");
+        if (takesValueElement == null) return null;
+        return findTakesValueArgument(widgetType, takesValueElement);
+    }
+
+    private TypeMirror findTakesValueArgument(TypeMirror type, TypeElement targetInterface) {
+        if (type.getKind() != TypeKind.DECLARED) return null;
+        DeclaredType declaredType = (DeclaredType) type;
+        javax.lang.model.element.Element element = declaredType.asElement();
+
+        if (element.equals(targetInterface)) {
+             if (declaredType.getTypeArguments().size() > 0) {
+                 return declaredType.getTypeArguments().get(0);
+             }
+             return null;
+        }
+
+        for (TypeMirror iface : ((TypeElement) element).getInterfaces()) {
+            TypeMirror result = findTakesValueArgument(iface, targetInterface);
+            if (result != null) return result;
+        }
+
+        TypeMirror superclass = ((TypeElement) element).getSuperclass();
+        if (superclass != null && superclass.getKind() != TypeKind.NONE) {
+            return findTakesValueArgument(superclass, targetInterface);
+        }
+
+        return null;
+    }
+
+    private String getTypeLiteral(TypeMirror type) {
+        if (type.getKind().isPrimitive()) {
+            return type.toString() + ".class";
+        }
+        TypeMirror erasure = processingEnv.getTypeUtils().erasure(type);
+        return erasure.toString() + ".class";
     }
 }
