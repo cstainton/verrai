@@ -86,11 +86,16 @@ public class FactoryWriter implements BeanVisitor {
                             typeArgName = typeArgName.substring(0, typeArgName.indexOf("<"));
                         }
 
+                        String key = typeArgName;
+                        if (injectionPoint.getQualifier() != null) {
+                            key += ":" + injectionPoint.getQualifier();
+                        }
+
                         // We need the factory for the type argument
                         ClassName dependencyFactory;
-                        if (resolutionMap.containsKey(typeArgName)) {
+                        if (resolutionMap.containsKey(key)) {
                              // Found in resolution map - use the implementation's factory
-                             TypeElement implElement = resolutionMap.get(typeArgName);
+                             TypeElement implElement = resolutionMap.get(key);
                              String implPackage = processingEnv.getElementUtils().getPackageOf(implElement).getQualifiedName().toString();
                              dependencyFactory = ClassName.get(implPackage, implElement.getSimpleName() + "_Factory");
                              createMethod.addStatement("bean.$L = () -> $T.getInstance()", field.getSimpleName(), dependencyFactory);
@@ -109,18 +114,26 @@ public class FactoryWriter implements BeanVisitor {
                         processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "Provider injection requires a type argument: " + field.getSimpleName(), field);
                     }
                 }
+            } else if (rawTypeName.equals("uk.co.instanto.tearay.api.Event")) {
+                // Handle Event<T> injection
+                createMethod.addStatement("bean.$L = e -> $T.fire(e)", field.getSimpleName(), ClassName.get("uk.co.instanto.tearay.impl", "EventBus"));
             } else {
                 // Regular Injection
                 ClassName dependencyFactory;
+                String key = rawTypeName;
+                if (injectionPoint.getQualifier() != null) {
+                    key += ":" + injectionPoint.getQualifier();
+                }
+
                 if (rawTypeName.equals("uk.co.instanto.tearay.api.Navigation")) {
                     dependencyFactory = ClassName.get("uk.co.instanto.tearay.impl", "NavigationImpl_Factory");
                     createMethod.addStatement("bean.$L = $T.getInstance()", field.getSimpleName(), dependencyFactory);
                 } else if (rawTypeName.startsWith("uk.co.instanto.tearay.widgets.")) {
                     // Direct instantiation for widgets
                     createMethod.addStatement("bean.$L = new $T()", field.getSimpleName(), ClassName.bestGuess(rawTypeName));
-                } else if (resolutionMap.containsKey(rawTypeName)) {
+                } else if (resolutionMap.containsKey(key)) {
                     // Found in resolution map - use the implementation's factory
-                    TypeElement implElement = resolutionMap.get(rawTypeName);
+                    TypeElement implElement = resolutionMap.get(key);
                     String implPackage = processingEnv.getElementUtils().getPackageOf(implElement).getQualifiedName().toString();
                     dependencyFactory = ClassName.get(implPackage, implElement.getSimpleName() + "_Factory");
                     createMethod.addStatement("bean.$L = $T.getInstance()", field.getSimpleName(), dependencyFactory);
@@ -135,6 +148,23 @@ public class FactoryWriter implements BeanVisitor {
         if (bean.isTemplated()) {
             ClassName binderClass = ClassName.get(packageName, typeElement.getSimpleName() + "_Binder");
             createMethod.addStatement("$T.bind(bean)", binderClass);
+        }
+
+        // Event Observer Registration
+        if (!bean.getObserverMethods().isEmpty()) {
+            ClassName eventBusClass = ClassName.get("uk.co.instanto.tearay.impl", "EventBus");
+            for (ExecutableElement method : bean.getObserverMethods()) {
+                // Find parameter annotated with @Observes
+                for (VariableElement param : method.getParameters()) {
+                    if (param.getAnnotation(uk.co.instanto.tearay.api.Observes.class) != null) {
+                        TypeMirror eventType = param.asType();
+                        // Register: EventBus.register(EventType.class, e -> bean.method(e))
+                        createMethod.addStatement("$T.register($T.class, e -> bean.$L(($T) e))",
+                            eventBusClass, ClassName.bestGuess(eventType.toString()), method.getSimpleName(), ClassName.bestGuess(eventType.toString()));
+                        break;
+                    }
+                }
+            }
         }
 
         // PostConstruct

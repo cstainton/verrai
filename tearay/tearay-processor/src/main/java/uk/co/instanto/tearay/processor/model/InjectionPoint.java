@@ -6,10 +6,12 @@ import javax.lang.model.type.TypeMirror;
 public class InjectionPoint {
     private final VariableElement field;
     private final TypeMirror type;
+    private final String qualifier;
 
-    public InjectionPoint(VariableElement field, TypeMirror type) {
+    public InjectionPoint(VariableElement field, TypeMirror type, String qualifier) {
         this.field = field;
         this.type = type;
+        this.qualifier = qualifier;
     }
 
     public VariableElement getField() {
@@ -18,5 +20,9 @@ public class InjectionPoint {
 
     public TypeMirror getType() {
         return type;
+    }
+
+    public String getQualifier() {
+        return qualifier;
     }
 }

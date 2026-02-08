@@ -6,6 +6,8 @@ import uk.co.instanto.tearay.api.EntryPoint;
 import uk.co.instanto.tearay.api.PostConstruct;
 import uk.co.instanto.tearay.api.Templated;
 import uk.co.instanto.tearay.api.Page;
+import uk.co.instanto.tearay.api.Named;
+import uk.co.instanto.tearay.api.Observes;
 import uk.co.instanto.tearay.processor.model.BeanDefinition;
 import uk.co.instanto.tearay.processor.model.InjectionPoint;
 import uk.co.instanto.tearay.processor.visitor.BeanVisitor;
@@ -63,20 +65,30 @@ public class IOCProcessor extends AbstractProcessor {
         beans.addAll(roundEnv.getElementsAnnotatedWith(Templated.class));
         beans.addAll(roundEnv.getElementsAnnotatedWith(Page.class));
 
-        // Build Interface Resolution Map
+        // Build Interface Resolution Map (Interface Name + Qualifier -> Implementation)
         Map<String, TypeElement> resolutionMap = new HashMap<>();
         for (Element element : beans) {
             if (element.getKind() == ElementKind.CLASS) {
                 TypeElement typeElement = (TypeElement) element;
+                String qualifier = getQualifier(element);
+
+                // Map the class itself
+                String selfName = typeElement.getQualifiedName().toString();
+                if (qualifier != null) {
+                    resolutionMap.put(selfName + ":" + qualifier, typeElement);
+                }
+
                 for (TypeMirror interfaceType : typeElement.getInterfaces()) {
-                    // For now, map the interface canonical name to the implementing class
-                    // This assumes a simple 1:1 mapping or last-one-wins for PoC
                     String interfaceName = interfaceType.toString();
-                    // Clean generics if present (simple approach)
                     if (interfaceName.contains("<")) {
                         interfaceName = interfaceName.substring(0, interfaceName.indexOf("<"));
                     }
-                    resolutionMap.put(interfaceName, typeElement);
+
+                    if (qualifier != null) {
+                        resolutionMap.put(interfaceName + ":" + qualifier, typeElement);
+                    } else {
+                        resolutionMap.put(interfaceName, typeElement);
+                    }
                 }
             }
         }
@@ -106,10 +118,19 @@ public class IOCProcessor extends AbstractProcessor {
         return false;
     }
 
+    private String getQualifier(Element element) {
+        Named named = element.getAnnotation(Named.class);
+        if (named != null) {
+            return named.value();
+        }
+        return null;
+    }
+
     private void processBean(TypeElement typeElement, Map<String, TypeElement> resolutionMap, BeanVisitor visitor) {
         boolean isSingleton = typeElement.getAnnotation(ApplicationScoped.class) != null ||
                               typeElement.getAnnotation(EntryPoint.class) != null;
         boolean isTemplated = typeElement.getAnnotation(Templated.class) != null;
+        String beanQualifier = getQualifier(typeElement);
 
         List<InjectionPoint> injectionPoints = new ArrayList<>();
         List<VariableElement> allFields = getAllFields(typeElement);
@@ -118,20 +139,28 @@ public class IOCProcessor extends AbstractProcessor {
         for (VariableElement field : allFields) {
             if (field.getAnnotation(Inject.class) != null) {
                 TypeMirror fieldType = processingEnv.getTypeUtils().asMemberOf(typeMirror, field);
-                injectionPoints.add(new InjectionPoint(field, fieldType));
+                String qualifier = getQualifier(field);
+                injectionPoints.add(new InjectionPoint(field, fieldType, qualifier));
             }
         }
 
         List<ExecutableElement> postConstructMethods = new ArrayList<>();
+        List<ExecutableElement> observerMethods = new ArrayList<>();
         List<ExecutableElement> allMethods = getAllMethods(typeElement);
         for (ExecutableElement method : allMethods) {
             if (method.getAnnotation(PostConstruct.class) != null) {
                 postConstructMethods.add(method);
             }
+            for (VariableElement param : method.getParameters()) {
+                if (param.getAnnotation(Observes.class) != null) {
+                    observerMethods.add(method);
+                    break;
+                }
+            }
         }
 
         BeanDefinition beanDef = new BeanDefinition(typeElement, isSingleton, isTemplated,
-                injectionPoints, postConstructMethods, resolutionMap);
+                injectionPoints, postConstructMethods, observerMethods, resolutionMap, beanQualifier);
 
         String signature = computeSignature(beanDef);
         String className = typeElement.getQualifiedName().toString();
@@ -161,6 +190,9 @@ public class IOCProcessor extends AbstractProcessor {
                 rawTypeName = rawTypeName.substring(0, rawTypeName.indexOf("<"));
             }
             sb.append(typeName);
+            if (ip.getQualifier() != null) {
+                sb.append("@").append(ip.getQualifier());
+            }
 
             if (rawTypeName.equals("javax.inject.Provider")) {
                 // Extract T
@@ -173,18 +205,27 @@ public class IOCProcessor extends AbstractProcessor {
                             typeArgName = typeArgName.substring(0, typeArgName.indexOf("<"));
                         }
 
+                        String key = typeArgName;
+                        if (ip.getQualifier() != null) {
+                            key += ":" + ip.getQualifier();
+                        }
+
                         // Check resolution for typeArgName
-                        if (beanDef.getResolutionMap().containsKey(typeArgName)) {
+                        if (beanDef.getResolutionMap().containsKey(key)) {
                             sb.append("->");
-                            sb.append(beanDef.getResolutionMap().get(typeArgName).getQualifiedName().toString());
+                            sb.append(beanDef.getResolutionMap().get(key).getQualifiedName().toString());
                         }
                      }
                 }
             } else {
+                 String key = rawTypeName;
+                 if (ip.getQualifier() != null) {
+                     key += ":" + ip.getQualifier();
+                 }
                  // Check resolution for rawTypeName
-                if (beanDef.getResolutionMap().containsKey(rawTypeName)) {
+                if (beanDef.getResolutionMap().containsKey(key)) {
                     sb.append("->");
-                    sb.append(beanDef.getResolutionMap().get(rawTypeName).getQualifiedName().toString());
+                    sb.append(beanDef.getResolutionMap().get(key).getQualifiedName().toString());
                 }
             }
 
@@ -193,6 +234,11 @@ public class IOCProcessor extends AbstractProcessor {
 
         sb.append("|");
         for (ExecutableElement method : beanDef.getPostConstructMethods()) {
+            sb.append(method.getSimpleName().toString());
+            sb.append(";");
+        }
+        sb.append("|");
+        for (ExecutableElement method : beanDef.getObserverMethods()) {
             sb.append(method.getSimpleName().toString());
             sb.append(";");
         }
