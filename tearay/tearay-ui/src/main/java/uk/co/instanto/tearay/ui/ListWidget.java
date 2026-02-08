@@ -4,7 +4,7 @@ import org.teavm.jso.dom.html.HTMLElement;
 import org.teavm.jso.browser.Window;
 import uk.co.instanto.tearay.api.IsWidget;
 import uk.co.instanto.tearay.api.TakesValue;
-import uk.co.instanto.tearay.widgets.Widget;
+import uk.co.instanto.tearay.bootstrap.Widget;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import java.util.List;

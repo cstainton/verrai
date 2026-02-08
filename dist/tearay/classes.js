@@ -1214,6 +1214,66 @@
         $this.$roles.$clear();
         $this.$roles.$addAll(ju_Arrays_asList($newRoles));
     }
+    var ucita_IsWidget = $rt_classWithoutFields(0);
+    function ucitb_Widget() {
+        jl_Object.call(this);
+        this.$element = null;
+    }
+    function ucitb_Widget__init_($this) {
+        jl_Object__init_0($this);
+    }
+    function ucitb_Widget_getElement($this) {
+        return $this.$element;
+    }
+    var ucita_TakesValue = $rt_classWithoutFields(0);
+    function ucitb_Slider() {
+        ucitb_Widget.call(this);
+        this.$input = null;
+    }
+    function ucitb_Slider__init_() {
+        var var_0 = new ucitb_Slider();
+        ucitb_Slider__init_0(var_0);
+        return var_0;
+    }
+    function ucitb_Slider__init_0($this) {
+        var var$1, var$2;
+        ucitb_Widget__init_($this);
+        $this.$element = $rt_globals.window.document.createElement("input");
+        $this.$input = $this.$element;
+        var$1 = $this.$input;
+        var$2 = "range";
+        var$1.type = var$2;
+        var$1 = $this.$element;
+        var$2 = "form-range";
+        var$1.className = var$2;
+    }
+    function ucitb_Slider_setMin($this, $min) {
+        var var$2, var$3;
+        var$2 = $this.$input;
+        var$3 = jl_String_valueOf($min);
+        var$2.setAttribute("min", $rt_ustr(var$3));
+    }
+    function ucitb_Slider_setMax($this, $max) {
+        var var$2, var$3;
+        var$2 = $this.$input;
+        var$3 = jl_String_valueOf($max);
+        var$2.setAttribute("max", $rt_ustr(var$3));
+    }
+    function ucitb_Slider_getValue($this) {
+        return jl_Integer_valueOf(jl_Integer_parseInt($rt_str($this.$input.value)));
+    }
+    function ucitb_Slider_setValue($this, $value) {
+        var var$2, var$3;
+        var$2 = $this.$input;
+        var$3 = $rt_ustr(jl_String_valueOf($value === null ? 0 : $value.$intValue()));
+        var$2.value = var$3;
+    }
+    function ucitb_Slider_setValue0($this, $value) {
+        $this.$setValue(jl_Integer_valueOf($value));
+    }
+    function ucitb_Slider_addChangeHandler($this, $listener) {
+        $this.$element.addEventListener("change", otji_JS_function($listener, "handleEvent"));
+    }
     var ucitu_HasModel = $rt_classWithoutFields(0);
     var ji_Serializable = $rt_classWithoutFields(0);
     var jl_Number = $rt_classWithoutFields();
@@ -1255,7 +1315,7 @@
         jl_Integer_$callClinit();
         return jl_Integer_toString($i, 10);
     }
-    function jl_Integer_parseInt($s, $radix) {
+    function jl_Integer_parseInt0($s, $radix) {
         jl_Integer_$callClinit();
         if ($s !== null)
             return jl_Integer_parseIntImpl($s, 0, $s.$length(), $radix);
@@ -1326,9 +1386,9 @@
         jl_NumberFormatException__init_1(var$10, jl_StringBuilder_toString(var$11));
         $rt_throw(var$10);
     }
-    function jl_Integer_parseInt0($s) {
+    function jl_Integer_parseInt($s) {
         jl_Integer_$callClinit();
-        return jl_Integer_parseInt($s, 10);
+        return jl_Integer_parseInt0($s, 10);
     }
     function jl_Integer_valueOf($i) {
         jl_Integer_$callClinit();
@@ -1401,6 +1461,54 @@
         var $bean;
         $bean = ucits_TaskWidget__init_();
         return $bean;
+    }
+    function ucitm_MaterialWidget() {
+        jl_Object.call(this);
+        this.$element0 = null;
+    }
+    function ucitm_MaterialWidget__init_($this) {
+        jl_Object__init_0($this);
+    }
+    function ucitm_MaterialWidget_getElement($this) {
+        return $this.$element0;
+    }
+    function ucitm_MaterialButton() {
+        ucitm_MaterialWidget.call(this);
+        this.$label = null;
+    }
+    function ucitm_MaterialButton__init_() {
+        var var_0 = new ucitm_MaterialButton();
+        ucitm_MaterialButton__init_0(var_0);
+        return var_0;
+    }
+    function ucitm_MaterialButton__init_0($this) {
+        var var$1, var$2, $ripple;
+        ucitm_MaterialWidget__init_($this);
+        $this.$element0 = $rt_globals.window.document.createElement("button");
+        var$1 = $this.$element0;
+        var$2 = "mdc-button mdc-button--raised";
+        var$1.className = var$2;
+        $ripple = $rt_globals.window.document.createElement("span");
+        var$1 = "mdc-button__ripple";
+        $ripple.className = var$1;
+        $this.$element0.appendChild($ripple);
+        $this.$label = $rt_globals.window.document.createElement("span");
+        var$1 = $this.$label;
+        var$2 = "mdc-button__label";
+        var$1.className = var$2;
+        var$1 = $this.$element0;
+        var$2 = $this.$label;
+        var$1.appendChild(var$2);
+        ucitm_MaterialButton$MDCRipple_attachTo$js_body$_1($this.$element0);
+    }
+    function ucitm_MaterialButton_setText($this, $text) {
+        var var$2, var$3;
+        var$2 = $this.$label;
+        var$3 = $rt_ustr($text);
+        var$2.innerText = var$3;
+    }
+    function ucitm_MaterialButton_addClickListener($this, $listener) {
+        $this.$element0.addEventListener("click", otji_JS_function($listener, "handleEvent"));
     }
     var ju_Iterator = $rt_classWithoutFields(0);
     var ju_ListIterator = $rt_classWithoutFields(0);
@@ -1598,50 +1706,135 @@
     function jl_Long__clinit_() {
         jl_Long_TYPE = $rt_cls($rt_longcls());
     }
-    var ucita_IsWidget = $rt_classWithoutFields(0);
-    function ucitw_Widget() {
-        jl_Object.call(this);
-        this.$element = null;
+    function jl_Enum() {
+        var a = this; jl_Object.call(a);
+        a.$name = null;
+        a.$ordinal = 0;
     }
-    function ucitw_Widget__init_($this) {
+    function jl_Enum__init_($this, $name, $ordinal) {
         jl_Object__init_0($this);
+        $this.$name = $name;
+        $this.$ordinal = $ordinal;
     }
-    function ucitw_Widget_getElement($this) {
-        return $this.$element;
+    function ucitb_Button$Type() {
+        jl_Enum.call(this);
+        this.$cssClass = null;
     }
-    var ucitw_Button = $rt_classWithoutFields(ucitw_Widget);
-    function ucitw_Button__init_() {
-        var var_0 = new ucitw_Button();
-        ucitw_Button__init_0(var_0);
+    var ucitb_Button$Type_PRIMARY = null;
+    var ucitb_Button$Type_SUCCESS = null;
+    var ucitb_Button$Type_DANGER = null;
+    var ucitb_Button$Type_WARNING = null;
+    var ucitb_Button$Type_INFO = null;
+    var ucitb_Button$Type_$VALUES = null;
+    function ucitb_Button$Type_$callClinit() {
+        ucitb_Button$Type_$callClinit = $rt_eraseClinit(ucitb_Button$Type);
+        ucitb_Button$Type__clinit_();
+    }
+    function ucitb_Button$Type__init_(var_0, var_1, var_2) {
+        var var_3 = new ucitb_Button$Type();
+        ucitb_Button$Type__init_0(var_3, var_0, var_1, var_2);
+        return var_3;
+    }
+    function ucitb_Button$Type__init_0($this, var$1, var$2, $cssClass) {
+        ucitb_Button$Type_$callClinit();
+        jl_Enum__init_($this, var$1, var$2);
+        $this.$cssClass = $cssClass;
+    }
+    function ucitb_Button$Type_getCssClass($this) {
+        return $this.$cssClass;
+    }
+    function ucitb_Button$Type_$values() {
+        ucitb_Button$Type_$callClinit();
+        return $rt_createArrayFromData(ucitb_Button$Type, [ucitb_Button$Type_PRIMARY, ucitb_Button$Type_SUCCESS, ucitb_Button$Type_DANGER, ucitb_Button$Type_WARNING, ucitb_Button$Type_INFO]);
+    }
+    function ucitb_Button$Type__clinit_() {
+        ucitb_Button$Type_PRIMARY = ucitb_Button$Type__init_($rt_s(8), 0, $rt_s(9));
+        ucitb_Button$Type_SUCCESS = ucitb_Button$Type__init_($rt_s(10), 1, $rt_s(11));
+        ucitb_Button$Type_DANGER = ucitb_Button$Type__init_($rt_s(12), 2, $rt_s(13));
+        ucitb_Button$Type_WARNING = ucitb_Button$Type__init_($rt_s(14), 3, $rt_s(15));
+        ucitb_Button$Type_INFO = ucitb_Button$Type__init_($rt_s(16), 4, $rt_s(17));
+        ucitb_Button$Type_$VALUES = ucitb_Button$Type_$values();
+    }
+    function ucitb_TableWidget() {
+        var a = this; ucitb_Widget.call(a);
+        a.$table = null;
+        a.$thead = null;
+        a.$tbody = null;
+    }
+    function ucitb_TableWidget__init_() {
+        var var_0 = new ucitb_TableWidget();
+        ucitb_TableWidget__init_0(var_0);
         return var_0;
     }
-    function ucitw_Button__init_0($this) {
+    function ucitb_TableWidget__init_0($this) {
         var var$1, var$2;
-        ucitw_Widget__init_($this);
-        $this.$element = $rt_globals.window.document.createElement("button");
-        var$1 = $this.$element;
-        var$2 = "btn";
+        ucitb_Widget__init_($this);
+        $this.$element = $rt_globals.window.document.createElement("table");
+        $this.$table = $this.$element;
+        var$1 = $this.$table;
+        var$2 = "table table-striped table-hover";
         var$1.className = var$2;
+        $this.$thead = $rt_globals.window.document.createElement("thead");
+        var$1 = $this.$table;
+        var$2 = $this.$thead;
+        var$1.appendChild(var$2);
+        $this.$tbody = $rt_globals.window.document.createElement("tbody");
+        var$1 = $this.$table;
+        var$2 = $this.$tbody;
+        var$1.appendChild(var$2);
     }
-    function ucitw_Button_setText($this, $text) {
-        var var$2, var$3;
-        var$2 = $this.$element;
-        var$3 = $rt_ustr($text);
-        var$2.innerText = var$3;
+    function ucitb_TableWidget_setHeaders($this, $headers) {
+        var var$2, var$3, var$4, $tr, var$6, var$7, $h, $th;
+        var$2 = $headers.data;
+        var$3 = $this.$thead;
+        var$4 = "";
+        var$3.innerText = var$4;
+        $tr = $rt_globals.window.document.createElement("tr");
+        var$6 = var$2.length;
+        var$7 = 0;
+        while (var$7 < var$6) {
+            $h = var$2[var$7];
+            $th = $rt_globals.window.document.createElement("th");
+            var$4 = $rt_ustr($h);
+            $th.innerText = var$4;
+            $tr.appendChild($th);
+            var$7 = var$7 + 1 | 0;
+        }
+        $this.$thead.appendChild($tr);
     }
-    function ucitw_Button_setType($this, $type) {
-        var var$2, var$3, var$4;
-        var$2 = $this.$element;
-        var$3 = ucitw_Button$Type_getCssClass($type);
-        var$4 = jl_StringBuilder__init_();
-        jl_StringBuilder_append(jl_StringBuilder_append(var$4, $rt_s(8)), var$3);
-        var$3 = $rt_ustr(jl_StringBuilder_toString(var$4));
-        var$2.className = var$3;
+    function ucitb_TableWidget_addRow($this, $cells) {
+        var var$2, $tr, var$4, var$5, $c, $td, var$8;
+        var$2 = $cells.data;
+        $tr = $rt_globals.window.document.createElement("tr");
+        var$4 = var$2.length;
+        var$5 = 0;
+        while (var$5 < var$4) {
+            $c = var$2[var$5];
+            $td = $rt_globals.window.document.createElement("td");
+            var$8 = $rt_ustr($c);
+            $td.innerText = var$8;
+            $tr.appendChild($td);
+            var$5 = var$5 + 1 | 0;
+        }
+        $this.$tbody.appendChild($tr);
     }
-    function ucitw_Button_addClickListener($this, $listener) {
-        $this.$element.addEventListener("click", otji_JS_function($listener, "handleEvent"));
+    function ucitb_TableWidget_clearBody($this) {
+        var var$1, var$2;
+        var$1 = $this.$tbody;
+        var$2 = "";
+        var$1.innerText = var$2;
     }
     var otj_JSObject = $rt_classWithoutFields(0);
+    var ucitm_MaterialDrawer$MDCDrawer = $rt_classWithoutFields();
+    function ucitm_MaterialDrawer$MDCDrawer_attachTo$js_body$_1(var$1) {
+        if (typeof $rt_globals.mdc !== 'undefined') return $rt_globals.mdc.drawer.MDCDrawer.attachTo(var$1);
+        return null;
+    }
+    var ucitm_MaterialMenu$MDCMenu = $rt_classWithoutFields();
+    function ucitm_MaterialMenu$MDCMenu_attachTo$js_body$_1(var$1) {
+        if (typeof $rt_globals.mdc !== 'undefined') return $rt_globals.mdc.menu.MDCMenu.attachTo(var$1);
+        return null;
+    }
     var otjde_EventTarget = $rt_classWithoutFields(0);
     var otjde_GamepadEventTarget = $rt_classWithoutFields(0);
     var jl_CharSequence = $rt_classWithoutFields(0);
@@ -1664,6 +1857,38 @@
         jl_Error__init_0($this, $message);
     }
     var otjde_LoadEventTarget = $rt_classWithoutFields(0);
+    var ucitb_Button = $rt_classWithoutFields(ucitb_Widget);
+    function ucitb_Button__init_() {
+        var var_0 = new ucitb_Button();
+        ucitb_Button__init_0(var_0);
+        return var_0;
+    }
+    function ucitb_Button__init_0($this) {
+        var var$1, var$2;
+        ucitb_Widget__init_($this);
+        $this.$element = $rt_globals.window.document.createElement("button");
+        var$1 = $this.$element;
+        var$2 = "btn";
+        var$1.className = var$2;
+    }
+    function ucitb_Button_setText($this, $text) {
+        var var$2, var$3;
+        var$2 = $this.$element;
+        var$3 = $rt_ustr($text);
+        var$2.innerText = var$3;
+    }
+    function ucitb_Button_setType($this, $type) {
+        var var$2, var$3, var$4;
+        var$2 = $this.$element;
+        var$3 = ucitb_Button$Type_getCssClass($type);
+        var$4 = jl_StringBuilder__init_();
+        jl_StringBuilder_append(jl_StringBuilder_append(var$4, $rt_s(18)), var$3);
+        var$3 = $rt_ustr(jl_StringBuilder_toString(var$4));
+        var$2.className = var$3;
+    }
+    function ucitb_Button_addClickListener($this, $listener) {
+        $this.$element.addEventListener("click", otji_JS_function($listener, "handleEvent"));
+    }
     var ju_Comparator = $rt_classWithoutFields(0);
     var jl_String$_clinit_$lambda$_93_0 = $rt_classWithoutFields();
     function jl_String$_clinit_$lambda$_93_0__init_() {
@@ -1724,36 +1949,6 @@
         $bean = ucits_HelloService__init_();
         return $bean;
     }
-    var ucitw_Alert = $rt_classWithoutFields(ucitw_Widget);
-    function ucitw_Alert__init_() {
-        var var_0 = new ucitw_Alert();
-        ucitw_Alert__init_0(var_0);
-        return var_0;
-    }
-    function ucitw_Alert__init_0($this) {
-        var var$1, var$2;
-        ucitw_Widget__init_($this);
-        $this.$element = $rt_globals.window.document.createElement("div");
-        var$1 = $this.$element;
-        var$2 = "alert";
-        var$1.className = var$2;
-        $this.$element.setAttribute("role", "alert");
-    }
-    function ucitw_Alert_setText($this, $text) {
-        var var$2, var$3;
-        var$2 = $this.$element;
-        var$3 = $rt_ustr($text);
-        var$2.innerText = var$3;
-    }
-    function ucitw_Alert_setType($this, $type) {
-        var var$2, var$3, var$4;
-        var$2 = $this.$element;
-        var$3 = ucitw_Alert$Type_getCssClass($type);
-        var$4 = jl_StringBuilder__init_();
-        jl_StringBuilder_append(jl_StringBuilder_append(var$4, $rt_s(9)), var$3);
-        var$3 = $rt_ustr(jl_StringBuilder_toString(var$4));
-        var$2.className = var$3;
-    }
     var otci_Base46 = $rt_classWithoutFields();
     function otci_Base46_decodeUnsigned($seq) {
         var $number, $pos, var$4, var$5, $digit, $hasMore;
@@ -1786,6 +1981,54 @@
         if ($c >= 92)
             return ($c - 32 | 0) - 2 | 0;
         return ($c - 32 | 0) - 1 | 0;
+    }
+    function ucits_MaterialDemoPage() {
+        var a = this; jl_Object.call(a);
+        a.$navigation = null;
+        a.$element1 = null;
+        a.$drawer = null;
+        a.$nameInput = null;
+        a.$toggleButton = null;
+        a.$fab = null;
+        a.$menu = null;
+    }
+    function ucits_MaterialDemoPage__init_() {
+        var var_0 = new ucits_MaterialDemoPage();
+        ucits_MaterialDemoPage__init_0(var_0);
+        return var_0;
+    }
+    function ucits_MaterialDemoPage__init_0($this) {
+        jl_Object__init_0($this);
+    }
+    function ucits_MaterialDemoPage_onShow($this) {
+        $this.$drawer.$addItem($rt_s(19), ucits_MaterialDemoPage$onShow$lambda$_1_0__init_());
+        $this.$drawer.$addItem($rt_s(20), ucits_MaterialDemoPage$onShow$lambda$_1_1__init_());
+        $this.$drawer.$initialize();
+        $this.$toggleButton.$setText($rt_s(21));
+        $this.$toggleButton.$addClickListener(ucits_MaterialDemoPage$onShow$lambda$_1_2__init_($this));
+        $this.$fab.$addClickListener(ucits_MaterialDemoPage$onShow$lambda$_1_3__init_());
+        $this.$menu.$addItem($rt_s(22), ucits_MaterialDemoPage$onShow$lambda$_1_4__init_());
+        $this.$menu.$addItem($rt_s(23), ucits_MaterialDemoPage$onShow$lambda$_1_5__init_());
+        $this.$menu.$setAnchor($this.$fab.$getElement());
+        $this.$nameInput.$setValue0($rt_s(24));
+    }
+    function ucits_MaterialDemoPage_lambda$onShow$5($e) {
+        $rt_globals.alert("Settings...");
+    }
+    function ucits_MaterialDemoPage_lambda$onShow$4($e) {
+        $rt_globals.alert("Refreshing...");
+    }
+    function ucits_MaterialDemoPage_lambda$onShow$3($e) {
+        $rt_globals.alert("FAB Action!");
+    }
+    function ucits_MaterialDemoPage_lambda$onShow$2($this, $e) {
+        $this.$drawer.$open();
+    }
+    function ucits_MaterialDemoPage_lambda$onShow$1($e) {
+        $rt_globals.alert("Star clicked");
+    }
+    function ucits_MaterialDemoPage_lambda$onShow$0($e) {
+        $rt_globals.alert("Inbox clicked");
     }
     var ucits_BootstrapperImpl = $rt_classWithoutFields();
     function ucits_BootstrapperImpl__init_() {
@@ -1857,7 +2100,7 @@
         var $i, var$4, var$5;
         if ($index >= 0 && $index <= $this.$length0) {
             if ($string === null)
-                $string = $rt_s(10);
+                $string = $rt_s(25);
             else if ($string.$isEmpty())
                 return $this;
             $this.$ensureCapacity($this.$length0 + $string.$length() | 0);
@@ -2021,7 +2264,7 @@
         return $this;
     }
     function jl_AbstractStringBuilder_insert4($this, $index, $obj) {
-        return $this.$insert0($index, $obj === null ? $rt_s(10) : $obj.$toString());
+        return $this.$insert0($index, $obj === null ? $rt_s(25) : $obj.$toString());
     }
     function jl_AbstractStringBuilder_ensureCapacity($this, $capacity) {
         var $newLength;
@@ -2126,6 +2369,11 @@
         jl_RuntimeException__init_1($this);
     }
     var jlr_AnnotatedElement = $rt_classWithoutFields(0);
+    var ucitm_MaterialButton$MDCRipple = $rt_classWithoutFields();
+    function ucitm_MaterialButton$MDCRipple_attachTo$js_body$_1(var$1) {
+        if (typeof $rt_globals.mdc !== 'undefined') return $rt_globals.mdc.ripple.MDCRipple.attachTo(var$1);
+        return null;
+    }
     var ucits_AppSecurityProvider_Factory = $rt_classWithoutFields();
     var ucits_AppSecurityProvider_Factory_instance = null;
     function ucits_AppSecurityProvider_Factory_getInstance() {
@@ -2160,7 +2408,7 @@
     function ucits_LoginPage_Factory_createInstance() {
         var $bean;
         $bean = ucits_LoginPage__init_();
-        $bean.$navigation = uciti_NavigationImpl_Factory_getInstance();
+        $bean.$navigation0 = uciti_NavigationImpl_Factory_getInstance();
         $bean.$securityProvider = ucits_AppSecurityProvider_Factory_getInstance();
         ucits_LoginPage_Binder_bind($bean);
         return $bean;
@@ -2175,7 +2423,7 @@
     function ucits_App_Factory_createInstance() {
         var $bean;
         $bean = ucits_App__init_();
-        $bean.$navigation0 = uciti_NavigationImpl_Factory_getInstance();
+        $bean.$navigation1 = uciti_NavigationImpl_Factory_getInstance();
         $bean.$onModuleLoad();
         return $bean;
     }
@@ -2257,107 +2505,107 @@
         $this.$goTo($role, ju_Collections_emptyMap());
     }
     function uciti_NavigationImpl_goTo0($this, $role, $state) {
-        var $body, var$4, $hash, $entry, var$7, var$8, var$9, var$10, $page_dashboard, $val, $page_user_profile, $page_login;
+        var $body, var$4, $hash, var$6, $entry, var$8, var$9, var$10, var$11, $page_material_demo, $page_dashboard, $val, $page_user_profile, $page_login;
         $body = $rt_globals.window.document.body;
         var$4 = "";
         $body.innerText = var$4;
         $hash = new jl_StringBuilder;
-        var$4 = jl_StringBuilder__init_();
-        jl_StringBuilder_append(jl_StringBuilder_append0(var$4, 35), $role);
-        jl_StringBuilder__init_2($hash, jl_StringBuilder_toString(var$4));
-        var$4 = ($state.$entrySet()).$iterator();
-        while (var$4.$hasNext()) {
-            $entry = var$4.$next();
-            ((($hash.$append8($rt_s(11))).$append8($entry.$getKey())).$append8($rt_s(12))).$append8($entry.$getValue());
+        var$6 = jl_StringBuilder__init_();
+        jl_StringBuilder_append(jl_StringBuilder_append0(var$6, 35), $role);
+        jl_StringBuilder__init_2($hash, jl_StringBuilder_toString(var$6));
+        var$6 = ($state.$entrySet()).$iterator();
+        while (var$6.$hasNext()) {
+            $entry = var$6.$next();
+            ((($hash.$append8($rt_s(26))).$append8($entry.$getKey())).$append8($rt_s(27))).$append8($entry.$getValue());
         }
         a: {
-            var$4 = $rt_globals.window.history;
-            var$7 = null;
+            var$6 = $rt_globals.window.history;
             var$8 = null;
-            var$9 = $hash.$toString();
-            var$4.pushState(var$7, $rt_ustr(var$8), $rt_ustr(var$9));
-            var$10 = (-1);
+            var$9 = null;
+            var$10 = $hash.$toString();
+            var$6.pushState(var$8, $rt_ustr(var$9), $rt_ustr(var$10));
+            var$11 = (-1);
             switch ($role.$hashCode()) {
-                case -1047860588:
-                    if (!$role.$equals($rt_s(13)))
+                case -1195779383:
+                    if (!$role.$equals($rt_s(28)))
                         break a;
-                    var$10 = 0;
+                    var$11 = 0;
+                    break a;
+                case -1047860588:
+                    if (!$role.$equals($rt_s(29)))
+                        break a;
+                    var$11 = 1;
                     break a;
                 case -24945241:
-                    if (!$role.$equals($rt_s(14)))
+                    if (!$role.$equals($rt_s(30)))
                         break a;
-                    var$10 = 1;
+                    var$11 = 2;
                     break a;
                 case 103149417:
-                    if (!$role.$equals($rt_s(15)))
+                    if (!$role.$equals($rt_s(31)))
                         break a;
-                    var$10 = 2;
+                    var$11 = 3;
                     break a;
                 default:
             }
         }
         b: {
-            switch (var$10) {
+            switch (var$11) {
                 case 0:
+                    $page_material_demo = ucits_MaterialDemoPage_Factory_getInstance();
+                    $page_material_demo.$onShow();
+                    if ($page_material_demo.$element1 !== null) {
+                        var$6 = $page_material_demo.$element1;
+                        $body.appendChild(var$6);
+                    }
+                    $this.$currentPage = $page_material_demo;
+                    break b;
+                case 1:
                     $page_dashboard = ucits_DashboardPage_Factory_getInstance();
-                    $val = $state.$get($rt_s(16));
+                    $val = $state.$get($rt_s(32));
                     if ($val !== null)
                         $page_dashboard.$username = $val;
                     $page_dashboard.$onShow();
-                    if ($page_dashboard.$element0 !== null) {
-                        var$4 = $page_dashboard.$element0;
-                        $body.appendChild(var$4);
+                    if ($page_dashboard.$element2 !== null) {
+                        var$6 = $page_dashboard.$element2;
+                        $body.appendChild(var$6);
                     }
                     $this.$currentPage = $page_dashboard;
                     break b;
-                case 1:
-                    if ($this.$securityProvider0 !== null && !$this.$securityProvider0.$hasRole($rt_s(17))) {
+                case 2:
+                    if ($this.$securityProvider0 !== null && !$this.$securityProvider0.$hasRole($rt_s(33))) {
                         $rt_globals.alert("Access Denied: Missing role admin");
                         return;
                     }
                     $page_user_profile = ucits_UserProfilePage_Factory_getInstance();
-                    $val = $state.$get($rt_s(18));
+                    $val = $state.$get($rt_s(34));
                     if ($val !== null)
                         $page_user_profile.$userId = $val;
-                    $val = $state.$get($rt_s(19));
+                    $val = $state.$get($rt_s(35));
                     if ($val !== null)
-                        $page_user_profile.$name = $val;
+                        $page_user_profile.$name0 = $val;
                     $page_user_profile.$onShow();
-                    if ($page_user_profile.$element1 !== null) {
-                        var$4 = $page_user_profile.$element1;
-                        $body.appendChild(var$4);
+                    if ($page_user_profile.$element3 !== null) {
+                        var$6 = $page_user_profile.$element3;
+                        $body.appendChild(var$6);
                     }
                     $this.$currentPage = $page_user_profile;
                     break b;
-                case 2:
+                case 3:
                     $page_login = ucits_LoginPage_Factory_getInstance();
                     $page_login.$onShow();
-                    if ($page_login.$element2 !== null) {
-                        var$4 = $page_login.$element2;
-                        $body.appendChild(var$4);
+                    if ($page_login.$element4 !== null) {
+                        var$6 = $page_login.$element4;
+                        $body.appendChild(var$6);
                     }
                     $this.$currentPage = $page_login;
                     break b;
                 default:
             }
-            var$4 = jl_StringBuilder__init_();
-            jl_StringBuilder_append(jl_StringBuilder_append(var$4, $rt_s(20)), $role);
-            $rt_globals.alert($rt_ustr(jl_StringBuilder_toString(var$4)));
+            var$6 = jl_StringBuilder__init_();
+            jl_StringBuilder_append(jl_StringBuilder_append(var$6, $rt_s(36)), $role);
+            $rt_globals.alert($rt_ustr(jl_StringBuilder_toString(var$6)));
         }
-    }
-    var ucitw_Container = $rt_classWithoutFields(ucitw_Widget);
-    function ucitw_Container__init_() {
-        var var_0 = new ucitw_Container();
-        ucitw_Container__init_0(var_0);
-        return var_0;
-    }
-    function ucitw_Container__init_0($this) {
-        var var$1, var$2;
-        ucitw_Widget__init_($this);
-        $this.$element = $rt_globals.window.document.createElement("div");
-        var$1 = $this.$element;
-        var$2 = "container";
-        var$1.className = var$2;
     }
     var otjb_StorageProvider = $rt_classWithoutFields(0);
     var otjc_JSArrayReader = $rt_classWithoutFields(0);
@@ -2385,10 +2633,10 @@
     }
     function ucits_UserProfilePage() {
         var a = this; jl_Object.call(a);
-        a.$navigation1 = null;
-        a.$element1 = null;
+        a.$navigation2 = null;
+        a.$element3 = null;
         a.$userId = null;
-        a.$name = null;
+        a.$name0 = null;
         a.$idSpan = null;
         a.$nameSpan = null;
         a.$backBtn = null;
@@ -2404,17 +2652,17 @@
     function ucits_UserProfilePage_onShow($this) {
         var var$1, var$2, var$3;
         var$1 = $this.$idSpan;
-        var$2 = $rt_ustr($this.$userId === null ? $rt_s(21) : $this.$userId);
+        var$2 = $rt_ustr($this.$userId === null ? $rt_s(37) : $this.$userId);
         var$1.innerText = var$2;
         var$1 = $this.$nameSpan;
-        var$2 = $rt_ustr($this.$name === null ? $rt_s(21) : $this.$name);
+        var$2 = $rt_ustr($this.$name0 === null ? $rt_s(37) : $this.$name0);
         var$1.innerText = var$2;
         var$1 = $this.$backBtn;
         var$3 = ucits_UserProfilePage$onShow$lambda$_1_0__init_($this);
         var$1.addEventListener("click", otji_JS_function(var$3, "handleEvent"));
     }
     function ucits_UserProfilePage_lambda$onShow$0($this, $e) {
-        $this.$navigation1.$goTo0($rt_s(13));
+        $this.$navigation2.$goTo0($rt_s(29));
     }
     function jl_String() {
         var a = this; jl_Object.call(a);
@@ -2573,28 +2821,19 @@
         jl_String_EMPTY = jl_String__init_1();
         jl_String_CASE_INSENSITIVE_ORDER = jl_String$_clinit_$lambda$_93_0__init_();
     }
-    var ucitw_Column = $rt_classWithoutFields(ucitw_Widget);
-    function ucitw_Column__init_() {
-        var var_0 = new ucitw_Column();
-        ucitw_Column__init_0(var_0);
+    var ucitb_Container = $rt_classWithoutFields(ucitb_Widget);
+    function ucitb_Container__init_() {
+        var var_0 = new ucitb_Container();
+        ucitb_Container__init_0(var_0);
         return var_0;
     }
-    function ucitw_Column__init_0($this) {
+    function ucitb_Container__init_0($this) {
         var var$1, var$2;
-        ucitw_Widget__init_($this);
+        ucitb_Widget__init_($this);
         $this.$element = $rt_globals.window.document.createElement("div");
         var$1 = $this.$element;
-        var$2 = "col";
+        var$2 = "container";
         var$1.className = var$2;
-    }
-    function ucitw_Column_span($this, $size) {
-        var var$2, var$3;
-        var$2 = $this.$element;
-        var$3 = jl_StringBuilder__init_();
-        jl_StringBuilder_append1(jl_StringBuilder_append(var$3, $rt_s(22)), $size);
-        var$3 = $rt_ustr(jl_StringBuilder_toString(var$3));
-        var$2.className = var$3;
-        return $this;
     }
     var ucits_UserProfilePage_Binder = $rt_classWithoutFields();
     function ucits_UserProfilePage_Binder_bind($target) {
@@ -2603,7 +2842,7 @@
         $root = $doc.createElement("div");
         var$4 = "<div>     <h1>User Profile</h1>     <p>User ID: <span data-field=\\\"idSpan\\\"></span></p>     <p>Name: <span data-field=\\\"nameSpan\\\"></span></p>     <button data-field=\\\"backBtn\\\">Back to Dashboard</button> </div> ";
         $root.innerHTML = var$4;
-        $target.$element1 = $root;
+        $target.$element3 = $root;
         $el_idSpan = null;
         $el_nameSpan = null;
         $el_backBtn = null;
@@ -2616,17 +2855,17 @@
                 var$12 = (-1);
                 switch ($key.$hashCode()) {
                     case -1193970939:
-                        if (!$key.$equals($rt_s(23)))
+                        if (!$key.$equals($rt_s(38)))
                             break a;
                         var$12 = 0;
                         break a;
                     case -347241483:
-                        if (!$key.$equals($rt_s(24)))
+                        if (!$key.$equals($rt_s(39)))
                             break a;
                         var$12 = 2;
                         break a;
                     case 1840556149:
-                        if (!$key.$equals($rt_s(25)))
+                        if (!$key.$equals($rt_s(40)))
                             break a;
                         var$12 = 1;
                         break a;
@@ -2708,6 +2947,36 @@
         var$0.$accept(otji_JSWrapper_jsToJava(var$1));
     }
     var ju_Map$Entry = $rt_classWithoutFields(0);
+    var ucitb_Alert = $rt_classWithoutFields(ucitb_Widget);
+    function ucitb_Alert__init_() {
+        var var_0 = new ucitb_Alert();
+        ucitb_Alert__init_0(var_0);
+        return var_0;
+    }
+    function ucitb_Alert__init_0($this) {
+        var var$1, var$2;
+        ucitb_Widget__init_($this);
+        $this.$element = $rt_globals.window.document.createElement("div");
+        var$1 = $this.$element;
+        var$2 = "alert";
+        var$1.className = var$2;
+        $this.$element.setAttribute("role", "alert");
+    }
+    function ucitb_Alert_setText($this, $text) {
+        var var$2, var$3;
+        var$2 = $this.$element;
+        var$3 = $rt_ustr($text);
+        var$2.innerText = var$3;
+    }
+    function ucitb_Alert_setType($this, $type) {
+        var var$2, var$3, var$4;
+        var$2 = $this.$element;
+        var$3 = ucitb_Alert$Type_getCssClass($type);
+        var$4 = jl_StringBuilder__init_();
+        jl_StringBuilder_append(jl_StringBuilder_append(var$4, $rt_s(41)), var$3);
+        var$3 = $rt_ustr(jl_StringBuilder_toString(var$4));
+        var$2.className = var$3;
+    }
     var jl_IncompatibleClassChangeError = $rt_classWithoutFields(jl_LinkageError);
     function jl_IncompatibleClassChangeError__init_(var_0) {
         var var_1 = new jl_IncompatibleClassChangeError();
@@ -2725,6 +2994,15 @@
     }
     function jl_NoSuchMethodError__init_0($this, $message) {
         jl_IncompatibleClassChangeError__init_0($this, $message);
+    }
+    var ucitb_Container_Factory = $rt_classWithoutFields();
+    function ucitb_Container_Factory_getInstance() {
+        return ucitb_Container_Factory_createInstance();
+    }
+    function ucitb_Container_Factory_createInstance() {
+        var $bean;
+        $bean = ucitb_Container__init_();
+        return $bean;
     }
     var jl_IllegalArgumentException = $rt_classWithoutFields(jl_RuntimeException);
     function jl_IllegalArgumentException__init_() {
@@ -2759,55 +3037,6 @@
     }
     function jl_NumberFormatException__init_1($this, $message) {
         jl_IllegalArgumentException__init_2($this, $message);
-    }
-    function jl_Enum() {
-        var a = this; jl_Object.call(a);
-        a.$name0 = null;
-        a.$ordinal = 0;
-    }
-    function jl_Enum__init_($this, $name, $ordinal) {
-        jl_Object__init_0($this);
-        $this.$name0 = $name;
-        $this.$ordinal = $ordinal;
-    }
-    function ucitw_Button$Type() {
-        jl_Enum.call(this);
-        this.$cssClass = null;
-    }
-    var ucitw_Button$Type_PRIMARY = null;
-    var ucitw_Button$Type_SUCCESS = null;
-    var ucitw_Button$Type_DANGER = null;
-    var ucitw_Button$Type_WARNING = null;
-    var ucitw_Button$Type_INFO = null;
-    var ucitw_Button$Type_$VALUES = null;
-    function ucitw_Button$Type_$callClinit() {
-        ucitw_Button$Type_$callClinit = $rt_eraseClinit(ucitw_Button$Type);
-        ucitw_Button$Type__clinit_();
-    }
-    function ucitw_Button$Type__init_(var_0, var_1, var_2) {
-        var var_3 = new ucitw_Button$Type();
-        ucitw_Button$Type__init_0(var_3, var_0, var_1, var_2);
-        return var_3;
-    }
-    function ucitw_Button$Type__init_0($this, var$1, var$2, $cssClass) {
-        ucitw_Button$Type_$callClinit();
-        jl_Enum__init_($this, var$1, var$2);
-        $this.$cssClass = $cssClass;
-    }
-    function ucitw_Button$Type_getCssClass($this) {
-        return $this.$cssClass;
-    }
-    function ucitw_Button$Type_$values() {
-        ucitw_Button$Type_$callClinit();
-        return $rt_createArrayFromData(ucitw_Button$Type, [ucitw_Button$Type_PRIMARY, ucitw_Button$Type_SUCCESS, ucitw_Button$Type_DANGER, ucitw_Button$Type_WARNING, ucitw_Button$Type_INFO]);
-    }
-    function ucitw_Button$Type__clinit_() {
-        ucitw_Button$Type_PRIMARY = ucitw_Button$Type__init_($rt_s(26), 0, $rt_s(27));
-        ucitw_Button$Type_SUCCESS = ucitw_Button$Type__init_($rt_s(28), 1, $rt_s(29));
-        ucitw_Button$Type_DANGER = ucitw_Button$Type__init_($rt_s(30), 2, $rt_s(31));
-        ucitw_Button$Type_WARNING = ucitw_Button$Type__init_($rt_s(32), 3, $rt_s(33));
-        ucitw_Button$Type_INFO = ucitw_Button$Type__init_($rt_s(34), 4, $rt_s(35));
-        ucitw_Button$Type_$VALUES = ucitw_Button$Type_$values();
     }
     function ju_AbstractList$1() {
         var a = this; jl_Object.call(a);
@@ -2980,7 +3209,7 @@
         $root = $doc.createElement("div");
         var$4 = "<div>     <h1>Login Page</h1>     <button data-field=\\\"loginBtn\\\">Login as User</button>     <button data-field=\\\"adminLoginBtn\\\">Login as Admin</button> </div> ";
         $root.innerHTML = var$4;
-        $target.$element2 = $root;
+        $target.$element4 = $root;
         $el_loginBtn = null;
         $el_adminLoginBtn = null;
         $candidates = $root.querySelectorAll("[data-field]");
@@ -2992,12 +3221,12 @@
                 var$11 = (-1);
                 switch ($key.$hashCode()) {
                     case 710679202:
-                        if (!$key.$equals($rt_s(36)))
+                        if (!$key.$equals($rt_s(42)))
                             break a;
                         var$11 = 1;
                         break a;
                     case 2022732339:
-                        if (!$key.$equals($rt_s(37)))
+                        if (!$key.$equals($rt_s(43)))
                             break a;
                         var$11 = 0;
                         break a;
@@ -3139,77 +3368,164 @@
             return $rt_createArray(var$1, var$2)
         }
     }
-    function ucitw_TableWidget() {
-        var a = this; ucitw_Widget.call(a);
-        a.$tableElement = null;
-        a.$thead = null;
-        a.$tbody = null;
+    function ucitm_MaterialTextField() {
+        var a = this; ucitm_MaterialWidget.call(a);
+        a.$input0 = null;
+        a.$label0 = null;
+        a.$instance = null;
     }
-    function ucitw_TableWidget__init_() {
-        var var_0 = new ucitw_TableWidget();
-        ucitw_TableWidget__init_0(var_0);
+    function ucitm_MaterialTextField__init_() {
+        var var_0 = new ucitm_MaterialTextField();
+        ucitm_MaterialTextField__init_0(var_0);
         return var_0;
     }
-    function ucitw_TableWidget__init_0($this) {
-        var var$1, var$2;
-        ucitw_Widget__init_($this);
-        $this.$tableElement = $rt_globals.window.document.createElement("table");
-        var$1 = $this.$tableElement;
-        var$2 = "table table-striped table-hover";
-        var$1.className = var$2;
-        $this.$thead = $rt_globals.window.document.createElement("thead");
-        var$1 = $this.$tableElement;
-        var$2 = $this.$thead;
-        var$1.appendChild(var$2);
-        $this.$tbody = $rt_globals.window.document.createElement("tbody");
-        var$1 = $this.$tableElement;
-        var$2 = $this.$tbody;
-        var$1.appendChild(var$2);
-        $this.$element = $this.$tableElement;
+    function ucitm_MaterialTextField__init_1(var_0) {
+        var var_1 = new ucitm_MaterialTextField();
+        ucitm_MaterialTextField__init_2(var_1, var_0);
+        return var_1;
     }
-    function ucitw_TableWidget_setHeaders($this, $headers) {
-        var var$2, var$3, var$4, $tr, var$6, var$7, $header, $th;
-        var$2 = $headers.data;
-        var$3 = $this.$thead;
-        var$4 = "";
-        var$3.innerText = var$4;
-        $tr = $rt_globals.window.document.createElement("tr");
-        var$6 = var$2.length;
-        var$7 = 0;
-        while (var$7 < var$6) {
-            $header = var$2[var$7];
-            $th = $rt_globals.window.document.createElement("th");
-            $th.setAttribute("scope", "col");
-            var$4 = $rt_ustr($header);
-            $th.innerText = var$4;
-            $tr.appendChild($th);
-            var$7 = var$7 + 1 | 0;
-        }
-        $this.$thead.appendChild($tr);
+    function ucitm_MaterialTextField__init_0($this) {
+        ucitm_MaterialTextField__init_2($this, $rt_s(44));
     }
-    function ucitw_TableWidget_addRow($this, $cells) {
-        var var$2, $tr, var$4, var$5, $cell, $td, var$8;
-        var$2 = $cells.data;
-        $tr = $rt_globals.window.document.createElement("tr");
-        var$4 = var$2.length;
-        var$5 = 0;
-        while (var$5 < var$4) {
-            $cell = var$2[var$5];
-            $td = $rt_globals.window.document.createElement("td");
-            var$8 = $rt_ustr($cell);
-            $td.innerText = var$8;
-            $tr.appendChild($td);
-            var$5 = var$5 + 1 | 0;
-        }
-        $this.$tbody.appendChild($tr);
+    function ucitm_MaterialTextField__init_2($this, $labelText) {
+        var var$2, var$3, $ripple, var$5, $id, $lineRipple;
+        ucitm_MaterialWidget__init_($this);
+        $this.$element0 = $rt_globals.window.document.createElement("label");
+        var$2 = $this.$element0;
+        var$3 = "mdc-text-field mdc-text-field--filled";
+        var$2.className = var$3;
+        $ripple = $rt_globals.window.document.createElement("span");
+        var$2 = "mdc-text-field__ripple";
+        $ripple.className = var$2;
+        $this.$element0.appendChild($ripple);
+        $this.$label0 = $rt_globals.window.document.createElement("span");
+        var$2 = $this.$label0;
+        var$3 = "mdc-floating-label";
+        var$2.className = var$3;
+        var$2 = $this.$label0;
+        var$3 = $rt_ustr($labelText);
+        var$2.innerText = var$3;
+        var$2 = $this.$element0;
+        var$3 = $this.$label0;
+        var$2.appendChild(var$3);
+        $this.$input0 = $rt_globals.window.document.createElement("input");
+        var$2 = $this.$input0;
+        var$3 = "mdc-text-field__input";
+        var$2.className = var$3;
+        $this.$input0.setAttribute("type", "text");
+        var$5 = jl_Math_random() * 10000.0 | 0;
+        var$2 = jl_StringBuilder__init_();
+        jl_StringBuilder_append1(jl_StringBuilder_append(var$2, $rt_s(45)), var$5);
+        $id = jl_StringBuilder_toString(var$2);
+        $this.$input0.setAttribute("aria-labelledby", $rt_ustr($id));
+        $this.$label0.setAttribute("id", $rt_ustr($id));
+        var$2 = $this.$element0;
+        var$3 = $this.$input0;
+        var$2.appendChild(var$3);
+        $lineRipple = $rt_globals.window.document.createElement("span");
+        var$2 = "mdc-line-ripple";
+        $lineRipple.className = var$2;
+        $this.$element0.appendChild($lineRipple);
+        $this.$instance = ucitm_MaterialTextField$MDCTextField_attachTo$js_body$_1($this.$element0);
     }
-    function ucitw_TableWidget_clearBody($this) {
-        var var$1, var$2;
-        var$1 = $this.$tbody;
-        var$2 = "";
-        var$1.innerText = var$2;
+    function ucitm_MaterialTextField_setValue($this, $value) {
+        var var$2, var$3;
+        var$2 = $this.$input0;
+        var$3 = $rt_ustr($value);
+        var$2.value = var$3;
     }
     var ji_Provider = $rt_classWithoutFields(0);
+    var ucitm_MaterialFAB$MDCRipple = $rt_classWithoutFields();
+    function ucitm_MaterialFAB$MDCRipple_attachTo$js_body$_1(var$1) {
+        if (typeof $rt_globals.mdc !== 'undefined') return $rt_globals.mdc.ripple.MDCRipple.attachTo(var$1);
+        return null;
+    }
+    function ucitm_MaterialDrawer() {
+        var a = this; ucitm_MaterialWidget.call(a);
+        a.$content = null;
+        a.$scrim = null;
+        a.$drawerInstance = null;
+    }
+    function ucitm_MaterialDrawer__init_() {
+        var var_0 = new ucitm_MaterialDrawer();
+        ucitm_MaterialDrawer__init_0(var_0);
+        return var_0;
+    }
+    function ucitm_MaterialDrawer__init_0($this) {
+        var var$1, var$2, $header, $title, $nav;
+        ucitm_MaterialWidget__init_($this);
+        $this.$element0 = $rt_globals.window.document.createElement("aside");
+        var$1 = $this.$element0;
+        var$2 = "mdc-drawer mdc-drawer--modal";
+        var$1.className = var$2;
+        $header = $rt_globals.window.document.createElement("div");
+        var$1 = "mdc-drawer__header";
+        $header.className = var$1;
+        $title = $rt_globals.window.document.createElement("h3");
+        var$1 = "mdc-drawer__title";
+        $title.className = var$1;
+        var$1 = "Drawer";
+        $title.innerText = var$1;
+        $header.appendChild($title);
+        $this.$element0.appendChild($header);
+        $this.$content = $rt_globals.window.document.createElement("div");
+        var$1 = $this.$content;
+        var$2 = "mdc-drawer__content";
+        var$1.className = var$2;
+        $nav = $rt_globals.window.document.createElement("nav");
+        var$1 = "mdc-list";
+        $nav.className = var$1;
+        $this.$content.appendChild($nav);
+        var$1 = $this.$element0;
+        var$2 = $this.$content;
+        var$1.appendChild(var$2);
+        $this.$scrim = $rt_globals.window.document.createElement("div");
+        var$1 = $this.$scrim;
+        var$2 = "mdc-drawer-scrim";
+        var$1.className = var$2;
+    }
+    function ucitm_MaterialDrawer_initialize($this) {
+        var var$1, var$2, var$3;
+        if ($this.$element0.parentNode !== null) {
+            var$1 = $this.$element0.parentNode;
+            var$2 = $this.$scrim;
+            var$3 = $this.$element0.nextSibling;
+            var$1.insertBefore(var$2, var$3);
+            $this.$drawerInstance = ucitm_MaterialDrawer$MDCDrawer_attachTo$js_body$_1($this.$element0);
+        }
+    }
+    function ucitm_MaterialDrawer_open($this) {
+        var var$1, var$2;
+        if ($this.$drawerInstance === null)
+            $this.$initialize();
+        if ($this.$drawerInstance !== null) {
+            var$1 = $this.$drawerInstance;
+            var$2 = !!1;
+            var$1.open = var$2;
+        }
+    }
+    function ucitm_MaterialDrawer_addItem($this, $text, $listener) {
+        var $item, var$4, $ripple, $textSpan, $list;
+        $item = $rt_globals.window.document.createElement("a");
+        var$4 = "mdc-list-item";
+        $item.className = var$4;
+        $item.setAttribute("href", "#");
+        $item.setAttribute("aria-current", "page");
+        $ripple = $rt_globals.window.document.createElement("span");
+        var$4 = "mdc-list-item__ripple";
+        $ripple.className = var$4;
+        $item.appendChild($ripple);
+        $textSpan = $rt_globals.window.document.createElement("span");
+        var$4 = "mdc-list-item__text";
+        $textSpan.className = var$4;
+        var$4 = $rt_ustr($text);
+        $textSpan.innerText = var$4;
+        $item.appendChild($textSpan);
+        if ($listener !== null)
+            $item.addEventListener("click", otji_JS_function($listener, "handleEvent"));
+        $list = $this.$content.querySelector(".mdc-list");
+        $list.appendChild($item);
+    }
     function ju_HashMap$AbstractMapIterator() {
         var a = this; jl_Object.call(a);
         a.$position = 0;
@@ -3282,15 +3598,14 @@
         jl_RuntimeException__init_1($this);
     }
     var otpp_ResourceAccessor = $rt_classWithoutFields();
-    var ucita_TakesValue = $rt_classWithoutFields(0);
     function ucitu_ListWidget() {
-        var a = this; ucitw_Widget.call(a);
+        var a = this; ucitb_Widget.call(a);
         a.$listElement = null;
         a.$itemWidgetProvider = null;
         a.$items = null;
     }
     function ucitu_ListWidget__init_($this, $tagName) {
-        ucitw_Widget__init_($this);
+        ucitb_Widget__init_($this);
         $this.$items = ju_ArrayList__init_();
         $this.$listElement = $rt_globals.window.document.createElement($rt_ustr($tagName));
         $this.$element = $this.$listElement;
@@ -3325,7 +3640,7 @@
     }
     function ucits_TaskListWidget__init_0($this) {
         var var$1, var$2;
-        ucitu_ListWidget__init_($this, $rt_s(38));
+        ucitu_ListWidget__init_($this, $rt_s(46));
         var$1 = $this.$getElement();
         var$2 = "list-group";
         var$1.className = var$2;
@@ -3347,7 +3662,7 @@
         $root = $doc.createElement("div");
         var$4 = "<div>     <h1>Dashboard</h1>     <div data-field=\\\"container\\\"></div>     <div class=\\\"mt-4\\\">         <h3>Tasks List</h3>         <div data-field=\\\"taskList\\\"></div>     </div>     <div class=\\\"mt-4\\\">         <h3>Users Table</h3>         <div data-field=\\\"userTable\\\"></div>     </div> </div> ";
         $root.innerHTML = var$4;
-        $target.$element0 = $root;
+        $target.$element2 = $root;
         $el_container = null;
         $el_taskList = null;
         $el_userTable = null;
@@ -3360,17 +3675,17 @@
                 var$12 = (-1);
                 switch ($key.$hashCode()) {
                     case -410956671:
-                        if (!$key.$equals($rt_s(39)))
+                        if (!$key.$equals($rt_s(47)))
                             break a;
                         var$12 = 0;
                         break a;
                     case -410382397:
-                        if (!$key.$equals($rt_s(40)))
+                        if (!$key.$equals($rt_s(48)))
                             break a;
                         var$12 = 1;
                         break a;
                     case 328795843:
-                        if (!$key.$equals($rt_s(41)))
+                        if (!$key.$equals($rt_s(49)))
                             break a;
                         var$12 = 2;
                         break a;
@@ -3420,12 +3735,70 @@
         $root.appendChild($fragment);
         return $root;
     }
+    function ucitm_MaterialMenu() {
+        var a = this; ucitm_MaterialWidget.call(a);
+        a.$list = null;
+        a.$instance0 = null;
+    }
+    function ucitm_MaterialMenu__init_() {
+        var var_0 = new ucitm_MaterialMenu();
+        ucitm_MaterialMenu__init_0(var_0);
+        return var_0;
+    }
+    function ucitm_MaterialMenu__init_0($this) {
+        var var$1, var$2;
+        ucitm_MaterialWidget__init_($this);
+        $this.$element0 = $rt_globals.window.document.createElement("div");
+        var$1 = $this.$element0;
+        var$2 = "mdc-menu mdc-menu-surface";
+        var$1.className = var$2;
+        $this.$list = $rt_globals.window.document.createElement("ul");
+        var$1 = $this.$list;
+        var$2 = "mdc-list";
+        var$1.className = var$2;
+        $this.$list.setAttribute("role", "menu");
+        $this.$list.setAttribute("aria-hidden", "true");
+        $this.$list.setAttribute("aria-orientation", "vertical");
+        $this.$list.setAttribute("tabindex", "-1");
+        var$1 = $this.$element0;
+        var$2 = $this.$list;
+        var$1.appendChild(var$2);
+    }
+    function ucitm_MaterialMenu_addItem($this, $text, $listener) {
+        var $item, var$4, $ripple, $textSpan;
+        $item = $rt_globals.window.document.createElement("li");
+        var$4 = "mdc-list-item";
+        $item.className = var$4;
+        $item.setAttribute("role", "menuitem");
+        $ripple = $rt_globals.window.document.createElement("span");
+        var$4 = "mdc-list-item__ripple";
+        $ripple.className = var$4;
+        $item.appendChild($ripple);
+        $textSpan = $rt_globals.window.document.createElement("span");
+        var$4 = "mdc-list-item__text";
+        $textSpan.className = var$4;
+        var$4 = $rt_ustr($text);
+        $textSpan.innerText = var$4;
+        $item.appendChild($textSpan);
+        if ($listener !== null)
+            $item.addEventListener("click", otji_JS_function($listener, "handleEvent"));
+        $this.$list.appendChild($item);
+    }
+    function ucitm_MaterialMenu_ensureInstance($this) {
+        if ($this.$instance0 === null)
+            $this.$instance0 = ucitm_MaterialMenu$MDCMenu_attachTo$js_body$_1($this.$element0);
+    }
+    function ucitm_MaterialMenu_setAnchor($this, $anchor) {
+        ucitm_MaterialMenu_ensureInstance($this);
+        if ($this.$instance0 !== null)
+            $this.$instance0.setAnchorElement($anchor);
+    }
     function ucits_DashboardPage() {
         var a = this; jl_Object.call(a);
-        a.$navigation2 = null;
+        a.$navigation3 = null;
         a.$service = null;
         a.$username = null;
-        a.$element0 = null;
+        a.$element2 = null;
         a.$container = null;
         a.$taskList = null;
         a.$userTable = null;
@@ -3443,41 +3816,41 @@
         var$1 = $this.$container.$element;
         var$2 = "";
         var$1.innerText = var$2;
-        $this.$taskList.$setValue(null);
+        $this.$taskList.$setValue1(null);
         $this.$userTable.$clearBody();
-        $navbar = ucitw_Navbar__init_();
-        $navbar.$setBrand($rt_s(42));
+        $navbar = ucitb_Navbar__init_();
+        $navbar.$setBrand($rt_s(50));
         $navbar.$setSticky(1);
-        $navbar.$addLink($rt_s(43), ucits_DashboardPage$onShow$lambda$_1_0__init_());
-        $navbar.$addLink($rt_s(44), ucits_DashboardPage$onShow$lambda$_1_1__init_($this));
+        $navbar.$addLink($rt_s(51), ucits_DashboardPage$onShow$lambda$_1_0__init_());
+        $navbar.$addLink($rt_s(52), ucits_DashboardPage$onShow$lambda$_1_1__init_($this));
         var$2 = $this.$container.$element;
         var$1 = $navbar.$element;
         var$2.appendChild(var$1);
-        $row = ucitw_Row__init_();
+        $row = ucitb_Row__init_();
         var$2 = $this.$container.$element;
         var$1 = $row.$element;
         var$2.appendChild(var$1);
-        $col1 = (ucitw_Column__init_()).$span(6);
+        $col1 = (ucitb_Column__init_()).$span(6);
         var$2 = $row.$element;
         var$1 = $col1.$element;
         var$2.appendChild(var$1);
-        $card = ucitw_Card__init_();
-        var$2 = $this.$username === null ? $rt_s(45) : $this.$username;
+        $card = ucitb_Card__init_();
+        var$2 = $this.$username === null ? $rt_s(53) : $this.$username;
         var$1 = jl_StringBuilder__init_();
-        jl_StringBuilder_append(jl_StringBuilder_append(var$1, $rt_s(46)), var$2);
+        jl_StringBuilder_append(jl_StringBuilder_append(var$1, $rt_s(54)), var$2);
         $card.$setTitle(jl_StringBuilder_toString(var$1));
         $card.$setText($this.$service.$getGreeting());
         var$2 = $col1.$element;
         var$1 = $card.$element;
         var$2.appendChild(var$1);
-        $profileBtn = ucitw_Button__init_();
-        $profileBtn.$setText($rt_s(47));
-        ucitw_Button$Type_$callClinit();
-        $profileBtn.$setType(ucitw_Button$Type_PRIMARY);
+        $profileBtn = ucitb_Button__init_();
+        $profileBtn.$setText($rt_s(55));
+        ucitb_Button$Type_$callClinit();
+        $profileBtn.$setType(ucitb_Button$Type_PRIMARY);
         $profileBtn.$addClickListener(ucits_DashboardPage$onShow$lambda$_1_2__init_($this));
         $card.$addContent($profileBtn);
-        $r1 = ucitw_RadioButton__init_($rt_s(48), $rt_s(49));
-        $r2 = ucitw_RadioButton__init_($rt_s(48), $rt_s(50));
+        $r1 = ucitb_RadioButton__init_($rt_s(56), $rt_s(57));
+        $r2 = ucitb_RadioButton__init_($rt_s(56), $rt_s(58));
         $r1.$addChangeHandler(ucits_DashboardPage$onShow$lambda$_1_3__init_());
         $r2.$addChangeHandler(ucits_DashboardPage$onShow$lambda$_1_4__init_());
         var$2 = $col1.$element;
@@ -3486,79 +3859,79 @@
         var$2 = $col1.$element;
         var$1 = $r2.$element;
         var$2.appendChild(var$1);
-        $col2 = (ucitw_Column__init_()).$span(6);
+        $col2 = (ucitb_Column__init_()).$span(6);
         var$2 = $row.$element;
         var$1 = $col2.$element;
         var$2.appendChild(var$1);
-        $alert = ucitw_Alert__init_();
-        ucitw_Alert$Type_$callClinit();
-        $alert.$setType0(ucitw_Alert$Type_INFO);
-        $alert.$setText($rt_s(51));
+        $alert = ucitb_Alert__init_();
+        ucitb_Alert$Type_$callClinit();
+        $alert.$setType0(ucitb_Alert$Type_INFO);
+        $alert.$setText($rt_s(59));
         var$2 = $col2.$element;
         var$1 = $alert.$element;
         var$2.appendChild(var$1);
-        $logoutBtn = ucitw_Button__init_();
-        $logoutBtn.$setText($rt_s(52));
-        $logoutBtn.$setType(ucitw_Button$Type_DANGER);
+        $logoutBtn = ucitb_Button__init_();
+        $logoutBtn.$setText($rt_s(60));
+        $logoutBtn.$setType(ucitb_Button$Type_DANGER);
         $logoutBtn.$addClickListener(ucits_DashboardPage$onShow$lambda$_1_5__init_($this));
         var$1 = $col2.$element;
         var$13 = $logoutBtn.$element;
         var$1.appendChild(var$13);
-        $slider = ucitw_Slider__init_();
+        $slider = ucitb_Slider__init_();
         $slider.$setMin(0);
         $slider.$setMax(100);
-        $slider.$setValue0(50);
+        $slider.$setValue2(50);
         $slider.$addChangeHandler(ucits_DashboardPage$onShow$lambda$_1_6__init_($alert, $slider));
         var$1 = $col2.$element;
         var$13 = $slider.$element;
         var$1.appendChild(var$13);
-        $toggle = ucitw_Switch__init_($rt_s(53));
+        $toggle = ucitb_Switch__init_($rt_s(61));
         $toggle.$addChangeHandler(ucits_DashboardPage$onShow$lambda$_1_7__init_($alert, $toggle));
         var$2 = $col2.$element;
         var$1 = $toggle.$element;
         var$2.appendChild(var$1);
-        $agree = ucitw_Checkbox__init_($rt_s(54));
+        $agree = ucitb_Checkbox__init_($rt_s(62));
         $agree.$addChangeHandler(ucits_DashboardPage$onShow$lambda$_1_8__init_($agree, $logoutBtn));
         var$2 = $col2.$element;
         var$1 = $agree.$element;
         var$2.appendChild(var$1);
         $tasks = ju_ArrayList__init_();
-        $tasks.$add(ucits_Task__init_($rt_s(55), 0));
-        $tasks.$add(ucits_Task__init_($rt_s(56), 1));
-        $tasks.$add(ucits_Task__init_($rt_s(57), 0));
-        $this.$taskList.$setValue($tasks);
-        $this.$userTable.$setHeaders($rt_createArrayFromData(jl_String, [$rt_s(58), $rt_s(59), $rt_s(60), $rt_s(61)]));
-        $this.$userTable.$addRow($rt_createArrayFromData(jl_String, [$rt_s(62), $rt_s(63), $rt_s(64), $rt_s(65)]));
-        $this.$userTable.$addRow($rt_createArrayFromData(jl_String, [$rt_s(66), $rt_s(67), $rt_s(68), $rt_s(69)]));
-        $this.$userTable.$addRow($rt_createArrayFromData(jl_String, [$rt_s(70), $rt_s(71), $rt_s(72), $rt_s(65)]));
+        $tasks.$add(ucits_Task__init_($rt_s(63), 0));
+        $tasks.$add(ucits_Task__init_($rt_s(64), 1));
+        $tasks.$add(ucits_Task__init_($rt_s(65), 0));
+        $this.$taskList.$setValue1($tasks);
+        $this.$userTable.$setHeaders($rt_createArrayFromData(jl_String, [$rt_s(66), $rt_s(67), $rt_s(68), $rt_s(69)]));
+        $this.$userTable.$addRow($rt_createArrayFromData(jl_String, [$rt_s(70), $rt_s(71), $rt_s(72), $rt_s(73)]));
+        $this.$userTable.$addRow($rt_createArrayFromData(jl_String, [$rt_s(74), $rt_s(75), $rt_s(76), $rt_s(77)]));
+        $this.$userTable.$addRow($rt_createArrayFromData(jl_String, [$rt_s(78), $rt_s(79), $rt_s(80), $rt_s(73)]));
     }
     function ucits_DashboardPage_lambda$onShow$8($agree, $logoutBtn, $e) {
         if (!($agree.$getValue0()).$booleanValue()) {
-            ucitw_Button$Type_$callClinit();
-            $logoutBtn.$setType(ucitw_Button$Type_WARNING);
-            $logoutBtn.$setText($rt_s(73));
+            ucitb_Button$Type_$callClinit();
+            $logoutBtn.$setType(ucitb_Button$Type_WARNING);
+            $logoutBtn.$setText($rt_s(81));
         } else {
-            ucitw_Button$Type_$callClinit();
-            $logoutBtn.$setType(ucitw_Button$Type_DANGER);
-            $logoutBtn.$setText($rt_s(74));
+            ucitb_Button$Type_$callClinit();
+            $logoutBtn.$setType(ucitb_Button$Type_DANGER);
+            $logoutBtn.$setText($rt_s(82));
         }
     }
     function ucits_DashboardPage_lambda$onShow$7($alert, $toggle, $e) {
         var var$4, var$5;
-        var$4 = !$toggle.$isChecked() ? $rt_s(75) : $rt_s(76);
+        var$4 = !$toggle.$isChecked() ? $rt_s(83) : $rt_s(84);
         var$5 = jl_StringBuilder__init_();
-        jl_StringBuilder_append(jl_StringBuilder_append(var$5, $rt_s(77)), var$4);
+        jl_StringBuilder_append(jl_StringBuilder_append(var$5, $rt_s(85)), var$4);
         $alert.$setText(jl_StringBuilder_toString(var$5));
     }
     function ucits_DashboardPage_lambda$onShow$6($alert, $slider, $e) {
         var var$4, var$5;
         var$4 = $slider.$getValue1();
         var$5 = jl_StringBuilder__init_();
-        jl_StringBuilder_append(jl_StringBuilder_append(var$5, $rt_s(78)), var$4);
+        jl_StringBuilder_append(jl_StringBuilder_append(var$5, $rt_s(86)), var$4);
         $alert.$setText(jl_StringBuilder_toString(var$5));
     }
     function ucits_DashboardPage_lambda$onShow$5($this, $e) {
-        $this.$navigation2.$goTo0($rt_s(15));
+        $this.$navigation3.$goTo0($rt_s(31));
     }
     function ucits_DashboardPage_lambda$onShow$4($e) {
         $rt_globals.alert("Selected: Option B");
@@ -3569,15 +3942,15 @@
     function ucits_DashboardPage_lambda$onShow$2($this, $e) {
         var $params;
         $params = ju_HashMap__init_();
-        $params.$put($rt_s(18), $rt_s(79));
-        $params.$put($rt_s(19), $rt_s(80));
-        $this.$navigation2.$goTo($rt_s(14), $params);
+        $params.$put($rt_s(34), $rt_s(87));
+        $params.$put($rt_s(35), $rt_s(24));
+        $this.$navigation3.$goTo($rt_s(30), $params);
     }
     function ucits_DashboardPage_lambda$onShow$1($this, $e) {
         var $params;
         $params = ju_HashMap__init_();
-        $params.$put($rt_s(18), $rt_s(79));
-        $this.$navigation2.$goTo($rt_s(14), $params);
+        $params.$put($rt_s(34), $rt_s(87));
+        $this.$navigation3.$goTo($rt_s(30), $params);
     }
     function ucits_DashboardPage_lambda$onShow$0($e) {
         $rt_globals.alert("Home clicked");
@@ -3586,7 +3959,7 @@
     function otci_IntegerUtil_toUnsignedLogRadixString($value, $radixLog2) {
         var $radix, $mask, $sz, $chars, $pos, $target, var$9, $target_0;
         if (!$value)
-            return $rt_s(81);
+            return $rt_s(88);
         $radix = 1 << $radixLog2;
         $mask = $radix - 1 | 0;
         $sz = (((32 - jl_Integer_numberOfLeadingZeros($value) | 0) + $radixLog2 | 0) - 1 | 0) / $radixLog2 | 0;
@@ -3602,51 +3975,13 @@
         }
         return jl_String__init_($chars);
     }
-    function ucitw_Checkbox() {
-        var a = this; ucitw_Widget.call(a);
-        a.$input = null;
-        a.$label = null;
-    }
-    function ucitw_Checkbox__init_(var_0) {
-        var var_1 = new ucitw_Checkbox();
-        ucitw_Checkbox__init_0(var_1, var_0);
-        return var_1;
-    }
-    function ucitw_Checkbox__init_0($this, $labelText) {
-        var var$2, var$3, var$4;
-        ucitw_Widget__init_($this);
-        $this.$element = $rt_globals.window.document.createElement("div");
-        var$2 = $this.$element;
-        var$3 = "form-check";
-        var$2.className = var$3;
-        $this.$input = $rt_globals.window.document.createElement("input");
-        var$2 = $this.$input;
-        var$4 = "form-check-input";
-        var$2.className = var$4;
-        var$2 = $this.$input;
-        var$3 = "checkbox";
-        var$2.type = var$3;
-        var$2 = $this.$element;
-        var$3 = $this.$input;
-        var$2.appendChild(var$3);
-        $this.$label = $rt_globals.window.document.createElement("label");
-        var$2 = $this.$label;
-        var$3 = "form-check-label";
-        var$2.className = var$3;
-        var$2 = $this.$label;
-        var$3 = $rt_ustr($labelText);
-        var$2.innerText = var$3;
-        var$2 = $this.$element;
-        var$3 = $this.$label;
-        var$2.appendChild(var$3);
-    }
-    function ucitw_Checkbox_getValue($this) {
-        return jl_Boolean_valueOf($this.$input.checked ? 1 : 0);
-    }
-    function ucitw_Checkbox_addChangeHandler($this, $listener) {
-        $this.$input.addEventListener("change", otji_JS_function($listener, "handleEvent"));
-    }
     var jl_Math = $rt_classWithoutFields();
+    function jl_Math_random() {
+        return jl_Math_randomImpl();
+    }
+    function jl_Math_randomImpl() {
+        return Math.random();
+    }
     function jl_Math_min($a, $b) {
         if ($a < $b)
             $b = $a;
@@ -3656,6 +3991,15 @@
         if ($a > $b)
             $b = $a;
         return $b;
+    }
+    var ucitm_MaterialDrawer_Factory = $rt_classWithoutFields();
+    function ucitm_MaterialDrawer_Factory_getInstance() {
+        return ucitm_MaterialDrawer_Factory_createInstance();
+    }
+    function ucitm_MaterialDrawer_Factory_createInstance() {
+        var $bean;
+        $bean = ucitm_MaterialDrawer__init_();
+        return $bean;
     }
     var otjc_JSWeakMap = $rt_classWithoutFields();
     function ju_HashMap$HashMapEntrySet() {
@@ -3674,6 +4018,50 @@
     function ju_HashMap$HashMapEntrySet_iterator($this) {
         return ju_HashMap$EntryIterator__init_($this.$associatedMap0);
     }
+    function ucitb_Checkbox() {
+        var a = this; ucitb_Widget.call(a);
+        a.$input1 = null;
+        a.$label1 = null;
+    }
+    function ucitb_Checkbox__init_(var_0) {
+        var var_1 = new ucitb_Checkbox();
+        ucitb_Checkbox__init_0(var_1, var_0);
+        return var_1;
+    }
+    function ucitb_Checkbox__init_0($this, $labelText) {
+        var var$2, var$3, var$4;
+        ucitb_Widget__init_($this);
+        $this.$element = $rt_globals.window.document.createElement("div");
+        var$2 = $this.$element;
+        var$3 = "form-check";
+        var$2.className = var$3;
+        $this.$input1 = $rt_globals.window.document.createElement("input");
+        var$2 = $this.$input1;
+        var$4 = "form-check-input";
+        var$2.className = var$4;
+        var$2 = $this.$input1;
+        var$3 = "checkbox";
+        var$2.type = var$3;
+        var$2 = $this.$element;
+        var$3 = $this.$input1;
+        var$2.appendChild(var$3);
+        $this.$label1 = $rt_globals.window.document.createElement("label");
+        var$2 = $this.$label1;
+        var$3 = "form-check-label";
+        var$2.className = var$3;
+        var$2 = $this.$label1;
+        var$3 = $rt_ustr($labelText);
+        var$2.innerText = var$3;
+        var$2 = $this.$element;
+        var$3 = $this.$label1;
+        var$2.appendChild(var$3);
+    }
+    function ucitb_Checkbox_getValue($this) {
+        return jl_Boolean_valueOf($this.$input1.checked ? 1 : 0);
+    }
+    function ucitb_Checkbox_addChangeHandler($this, $listener) {
+        $this.$input1.addEventListener("change", otji_JS_function($listener, "handleEvent"));
+    }
     var ucits_DashboardPage_Factory = $rt_classWithoutFields();
     function ucits_DashboardPage_Factory_getInstance() {
         return ucits_DashboardPage_Factory_createInstance();
@@ -3681,94 +4069,91 @@
     function ucits_DashboardPage_Factory_createInstance() {
         var $bean;
         $bean = ucits_DashboardPage__init_();
-        $bean.$navigation2 = uciti_NavigationImpl_Factory_getInstance();
+        $bean.$navigation3 = uciti_NavigationImpl_Factory_getInstance();
         $bean.$service = ucits_HelloService_Factory_getInstance();
-        $bean.$container = ucitw_Container__init_();
+        $bean.$container = ucitb_Container_Factory_getInstance();
         $bean.$taskList = ucits_TaskListWidget_Factory_getInstance();
-        $bean.$userTable = ucitw_TableWidget__init_();
+        $bean.$userTable = ucitb_TableWidget_Factory_getInstance();
         ucits_DashboardPage_Binder_bind($bean);
         return $bean;
     }
-    var otjc_JSObjects = $rt_classWithoutFields();
-    function ucitw_Navbar() {
-        var a = this; ucitw_Widget.call(a);
-        a.$container0 = null;
-        a.$brand = null;
-        a.$navList = null;
+    var ucitb_TableWidget_Factory = $rt_classWithoutFields();
+    function ucitb_TableWidget_Factory_getInstance() {
+        return ucitb_TableWidget_Factory_createInstance();
     }
-    function ucitw_Navbar__init_() {
-        var var_0 = new ucitw_Navbar();
-        ucitw_Navbar__init_0(var_0);
+    function ucitb_TableWidget_Factory_createInstance() {
+        var $bean;
+        $bean = ucitb_TableWidget__init_();
+        return $bean;
+    }
+    var ucits_MaterialDemoPage$onShow$lambda$_1_4 = $rt_classWithoutFields();
+    function ucits_MaterialDemoPage$onShow$lambda$_1_4__init_() {
+        var var_0 = new ucits_MaterialDemoPage$onShow$lambda$_1_4();
+        ucits_MaterialDemoPage$onShow$lambda$_1_4__init_0(var_0);
         return var_0;
     }
-    function ucitw_Navbar__init_0($this) {
-        var var$1, var$2, $collapse;
-        ucitw_Widget__init_($this);
-        $this.$element = $rt_globals.window.document.createElement("nav");
-        var$1 = $this.$element;
-        var$2 = "navbar navbar-expand-lg navbar-light bg-light";
-        var$1.className = var$2;
-        $this.$container0 = $rt_globals.window.document.createElement("div");
-        var$1 = $this.$container0;
-        var$2 = "container-fluid";
-        var$1.className = var$2;
-        var$1 = $this.$element;
-        var$2 = $this.$container0;
-        var$1.appendChild(var$2);
-        $this.$brand = $rt_globals.window.document.createElement("a");
-        var$1 = $this.$brand;
-        var$2 = "navbar-brand";
-        var$1.className = var$2;
-        $this.$brand.setAttribute("href", "#");
-        var$1 = $this.$container0;
-        var$2 = $this.$brand;
-        var$1.appendChild(var$2);
-        $collapse = $rt_globals.window.document.createElement("div");
-        var$1 = "collapse navbar-collapse";
-        $collapse.className = var$1;
-        $this.$container0.appendChild($collapse);
-        $this.$navList = $rt_globals.window.document.createElement("ul");
-        var$1 = $this.$navList;
-        var$2 = "navbar-nav me-auto mb-2 mb-lg-0";
-        var$1.className = var$2;
-        var$1 = $this.$navList;
-        $collapse.appendChild(var$1);
+    function ucits_MaterialDemoPage$onShow$lambda$_1_4__init_0(var$0) {
+        jl_Object__init_0(var$0);
     }
-    function ucitw_Navbar_setBrand($this, $text) {
+    function ucits_MaterialDemoPage$onShow$lambda$_1_4_handleEvent(var$0, var$1) {
+        ucits_MaterialDemoPage_lambda$onShow$4(var$1);
+    }
+    function ucits_MaterialDemoPage$onShow$lambda$_1_4_handleEvent$exported$0(var$0, var$1) {
+        var$0.$handleEvent(var$1);
+    }
+    var otjc_JSObjects = $rt_classWithoutFields();
+    var ucits_MaterialDemoPage$onShow$lambda$_1_3 = $rt_classWithoutFields();
+    function ucits_MaterialDemoPage$onShow$lambda$_1_3__init_() {
+        var var_0 = new ucits_MaterialDemoPage$onShow$lambda$_1_3();
+        ucits_MaterialDemoPage$onShow$lambda$_1_3__init_0(var_0);
+        return var_0;
+    }
+    function ucits_MaterialDemoPage$onShow$lambda$_1_3__init_0(var$0) {
+        jl_Object__init_0(var$0);
+    }
+    function ucits_MaterialDemoPage$onShow$lambda$_1_3_handleEvent(var$0, var$1) {
+        ucits_MaterialDemoPage_lambda$onShow$3(var$1);
+    }
+    function ucits_MaterialDemoPage$onShow$lambda$_1_3_handleEvent$exported$0(var$0, var$1) {
+        var$0.$handleEvent(var$1);
+    }
+    var ucits_MaterialDemoPage$onShow$lambda$_1_5 = $rt_classWithoutFields();
+    function ucits_MaterialDemoPage$onShow$lambda$_1_5__init_() {
+        var var_0 = new ucits_MaterialDemoPage$onShow$lambda$_1_5();
+        ucits_MaterialDemoPage$onShow$lambda$_1_5__init_0(var_0);
+        return var_0;
+    }
+    function ucits_MaterialDemoPage$onShow$lambda$_1_5__init_0(var$0) {
+        jl_Object__init_0(var$0);
+    }
+    function ucits_MaterialDemoPage$onShow$lambda$_1_5_handleEvent(var$0, var$1) {
+        ucits_MaterialDemoPage_lambda$onShow$5(var$1);
+    }
+    function ucits_MaterialDemoPage$onShow$lambda$_1_5_handleEvent$exported$0(var$0, var$1) {
+        var$0.$handleEvent(var$1);
+    }
+    var ucitb_Column = $rt_classWithoutFields(ucitb_Widget);
+    function ucitb_Column__init_() {
+        var var_0 = new ucitb_Column();
+        ucitb_Column__init_0(var_0);
+        return var_0;
+    }
+    function ucitb_Column__init_0($this) {
+        var var$1, var$2;
+        ucitb_Widget__init_($this);
+        $this.$element = $rt_globals.window.document.createElement("div");
+        var$1 = $this.$element;
+        var$2 = "col";
+        var$1.className = var$2;
+    }
+    function ucitb_Column_span($this, $size) {
         var var$2, var$3;
-        var$2 = $this.$brand;
-        var$3 = $rt_ustr($text);
-        var$2.innerText = var$3;
-    }
-    function ucitw_Navbar_setSticky($this, $sticky) {
-        var var$2, var$3, var$4;
-        if (!$sticky) {
-            var$2 = $this.$element;
-            var$3 = $rt_ustr($rt_str($this.$element.className).$replace($rt_s(82), $rt_s(83)));
-            var$2.className = var$3;
-        } else {
-            var$2 = $this.$element;
-            var$3 = $rt_str($this.$element.className);
-            var$4 = jl_StringBuilder__init_();
-            jl_StringBuilder_append(jl_StringBuilder_append(var$4, var$3), $rt_s(82));
-            var$3 = $rt_ustr(jl_StringBuilder_toString(var$4));
-            var$2.className = var$3;
-        }
-    }
-    function ucitw_Navbar_addLink($this, $text, $handler) {
-        var $li, var$4, $a;
-        $li = $rt_globals.window.document.createElement("li");
-        var$4 = "nav-item";
-        $li.className = var$4;
-        $a = $rt_globals.window.document.createElement("a");
-        var$4 = "nav-link";
-        $a.className = var$4;
-        var$4 = $rt_ustr($text);
-        $a.innerText = var$4;
-        $a.setAttribute("href", "#");
-        $a.addEventListener("click", otji_JS_function($handler, "handleEvent"));
-        $li.appendChild($a);
-        $this.$navList.appendChild($li);
+        var$2 = $this.$element;
+        var$3 = jl_StringBuilder__init_();
+        jl_StringBuilder_append1(jl_StringBuilder_append(var$3, $rt_s(89)), $size);
+        var$3 = $rt_ustr(jl_StringBuilder_toString(var$3));
+        var$2.className = var$3;
+        return $this;
     }
     var otji_JS = $rt_classWithoutFields();
     function otji_JS_function(var$1, var$2) {
@@ -3798,6 +4183,45 @@
         }
         return uciti_NavigationImpl_Factory_instance;
     }
+    function ucitb_Alert$Type() {
+        jl_Enum.call(this);
+        this.$cssClass0 = null;
+    }
+    var ucitb_Alert$Type_PRIMARY = null;
+    var ucitb_Alert$Type_SUCCESS = null;
+    var ucitb_Alert$Type_DANGER = null;
+    var ucitb_Alert$Type_WARNING = null;
+    var ucitb_Alert$Type_INFO = null;
+    var ucitb_Alert$Type_$VALUES = null;
+    function ucitb_Alert$Type_$callClinit() {
+        ucitb_Alert$Type_$callClinit = $rt_eraseClinit(ucitb_Alert$Type);
+        ucitb_Alert$Type__clinit_();
+    }
+    function ucitb_Alert$Type__init_(var_0, var_1, var_2) {
+        var var_3 = new ucitb_Alert$Type();
+        ucitb_Alert$Type__init_0(var_3, var_0, var_1, var_2);
+        return var_3;
+    }
+    function ucitb_Alert$Type__init_0($this, var$1, var$2, $cssClass) {
+        ucitb_Alert$Type_$callClinit();
+        jl_Enum__init_($this, var$1, var$2);
+        $this.$cssClass0 = $cssClass;
+    }
+    function ucitb_Alert$Type_getCssClass($this) {
+        return $this.$cssClass0;
+    }
+    function ucitb_Alert$Type_$values() {
+        ucitb_Alert$Type_$callClinit();
+        return $rt_createArrayFromData(ucitb_Alert$Type, [ucitb_Alert$Type_PRIMARY, ucitb_Alert$Type_SUCCESS, ucitb_Alert$Type_DANGER, ucitb_Alert$Type_WARNING, ucitb_Alert$Type_INFO]);
+    }
+    function ucitb_Alert$Type__clinit_() {
+        ucitb_Alert$Type_PRIMARY = ucitb_Alert$Type__init_($rt_s(8), 0, $rt_s(90));
+        ucitb_Alert$Type_SUCCESS = ucitb_Alert$Type__init_($rt_s(10), 1, $rt_s(91));
+        ucitb_Alert$Type_DANGER = ucitb_Alert$Type__init_($rt_s(12), 2, $rt_s(92));
+        ucitb_Alert$Type_WARNING = ucitb_Alert$Type__init_($rt_s(14), 3, $rt_s(93));
+        ucitb_Alert$Type_INFO = ucitb_Alert$Type__init_($rt_s(16), 4, $rt_s(94));
+        ucitb_Alert$Type_$VALUES = ucitb_Alert$Type_$values();
+    }
     var otciu_UnicodeHelper = $rt_classWithoutFields();
     function otciu_UnicodeHelper_decodeIntPairsDiff($text) {
         var $flow, $sz, $data, $j, $lastKey, $lastValue, $i, var$9, var$10;
@@ -3820,9 +4244,18 @@
         }
         return $data;
     }
+    var ucitm_MaterialMenu_Factory = $rt_classWithoutFields();
+    function ucitm_MaterialMenu_Factory_getInstance() {
+        return ucitm_MaterialMenu_Factory_createInstance();
+    }
+    function ucitm_MaterialMenu_Factory_createInstance() {
+        var $bean;
+        $bean = ucitm_MaterialMenu__init_();
+        return $bean;
+    }
     var ju_Objects = $rt_classWithoutFields();
     function ju_Objects_requireNonNull($obj) {
-        return ju_Objects_requireNonNull0($obj, $rt_s(83));
+        return ju_Objects_requireNonNull0($obj, $rt_s(44));
     }
     function ju_Objects_requireNonNull0($obj, $message) {
         if ($obj !== null)
@@ -3866,7 +4299,7 @@
     }
     var jlr_Type = $rt_classWithoutFields(0);
     function ucits_TaskWidget() {
-        ucitw_Widget.call(this);
+        ucitb_Widget.call(this);
         this.$model = null;
     }
     function ucits_TaskWidget__init_() {
@@ -3876,7 +4309,7 @@
     }
     function ucits_TaskWidget__init_0($this) {
         var var$1, var$2;
-        ucitw_Widget__init_($this);
+        ucitb_Widget__init_($this);
         $this.$element = $rt_globals.window.document.createElement("div");
         var$1 = $this.$element;
         var$2 = "list-group-item";
@@ -3886,7 +4319,7 @@
         var var$2, var$3, var$4, var$5;
         $this.$model = $model;
         var$2 = $this.$element;
-        var$3 = !$model.$isCompleted() ? $rt_s(84) : $rt_s(85);
+        var$3 = !$model.$isCompleted() ? $rt_s(95) : $rt_s(96);
         var$4 = $model.$getTitle();
         var$5 = jl_StringBuilder__init_();
         jl_StringBuilder_append(jl_StringBuilder_append(var$5, var$3), var$4);
@@ -3896,6 +4329,116 @@
     function ucits_TaskWidget_setModel0($this, var$1) {
         $this.$setModel0(var$1);
     }
+    var ucits_MaterialDemoPage_Binder = $rt_classWithoutFields();
+    function ucits_MaterialDemoPage_Binder_bind($target) {
+        var $doc, $root, var$4, $el_drawer, $el_nameInput, $el_toggleButton, $el_fab, $el_menu, $candidates, $i, var$12, $key, var$14, $fragment, $widgetElement;
+        $doc = $rt_globals.window.document;
+        $root = $doc.createElement("div");
+        var$4 = "<div class=\\\"mdc-typography\\\">     <!-- Drawer -->     <aside data-field=\\\"drawer\\\"></aside>          <div class=\\\"mdc-drawer-app-content\\\">         <!-- App Bar -->         <header class=\\\"mdc-top-app-bar\\\">           <div class=\\\"mdc-top-app-bar__row\\\">             <section class=\\\"mdc-top-app-bar__section mdc-top-app-bar__section--align-start\\\">               <span class=\\\"mdc-top-app-bar__title\\\">Material Demo</span>             </section>           </div>         </header>                  <main class=\\\"mdc-top-app-bar--fixed-adjust\\\">             <div class=\\\"mdc-layout-grid\\\">               <div class=\\\"mdc-layout-grid__inner\\\">                 <div class=\\\"mdc-layout-grid__cell\\\">                     <h3>Controls</h3>                     <div data-field=\\\"toggleButton\\\"></div>                     <br><br>                     <div data-field=\\\"nameInput\\\"></div>                 </div>               </div>             </div>                          <!-- FAB -->             <div data-field=\\\"fab\\\" style=\\\"position: fixed; bottom: 2rem; right: 2rem;\\\"></div>                          <!-- Menu -->             <div data-field=\\\"menu\\\" style=\\\"position: fixed; bottom: 5rem; right: 2rem;\\\"></div>         </main>     </div> </div> ";
+        $root.innerHTML = var$4;
+        $target.$element1 = $root;
+        $el_drawer = null;
+        $el_nameInput = null;
+        $el_toggleButton = null;
+        $el_fab = null;
+        $el_menu = null;
+        $candidates = $root.querySelectorAll("[data-field]");
+        $i = 0;
+        while ($i < $candidates.length) {
+            a: {
+                var$12 = $candidates.item($i);
+                $key = $rt_str(var$12.getAttribute("data-field"));
+                var$14 = (-1);
+                switch ($key.$hashCode()) {
+                    case -1323763471:
+                        if (!$key.$equals($rt_s(97)))
+                            break a;
+                        var$14 = 1;
+                        break a;
+                    case 101127:
+                        if (!$key.$equals($rt_s(98)))
+                            break a;
+                        var$14 = 0;
+                        break a;
+                    case 3347807:
+                        if (!$key.$equals($rt_s(99)))
+                            break a;
+                        var$14 = 2;
+                        break a;
+                    case 634978214:
+                        if (!$key.$equals($rt_s(100)))
+                            break a;
+                        var$14 = 4;
+                        break a;
+                    case 1213385727:
+                        if (!$key.$equals($rt_s(101)))
+                            break a;
+                        var$14 = 3;
+                        break a;
+                    default:
+                }
+            }
+            b: {
+                switch (var$14) {
+                    case 0:
+                        break;
+                    case 1:
+                        $el_drawer = var$12;
+                        var$12 = $el_fab;
+                        break b;
+                    case 2:
+                        $el_menu = var$12;
+                        var$12 = $el_fab;
+                        break b;
+                    case 3:
+                        $el_nameInput = var$12;
+                        var$12 = $el_fab;
+                        break b;
+                    case 4:
+                        $el_toggleButton = var$12;
+                        var$12 = $el_fab;
+                        break b;
+                    default:
+                        var$12 = $el_fab;
+                        break b;
+                }
+            }
+            $i = $i + 1 | 0;
+            $el_fab = var$12;
+        }
+        $fragment = $doc.createDocumentFragment();
+        while ($root.hasChildNodes() ? 1 : 0) {
+            var$12 = $root.firstChild;
+            $fragment.appendChild(var$12);
+        }
+        if ($el_drawer !== null && $target.$drawer !== null) {
+            $widgetElement = $target.$drawer.$element0;
+            if ($widgetElement !== null)
+                $el_drawer.parentNode.replaceChild($widgetElement, $el_drawer);
+        }
+        if ($el_nameInput !== null && $target.$nameInput !== null) {
+            $widgetElement = $target.$nameInput.$element0;
+            if ($widgetElement !== null)
+                $el_nameInput.parentNode.replaceChild($widgetElement, $el_nameInput);
+        }
+        if ($el_toggleButton !== null && $target.$toggleButton !== null) {
+            $widgetElement = $target.$toggleButton.$element0;
+            if ($widgetElement !== null)
+                $el_toggleButton.parentNode.replaceChild($widgetElement, $el_toggleButton);
+        }
+        if ($el_fab !== null && $target.$fab !== null) {
+            $widgetElement = $target.$fab.$element0;
+            if ($widgetElement !== null)
+                $el_fab.parentNode.replaceChild($widgetElement, $el_fab);
+        }
+        if ($el_menu !== null && $target.$menu !== null) {
+            $widgetElement = $target.$menu.$element0;
+            if ($widgetElement !== null)
+                $el_menu.parentNode.replaceChild($widgetElement, $el_menu);
+        }
+        $root.appendChild($fragment);
+        return $root;
+    }
     var jl_ArrayStoreException = $rt_classWithoutFields(jl_RuntimeException);
     function jl_ArrayStoreException__init_() {
         var var_0 = new jl_ArrayStoreException();
@@ -3904,6 +4447,75 @@
     }
     function jl_ArrayStoreException__init_0($this) {
         jl_RuntimeException__init_1($this);
+    }
+    function ucitb_Card() {
+        var a = this; ucitb_Widget.call(a);
+        a.$body = null;
+        a.$title = null;
+        a.$text = null;
+    }
+    function ucitb_Card__init_() {
+        var var_0 = new ucitb_Card();
+        ucitb_Card__init_0(var_0);
+        return var_0;
+    }
+    function ucitb_Card__init_0($this) {
+        var var$1, var$2;
+        ucitb_Widget__init_($this);
+        $this.$element = $rt_globals.window.document.createElement("div");
+        var$1 = $this.$element;
+        var$2 = "card";
+        var$1.className = var$2;
+        $this.$body = $rt_globals.window.document.createElement("div");
+        var$1 = $this.$body;
+        var$2 = "card-body";
+        var$1.className = var$2;
+        var$1 = $this.$element;
+        var$2 = $this.$body;
+        var$1.appendChild(var$2);
+        $this.$title = $rt_globals.window.document.createElement("h5");
+        var$1 = $this.$title;
+        var$2 = "card-title";
+        var$1.className = var$2;
+        var$1 = $this.$body;
+        var$2 = $this.$title;
+        var$1.appendChild(var$2);
+        $this.$text = $rt_globals.window.document.createElement("p");
+        var$1 = $this.$text;
+        var$2 = "card-text";
+        var$1.className = var$2;
+        var$1 = $this.$body;
+        var$2 = $this.$text;
+        var$1.appendChild(var$2);
+    }
+    function ucitb_Card_setTitle($this, $titleStr) {
+        var var$2, var$3;
+        var$2 = $this.$title;
+        var$3 = $rt_ustr($titleStr);
+        var$2.innerText = var$3;
+    }
+    function ucitb_Card_setText($this, $textStr) {
+        var var$2, var$3;
+        var$2 = $this.$text;
+        var$3 = $rt_ustr($textStr);
+        var$2.innerText = var$3;
+    }
+    function ucitb_Card_addContent($this, $widget) {
+        var var$2, var$3;
+        if ($widget.$element !== null) {
+            var$2 = $this.$body;
+            var$3 = $widget.$element;
+            var$2.appendChild(var$3);
+        }
+    }
+    var ucitm_MaterialButton_Factory = $rt_classWithoutFields();
+    function ucitm_MaterialButton_Factory_getInstance() {
+        return ucitm_MaterialButton_Factory_createInstance();
+    }
+    function ucitm_MaterialButton_Factory_createInstance() {
+        var $bean;
+        $bean = ucitm_MaterialButton__init_();
+        return $bean;
     }
     var ucits_HelloService = $rt_classWithoutFields();
     function ucits_HelloService__init_() {
@@ -3918,14 +4530,102 @@
         var var$1, var$2;
         var$1 = jl_System_currentTimeMillis();
         var$2 = jl_StringBuilder__init_();
-        jl_StringBuilder_append3(jl_StringBuilder_append(var$2, $rt_s(86)), var$1);
+        jl_StringBuilder_append3(jl_StringBuilder_append(var$2, $rt_s(102)), var$1);
         return jl_StringBuilder_toString(var$2);
+    }
+    function ucitb_Switch() {
+        var a = this; ucitb_Widget.call(a);
+        a.$input2 = null;
+        a.$label2 = null;
+    }
+    function ucitb_Switch__init_(var_0) {
+        var var_1 = new ucitb_Switch();
+        ucitb_Switch__init_0(var_1, var_0);
+        return var_1;
+    }
+    function ucitb_Switch__init_0($this, $labelText) {
+        var var$2, var$3, var$4;
+        ucitb_Widget__init_($this);
+        $this.$element = $rt_globals.window.document.createElement("div");
+        var$2 = $this.$element;
+        var$3 = "form-check form-switch";
+        var$2.className = var$3;
+        $this.$input2 = $rt_globals.window.document.createElement("input");
+        var$2 = $this.$input2;
+        var$4 = "form-check-input";
+        var$2.className = var$4;
+        var$2 = $this.$input2;
+        var$3 = "checkbox";
+        var$2.type = var$3;
+        var$2 = $this.$element;
+        var$3 = $this.$input2;
+        var$2.appendChild(var$3);
+        $this.$label2 = $rt_globals.window.document.createElement("label");
+        var$2 = $this.$label2;
+        var$3 = "form-check-label";
+        var$2.className = var$3;
+        var$2 = $this.$label2;
+        var$3 = $rt_ustr($labelText);
+        var$2.innerText = var$3;
+        var$2 = $this.$element;
+        var$3 = $this.$label2;
+        var$2.appendChild(var$3);
+    }
+    function ucitb_Switch_isChecked($this) {
+        return $this.$input2.checked ? 1 : 0;
+    }
+    function ucitb_Switch_addChangeHandler($this, $listener) {
+        $this.$input2.addEventListener("change", otji_JS_function($listener, "handleEvent"));
+    }
+    function ucitm_MaterialFAB() {
+        ucitm_MaterialWidget.call(this);
+        this.$icon = null;
+    }
+    function ucitm_MaterialFAB__init_() {
+        var var_0 = new ucitm_MaterialFAB();
+        ucitm_MaterialFAB__init_0(var_0);
+        return var_0;
+    }
+    function ucitm_MaterialFAB__init_1(var_0) {
+        var var_1 = new ucitm_MaterialFAB();
+        ucitm_MaterialFAB__init_2(var_1, var_0);
+        return var_1;
+    }
+    function ucitm_MaterialFAB__init_0($this) {
+        ucitm_MaterialFAB__init_2($this, $rt_s(103));
+    }
+    function ucitm_MaterialFAB__init_2($this, $iconClass) {
+        var var$2, var$3, $ripple;
+        ucitm_MaterialWidget__init_($this);
+        $this.$element0 = $rt_globals.window.document.createElement("button");
+        var$2 = $this.$element0;
+        var$3 = "mdc-fab";
+        var$2.className = var$3;
+        $this.$element0.setAttribute("aria-label", "Action");
+        $ripple = $rt_globals.window.document.createElement("div");
+        var$2 = "mdc-fab__ripple";
+        $ripple.className = var$2;
+        $this.$element0.appendChild($ripple);
+        $this.$icon = $rt_globals.window.document.createElement("span");
+        var$2 = $this.$icon;
+        var$3 = "mdc-fab__icon material-icons";
+        var$2.className = var$3;
+        var$2 = $this.$icon;
+        var$3 = $rt_ustr($iconClass);
+        var$2.innerText = var$3;
+        var$2 = $this.$element0;
+        var$3 = $this.$icon;
+        var$2.appendChild(var$3);
+        ucitm_MaterialFAB$MDCRipple_attachTo$js_body$_1($this.$element0);
+    }
+    function ucitm_MaterialFAB_addClickListener($this, $listener) {
+        $this.$element0.addEventListener("click", otji_JS_function($listener, "handleEvent"));
     }
     function ucits_LoginPage() {
         var a = this; jl_Object.call(a);
-        a.$navigation = null;
+        a.$navigation0 = null;
         a.$securityProvider = null;
-        a.$element2 = null;
+        a.$element4 = null;
         a.$loginBtn = null;
         a.$adminLoginBtn = null;
     }
@@ -3950,25 +4650,25 @@
         var var$2, var$3, $params;
         var$2 = $this.$securityProvider;
         var$3 = $rt_createArray(jl_String, 1);
-        var$3.data[0] = $rt_s(17);
+        var$3.data[0] = $rt_s(33);
         var$2.$setRoles(var$3);
         $params = ju_HashMap__init_();
-        $params.$put($rt_s(16), $rt_s(87));
-        $this.$navigation.$goTo($rt_s(13), $params);
+        $params.$put($rt_s(32), $rt_s(104));
+        $this.$navigation0.$goTo($rt_s(29), $params);
     }
     function ucits_LoginPage_lambda$onShow$0($this, $e) {
         var var$2, var$3, $params;
         var$2 = $this.$securityProvider;
         var$3 = $rt_createArray(jl_String, 1);
-        var$3.data[0] = $rt_s(88);
+        var$3.data[0] = $rt_s(105);
         var$2.$setRoles(var$3);
         $params = ju_HashMap__init_();
-        $params.$put($rt_s(16), $rt_s(89));
-        $this.$navigation.$goTo($rt_s(13), $params);
+        $params.$put($rt_s(32), $rt_s(106));
+        $this.$navigation0.$goTo($rt_s(29), $params);
     }
     function ucits_App() {
         jl_Object.call(this);
-        this.$navigation0 = null;
+        this.$navigation1 = null;
     }
     function ucits_App__init_() {
         var var_0 = new ucits_App();
@@ -3979,7 +4679,7 @@
         jl_Object__init_0($this);
     }
     function ucits_App_onModuleLoad($this) {
-        $this.$navigation0.$goTo0($rt_s(15));
+        $this.$navigation1.$goTo0($rt_s(31));
     }
     function ucits_App_main($args) {
         (ucits_BootstrapperImpl__init_()).$run();
@@ -4161,6 +4861,15 @@
     function ju_HashMap_areEqualKeys($key1, $key2) {
         return $key1 !== $key2 && !$key1.$equals($key2) ? 0 : 1;
     }
+    var ucitm_MaterialFAB_Factory = $rt_classWithoutFields();
+    function ucitm_MaterialFAB_Factory_getInstance() {
+        return ucitm_MaterialFAB_Factory_createInstance();
+    }
+    function ucitm_MaterialFAB_Factory_createInstance() {
+        var $bean;
+        $bean = ucitm_MaterialFAB__init_();
+        return $bean;
+    }
     function otji_JSWrapper() {
         jl_Object.call(this);
         this.$js = null;
@@ -4193,7 +4902,7 @@
             return null;
         $js = $o;
         $type = $rt_str(typeof $js);
-        $isObject = !$type.$equals($rt_s(90)) && !$type.$equals($rt_s(91)) ? 0 : 1;
+        $isObject = !$type.$equals($rt_s(107)) && !$type.$equals($rt_s(108)) ? 0 : 1;
         if ($isObject && $o[$rt_jso_marker] === true)
             return $o;
         if (otji_JSWrapper_wrappers !== null) {
@@ -4206,7 +4915,7 @@
                 otji_JSWrapper_wrappers.set($js, new $rt_globals.WeakRef($wrapper));
                 return $wrapper;
             }
-            if ($type.$equals($rt_s(92))) {
+            if ($type.$equals($rt_s(109))) {
                 $jsString = $js;
                 $existingRef = otji_JSWrapper_stringWrappers.get($jsString);
                 $existing = (typeof $existingRef === 'undefined' ? 1 : 0) ? void 0 : $existingRef.deref();
@@ -4218,7 +4927,7 @@
                 otji_JSWrapper_register$js_body$_4(otji_JSWrapper_stringFinalizationRegistry, $wrapperAsJs, $jsString);
                 return $wrapper;
             }
-            if ($type.$equals($rt_s(93))) {
+            if ($type.$equals($rt_s(110))) {
                 $jsNumber = $js;
                 $existingRef = otji_JSWrapper_numberWrappers.get($jsNumber);
                 $existing = (typeof $existingRef === 'undefined' ? 1 : 0) ? void 0 : $existingRef.deref();
@@ -4230,7 +4939,7 @@
                 otji_JSWrapper_register$js_body$_4(otji_JSWrapper_numberFinalizationRegistry, $wrapperAsJs, $jsNumber);
                 return $wrapper;
             }
-            if ($type.$equals($rt_s(94))) {
+            if ($type.$equals($rt_s(111))) {
                 $existingRef = otji_JSWrapper_undefinedWrapper;
                 $existing = $existingRef === null ? void 0 : $existingRef.deref();
                 if (!(typeof $existing === 'undefined' ? 1 : 0))
@@ -4292,6 +5001,11 @@
     function otji_JSWrapper_register$js_body$_4(var$1, var$2, var$3) {
         return var$1.register(var$2, var$3);
     }
+    var ucitm_MaterialTextField$MDCTextField = $rt_classWithoutFields();
+    function ucitm_MaterialTextField$MDCTextField_attachTo$js_body$_1(var$1) {
+        if (typeof $rt_globals.mdc !== 'undefined') return $rt_globals.mdc.textField.MDCTextField.attachTo(var$1);
+        return null;
+    }
     function ju_HashSet() {
         ju_AbstractSet.call(this);
         this.$backingMap = null;
@@ -4349,6 +5063,15 @@
     function otp_Platform_getName($cls) {
         return $rt_str($cls.$meta.name);
     }
+    var ucitm_MaterialTextField_Factory = $rt_classWithoutFields();
+    function ucitm_MaterialTextField_Factory_getInstance() {
+        return ucitm_MaterialTextField_Factory_createInstance();
+    }
+    function ucitm_MaterialTextField_Factory_createInstance() {
+        var $bean;
+        $bean = ucitm_MaterialTextField__init_();
+        return $bean;
+    }
     var ucits_TaskListWidget_Factory$createInstance$lambda$_2_0 = $rt_classWithoutFields();
     function ucits_TaskListWidget_Factory$createInstance$lambda$_2_0__init_() {
         var var_0 = new ucits_TaskListWidget_Factory$createInstance$lambda$_2_0();
@@ -4363,66 +5086,6 @@
     }
     function ucits_TaskListWidget_Factory$createInstance$lambda$_2_0_get0(var$0) {
         return ucits_TaskListWidget_Factory_lambda$createInstance$0();
-    }
-    function ucitw_Card() {
-        var a = this; ucitw_Widget.call(a);
-        a.$body = null;
-        a.$title = null;
-        a.$text = null;
-    }
-    function ucitw_Card__init_() {
-        var var_0 = new ucitw_Card();
-        ucitw_Card__init_0(var_0);
-        return var_0;
-    }
-    function ucitw_Card__init_0($this) {
-        var var$1, var$2;
-        ucitw_Widget__init_($this);
-        $this.$element = $rt_globals.window.document.createElement("div");
-        var$1 = $this.$element;
-        var$2 = "card";
-        var$1.className = var$2;
-        $this.$body = $rt_globals.window.document.createElement("div");
-        var$1 = $this.$body;
-        var$2 = "card-body";
-        var$1.className = var$2;
-        var$1 = $this.$element;
-        var$2 = $this.$body;
-        var$1.appendChild(var$2);
-        $this.$title = $rt_globals.window.document.createElement("h5");
-        var$1 = $this.$title;
-        var$2 = "card-title";
-        var$1.className = var$2;
-        var$1 = $this.$body;
-        var$2 = $this.$title;
-        var$1.appendChild(var$2);
-        $this.$text = $rt_globals.window.document.createElement("p");
-        var$1 = $this.$text;
-        var$2 = "card-text";
-        var$1.className = var$2;
-        var$1 = $this.$body;
-        var$2 = $this.$text;
-        var$1.appendChild(var$2);
-    }
-    function ucitw_Card_setTitle($this, $titleStr) {
-        var var$2, var$3;
-        var$2 = $this.$title;
-        var$3 = $rt_ustr($titleStr);
-        var$2.innerText = var$3;
-    }
-    function ucitw_Card_setText($this, $textStr) {
-        var var$2, var$3;
-        var$2 = $this.$text;
-        var$3 = $rt_ustr($textStr);
-        var$2.innerText = var$3;
-    }
-    function ucitw_Card_addContent($this, $widget) {
-        var var$2, var$3;
-        if ($widget.$element !== null) {
-            var$2 = $this.$body;
-            var$3 = $widget.$element;
-            var$2.appendChild(var$3);
-        }
     }
     function jl_Boolean() {
         jl_Object.call(this);
@@ -4457,20 +5120,6 @@
         jl_Boolean_FALSE = jl_Boolean__init_(0);
         jl_Boolean_TYPE = $rt_cls($rt_booleancls());
     }
-    var ucitw_Row = $rt_classWithoutFields(ucitw_Widget);
-    function ucitw_Row__init_() {
-        var var_0 = new ucitw_Row();
-        ucitw_Row__init_0(var_0);
-        return var_0;
-    }
-    function ucitw_Row__init_0($this) {
-        var var$1, var$2;
-        ucitw_Widget__init_($this);
-        $this.$element = $rt_globals.window.document.createElement("div");
-        var$1 = $this.$element;
-        var$2 = "row";
-        var$1.className = var$2;
-    }
     var jl_NoClassDefFoundError = $rt_classWithoutFields(jl_LinkageError);
     var ju_NoSuchElementException = $rt_classWithoutFields(jl_RuntimeException);
     function ju_NoSuchElementException__init_() {
@@ -4482,6 +5131,69 @@
         jl_RuntimeException__init_1($this);
     }
     var otjc_JSWeakRef = $rt_classWithoutFields();
+    var ucits_MaterialDemoPage$onShow$lambda$_1_0 = $rt_classWithoutFields();
+    function ucits_MaterialDemoPage$onShow$lambda$_1_0__init_() {
+        var var_0 = new ucits_MaterialDemoPage$onShow$lambda$_1_0();
+        ucits_MaterialDemoPage$onShow$lambda$_1_0__init_0(var_0);
+        return var_0;
+    }
+    function ucits_MaterialDemoPage$onShow$lambda$_1_0__init_0(var$0) {
+        jl_Object__init_0(var$0);
+    }
+    function ucits_MaterialDemoPage$onShow$lambda$_1_0_handleEvent(var$0, var$1) {
+        ucits_MaterialDemoPage_lambda$onShow$0(var$1);
+    }
+    function ucits_MaterialDemoPage$onShow$lambda$_1_0_handleEvent$exported$0(var$0, var$1) {
+        var$0.$handleEvent(var$1);
+    }
+    var ucitb_Row = $rt_classWithoutFields(ucitb_Widget);
+    function ucitb_Row__init_() {
+        var var_0 = new ucitb_Row();
+        ucitb_Row__init_0(var_0);
+        return var_0;
+    }
+    function ucitb_Row__init_0($this) {
+        var var$1, var$2;
+        ucitb_Widget__init_($this);
+        $this.$element = $rt_globals.window.document.createElement("div");
+        var$1 = $this.$element;
+        var$2 = "row";
+        var$1.className = var$2;
+    }
+    function ucits_MaterialDemoPage$onShow$lambda$_1_2() {
+        jl_Object.call(this);
+        this.$_08 = null;
+    }
+    function ucits_MaterialDemoPage$onShow$lambda$_1_2__init_(var_0) {
+        var var_1 = new ucits_MaterialDemoPage$onShow$lambda$_1_2();
+        ucits_MaterialDemoPage$onShow$lambda$_1_2__init_0(var_1, var_0);
+        return var_1;
+    }
+    function ucits_MaterialDemoPage$onShow$lambda$_1_2__init_0(var$0, var$1) {
+        jl_Object__init_0(var$0);
+        var$0.$_08 = var$1;
+    }
+    function ucits_MaterialDemoPage$onShow$lambda$_1_2_handleEvent(var$0, var$1) {
+        ucits_MaterialDemoPage_lambda$onShow$2(var$0.$_08, var$1);
+    }
+    function ucits_MaterialDemoPage$onShow$lambda$_1_2_handleEvent$exported$0(var$0, var$1) {
+        var$0.$handleEvent(var$1);
+    }
+    var ucits_MaterialDemoPage$onShow$lambda$_1_1 = $rt_classWithoutFields();
+    function ucits_MaterialDemoPage$onShow$lambda$_1_1__init_() {
+        var var_0 = new ucits_MaterialDemoPage$onShow$lambda$_1_1();
+        ucits_MaterialDemoPage$onShow$lambda$_1_1__init_0(var_0);
+        return var_0;
+    }
+    function ucits_MaterialDemoPage$onShow$lambda$_1_1__init_0(var$0) {
+        jl_Object__init_0(var$0);
+    }
+    function ucits_MaterialDemoPage$onShow$lambda$_1_1_handleEvent(var$0, var$1) {
+        ucits_MaterialDemoPage_lambda$onShow$1(var$1);
+    }
+    function ucits_MaterialDemoPage$onShow$lambda$_1_1_handleEvent$exported$0(var$0, var$1) {
+        var$0.$handleEvent(var$1);
+    }
     function otci_CharFlow() {
         var a = this; jl_Object.call(a);
         a.$characters0 = null;
@@ -4496,7 +5208,67 @@
         jl_Object__init_0($this);
         $this.$characters0 = $characters;
     }
+    var ucits_MaterialDemoPage_Factory = $rt_classWithoutFields();
+    function ucits_MaterialDemoPage_Factory_getInstance() {
+        return ucits_MaterialDemoPage_Factory_createInstance();
+    }
+    function ucits_MaterialDemoPage_Factory_createInstance() {
+        var $bean;
+        $bean = ucits_MaterialDemoPage__init_();
+        $bean.$navigation = uciti_NavigationImpl_Factory_getInstance();
+        $bean.$drawer = ucitm_MaterialDrawer_Factory_getInstance();
+        $bean.$nameInput = ucitm_MaterialTextField_Factory_getInstance();
+        $bean.$toggleButton = ucitm_MaterialButton_Factory_getInstance();
+        $bean.$fab = ucitm_MaterialFAB_Factory_getInstance();
+        $bean.$menu = ucitm_MaterialMenu_Factory_getInstance();
+        ucits_MaterialDemoPage_Binder_bind($bean);
+        return $bean;
+    }
     var otjc_JSFinalizationRegistry = $rt_classWithoutFields();
+    function ucitb_RadioButton() {
+        var a = this; ucitb_Widget.call(a);
+        a.$input3 = null;
+        a.$label3 = null;
+    }
+    function ucitb_RadioButton__init_(var_0, var_1) {
+        var var_2 = new ucitb_RadioButton();
+        ucitb_RadioButton__init_0(var_2, var_0, var_1);
+        return var_2;
+    }
+    function ucitb_RadioButton__init_0($this, $name, $labelText) {
+        var var$3, var$4, var$5;
+        ucitb_Widget__init_($this);
+        $this.$element = $rt_globals.window.document.createElement("div");
+        var$3 = $this.$element;
+        var$4 = "form-check";
+        var$3.className = var$4;
+        $this.$input3 = $rt_globals.window.document.createElement("input");
+        var$4 = $this.$input3;
+        var$3 = "form-check-input";
+        var$4.className = var$3;
+        var$5 = $this.$input3;
+        var$3 = "radio";
+        var$5.type = var$3;
+        var$5 = $this.$input3;
+        var$3 = $rt_ustr($name);
+        var$5.name = var$3;
+        var$4 = $this.$element;
+        var$5 = $this.$input3;
+        var$4.appendChild(var$5);
+        $this.$label3 = $rt_globals.window.document.createElement("label");
+        var$5 = $this.$label3;
+        var$3 = "form-check-label";
+        var$5.className = var$3;
+        var$3 = $this.$label3;
+        var$4 = $rt_ustr($labelText);
+        var$3.innerText = var$4;
+        var$3 = $this.$element;
+        var$4 = $this.$label3;
+        var$3.appendChild(var$4);
+    }
+    function ucitb_RadioButton_addChangeHandler($this, $listener) {
+        $this.$input3.addEventListener("change", otji_JS_function($listener, "handleEvent"));
+    }
     var ucits_TaskListWidget_Factory = $rt_classWithoutFields();
     function ucits_TaskListWidget_Factory_getInstance() {
         return ucits_TaskListWidget_Factory_createInstance();
@@ -4510,53 +5282,85 @@
     function ucits_TaskListWidget_Factory_lambda$createInstance$0() {
         return ucits_TaskWidget_Factory_getInstance();
     }
-    function ucitw_Slider() {
-        ucitw_Widget.call(this);
-        this.$input0 = null;
+    function ucitb_Navbar() {
+        var a = this; ucitb_Widget.call(a);
+        a.$container0 = null;
+        a.$brand = null;
+        a.$navList = null;
     }
-    function ucitw_Slider__init_() {
-        var var_0 = new ucitw_Slider();
-        ucitw_Slider__init_0(var_0);
+    function ucitb_Navbar__init_() {
+        var var_0 = new ucitb_Navbar();
+        ucitb_Navbar__init_0(var_0);
         return var_0;
     }
-    function ucitw_Slider__init_0($this) {
-        var var$1, var$2;
-        ucitw_Widget__init_($this);
-        $this.$element = $rt_globals.window.document.createElement("input");
-        $this.$input0 = $this.$element;
-        var$1 = $this.$input0;
-        var$2 = "range";
-        var$1.type = var$2;
+    function ucitb_Navbar__init_0($this) {
+        var var$1, var$2, $collapse;
+        ucitb_Widget__init_($this);
+        $this.$element = $rt_globals.window.document.createElement("nav");
         var$1 = $this.$element;
-        var$2 = "form-range";
+        var$2 = "navbar navbar-expand-lg navbar-light bg-light";
         var$1.className = var$2;
+        $this.$container0 = $rt_globals.window.document.createElement("div");
+        var$1 = $this.$container0;
+        var$2 = "container-fluid";
+        var$1.className = var$2;
+        var$1 = $this.$element;
+        var$2 = $this.$container0;
+        var$1.appendChild(var$2);
+        $this.$brand = $rt_globals.window.document.createElement("a");
+        var$1 = $this.$brand;
+        var$2 = "navbar-brand";
+        var$1.className = var$2;
+        $this.$brand.setAttribute("href", "#");
+        var$1 = $this.$container0;
+        var$2 = $this.$brand;
+        var$1.appendChild(var$2);
+        $collapse = $rt_globals.window.document.createElement("div");
+        var$1 = "collapse navbar-collapse";
+        $collapse.className = var$1;
+        $this.$container0.appendChild($collapse);
+        $this.$navList = $rt_globals.window.document.createElement("ul");
+        var$1 = $this.$navList;
+        var$2 = "navbar-nav me-auto mb-2 mb-lg-0";
+        var$1.className = var$2;
+        var$1 = $this.$navList;
+        $collapse.appendChild(var$1);
     }
-    function ucitw_Slider_setMin($this, $min) {
+    function ucitb_Navbar_setBrand($this, $text) {
         var var$2, var$3;
-        var$2 = $this.$input0;
-        var$3 = jl_String_valueOf($min);
-        var$2.setAttribute("min", $rt_ustr(var$3));
+        var$2 = $this.$brand;
+        var$3 = $rt_ustr($text);
+        var$2.innerText = var$3;
     }
-    function ucitw_Slider_setMax($this, $max) {
-        var var$2, var$3;
-        var$2 = $this.$input0;
-        var$3 = jl_String_valueOf($max);
-        var$2.setAttribute("max", $rt_ustr(var$3));
+    function ucitb_Navbar_setSticky($this, $sticky) {
+        var var$2, var$3, var$4;
+        if (!$sticky) {
+            var$2 = $this.$element;
+            var$3 = $rt_ustr($rt_str($this.$element.className).$replace($rt_s(112), $rt_s(44)));
+            var$2.className = var$3;
+        } else {
+            var$2 = $this.$element;
+            var$3 = $rt_str($this.$element.className);
+            var$4 = jl_StringBuilder__init_();
+            jl_StringBuilder_append(jl_StringBuilder_append(var$4, var$3), $rt_s(112));
+            var$3 = $rt_ustr(jl_StringBuilder_toString(var$4));
+            var$2.className = var$3;
+        }
     }
-    function ucitw_Slider_getValue($this) {
-        return jl_Integer_valueOf(jl_Integer_parseInt0($rt_str($this.$input0.value)));
-    }
-    function ucitw_Slider_setValue($this, $value) {
-        var var$2, var$3;
-        var$2 = $this.$input0;
-        var$3 = $rt_ustr(jl_String_valueOf($value === null ? 0 : $value.$intValue()));
-        var$2.value = var$3;
-    }
-    function ucitw_Slider_setValue0($this, $value) {
-        $this.$setValue1(jl_Integer_valueOf($value));
-    }
-    function ucitw_Slider_addChangeHandler($this, $listener) {
-        $this.$element.addEventListener("change", otji_JS_function($listener, "handleEvent"));
+    function ucitb_Navbar_addLink($this, $text, $handler) {
+        var $li, var$4, $a;
+        $li = $rt_globals.window.document.createElement("li");
+        var$4 = "nav-item";
+        $li.className = var$4;
+        $a = $rt_globals.window.document.createElement("a");
+        var$4 = "nav-link";
+        $a.className = var$4;
+        var$4 = $rt_ustr($text);
+        $a.innerText = var$4;
+        $a.setAttribute("href", "#");
+        $a.addEventListener("click", otji_JS_function($handler, "handleEvent"));
+        $li.appendChild($a);
+        $this.$navList.appendChild($li);
     }
     function ucits_Task() {
         var a = this; jl_Object.call(a);
@@ -4622,50 +5426,6 @@
     function jl_Class_getComponentType($this) {
         return jl_Class_getClass(otp_Platform_getArrayItem($this.$platformClass));
     }
-    function ucitw_Switch() {
-        var a = this; ucitw_Widget.call(a);
-        a.$input1 = null;
-        a.$label0 = null;
-    }
-    function ucitw_Switch__init_(var_0) {
-        var var_1 = new ucitw_Switch();
-        ucitw_Switch__init_0(var_1, var_0);
-        return var_1;
-    }
-    function ucitw_Switch__init_0($this, $labelText) {
-        var var$2, var$3, var$4;
-        ucitw_Widget__init_($this);
-        $this.$element = $rt_globals.window.document.createElement("div");
-        var$2 = $this.$element;
-        var$3 = "form-check form-switch";
-        var$2.className = var$3;
-        $this.$input1 = $rt_globals.window.document.createElement("input");
-        var$2 = $this.$input1;
-        var$4 = "form-check-input";
-        var$2.className = var$4;
-        var$2 = $this.$input1;
-        var$3 = "checkbox";
-        var$2.type = var$3;
-        var$2 = $this.$element;
-        var$3 = $this.$input1;
-        var$2.appendChild(var$3);
-        $this.$label0 = $rt_globals.window.document.createElement("label");
-        var$2 = $this.$label0;
-        var$3 = "form-check-label";
-        var$2.className = var$3;
-        var$2 = $this.$label0;
-        var$3 = $rt_ustr($labelText);
-        var$2.innerText = var$3;
-        var$2 = $this.$element;
-        var$3 = $this.$label0;
-        var$2.appendChild(var$3);
-    }
-    function ucitw_Switch_isChecked($this) {
-        return $this.$input1.checked ? 1 : 0;
-    }
-    function ucitw_Switch_addChangeHandler($this, $listener) {
-        $this.$input1.addEventListener("change", otji_JS_function($listener, "handleEvent"));
-    }
     var ju_HashMap$EntryIterator = $rt_classWithoutFields(ju_HashMap$AbstractMapIterator);
     function ju_HashMap$EntryIterator__init_(var_0) {
         var var_1 = new ju_HashMap$EntryIterator();
@@ -4682,50 +5442,6 @@
     function ju_HashMap$EntryIterator_next0($this) {
         return $this.$next1();
     }
-    function ucitw_RadioButton() {
-        var a = this; ucitw_Widget.call(a);
-        a.$input2 = null;
-        a.$label1 = null;
-    }
-    function ucitw_RadioButton__init_(var_0, var_1) {
-        var var_2 = new ucitw_RadioButton();
-        ucitw_RadioButton__init_0(var_2, var_0, var_1);
-        return var_2;
-    }
-    function ucitw_RadioButton__init_0($this, $name, $labelText) {
-        var var$3, var$4, var$5;
-        ucitw_Widget__init_($this);
-        $this.$element = $rt_globals.window.document.createElement("div");
-        var$3 = $this.$element;
-        var$4 = "form-check";
-        var$3.className = var$4;
-        $this.$input2 = $rt_globals.window.document.createElement("input");
-        var$4 = $this.$input2;
-        var$3 = "form-check-input";
-        var$4.className = var$3;
-        var$5 = $this.$input2;
-        var$3 = "radio";
-        var$5.type = var$3;
-        var$5 = $this.$input2;
-        var$3 = $rt_ustr($name);
-        var$5.name = var$3;
-        var$4 = $this.$element;
-        var$5 = $this.$input2;
-        var$4.appendChild(var$5);
-        $this.$label1 = $rt_globals.window.document.createElement("label");
-        var$5 = $this.$label1;
-        var$3 = "form-check-label";
-        var$5.className = var$3;
-        var$3 = $this.$label1;
-        var$4 = $rt_ustr($labelText);
-        var$3.innerText = var$4;
-        var$3 = $this.$element;
-        var$4 = $this.$label1;
-        var$3.appendChild(var$4);
-    }
-    function ucitw_RadioButton_addChangeHandler($this, $listener) {
-        $this.$input2.addEventListener("change", otji_JS_function($listener, "handleEvent"));
-    }
     var ucits_UserProfilePage_Factory = $rt_classWithoutFields();
     function ucits_UserProfilePage_Factory_getInstance() {
         return ucits_UserProfilePage_Factory_createInstance();
@@ -4733,7 +5449,7 @@
     function ucits_UserProfilePage_Factory_createInstance() {
         var $bean;
         $bean = ucits_UserProfilePage__init_();
-        $bean.$navigation1 = uciti_NavigationImpl_Factory_getInstance();
+        $bean.$navigation2 = uciti_NavigationImpl_Factory_getInstance();
         ucits_UserProfilePage_Binder_bind($bean);
         return $bean;
     }
@@ -4787,45 +5503,6 @@
         ju_Collections_EMPTY_LIST_ITERATOR = ju_Collections$5__init_();
         ju_Collections_reverseOrder = ju_Collections$_clinit_$lambda$_59_0__init_();
     }
-    function ucitw_Alert$Type() {
-        jl_Enum.call(this);
-        this.$cssClass0 = null;
-    }
-    var ucitw_Alert$Type_PRIMARY = null;
-    var ucitw_Alert$Type_SUCCESS = null;
-    var ucitw_Alert$Type_DANGER = null;
-    var ucitw_Alert$Type_WARNING = null;
-    var ucitw_Alert$Type_INFO = null;
-    var ucitw_Alert$Type_$VALUES = null;
-    function ucitw_Alert$Type_$callClinit() {
-        ucitw_Alert$Type_$callClinit = $rt_eraseClinit(ucitw_Alert$Type);
-        ucitw_Alert$Type__clinit_();
-    }
-    function ucitw_Alert$Type__init_(var_0, var_1, var_2) {
-        var var_3 = new ucitw_Alert$Type();
-        ucitw_Alert$Type__init_0(var_3, var_0, var_1, var_2);
-        return var_3;
-    }
-    function ucitw_Alert$Type__init_0($this, var$1, var$2, $cssClass) {
-        ucitw_Alert$Type_$callClinit();
-        jl_Enum__init_($this, var$1, var$2);
-        $this.$cssClass0 = $cssClass;
-    }
-    function ucitw_Alert$Type_getCssClass($this) {
-        return $this.$cssClass0;
-    }
-    function ucitw_Alert$Type_$values() {
-        ucitw_Alert$Type_$callClinit();
-        return $rt_createArrayFromData(ucitw_Alert$Type, [ucitw_Alert$Type_PRIMARY, ucitw_Alert$Type_SUCCESS, ucitw_Alert$Type_DANGER, ucitw_Alert$Type_WARNING, ucitw_Alert$Type_INFO]);
-    }
-    function ucitw_Alert$Type__clinit_() {
-        ucitw_Alert$Type_PRIMARY = ucitw_Alert$Type__init_($rt_s(26), 0, $rt_s(95));
-        ucitw_Alert$Type_SUCCESS = ucitw_Alert$Type__init_($rt_s(28), 1, $rt_s(96));
-        ucitw_Alert$Type_DANGER = ucitw_Alert$Type__init_($rt_s(30), 2, $rt_s(97));
-        ucitw_Alert$Type_WARNING = ucitw_Alert$Type__init_($rt_s(32), 3, $rt_s(98));
-        ucitw_Alert$Type_INFO = ucitw_Alert$Type__init_($rt_s(34), 4, $rt_s(99));
-        ucitw_Alert$Type_$VALUES = ucitw_Alert$Type_$values();
-    }
     $rt_packages([-1, "java", 0, "lang"
     ]);
     $rt_metadata([jl_Object, "Object", 1, 0, [], 0, 3, 0, 0, ["$getClass0", $rt_wrapFunction0(jl_Object_getClass), "$hashCode", $rt_wrapFunction0(jl_Object_hashCode), "$equals", $rt_wrapFunction1(jl_Object_equals), "$toString", $rt_wrapFunction0(jl_Object_toString), "$identity", $rt_wrapFunction0(jl_Object_identity)],
@@ -4837,12 +5514,18 @@
     jl_System, 0, jl_Object, [], 4, 3, 0, 0, 0,
     ucita_SecurityProvider, 0, jl_Object, [], 3, 3, 0, 0, 0,
     ucits_AppSecurityProvider, 0, jl_Object, [ucita_SecurityProvider], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ucits_AppSecurityProvider__init_0), "$hasRole", $rt_wrapFunction1(ucits_AppSecurityProvider_hasRole), "$setRoles", $rt_wrapFunction1(ucits_AppSecurityProvider_setRoles)],
+    ucita_IsWidget, 0, jl_Object, [], 3, 3, 0, 0, 0,
+    ucitb_Widget, 0, jl_Object, [ucita_IsWidget], 1, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ucitb_Widget__init_), "$getElement", $rt_wrapFunction0(ucitb_Widget_getElement)],
+    ucita_TakesValue, 0, jl_Object, [], 3, 3, 0, 0, 0,
+    ucitb_Slider, 0, ucitb_Widget, [ucita_TakesValue], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ucitb_Slider__init_0), "$setMin", $rt_wrapFunction1(ucitb_Slider_setMin), "$setMax", $rt_wrapFunction1(ucitb_Slider_setMax), "$getValue1", $rt_wrapFunction0(ucitb_Slider_getValue), "$setValue", $rt_wrapFunction1(ucitb_Slider_setValue), "$setValue2", $rt_wrapFunction1(ucitb_Slider_setValue0), "$addChangeHandler", $rt_wrapFunction1(ucitb_Slider_addChangeHandler)],
     ucitu_HasModel, 0, jl_Object, [], 3, 3, 0, 0, 0,
     ji_Serializable, 0, jl_Object, [], 3, 3, 0, 0, 0,
     jl_Number, 0, jl_Object, [ji_Serializable], 1, 3, 0, 0, ["$_init_", $rt_wrapFunction0(jl_Number__init_)],
     jl_Comparable, 0, jl_Object, [], 3, 3, 0, 0, 0,
     jl_Integer, 0, jl_Number, [jl_Comparable], 0, 3, 0, jl_Integer_$callClinit, ["$_init_2", $rt_wrapFunction1(jl_Integer__init_0), "$intValue", $rt_wrapFunction0(jl_Integer_intValue), "$toString", $rt_wrapFunction0(jl_Integer_toString1)],
     ucits_TaskWidget_Factory, 0, jl_Object, [], 0, 3, 0, 0, 0,
+    ucitm_MaterialWidget, 0, jl_Object, [ucita_IsWidget], 1, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ucitm_MaterialWidget__init_), "$getElement", $rt_wrapFunction0(ucitm_MaterialWidget_getElement)],
+    ucitm_MaterialButton, 0, ucitm_MaterialWidget, [], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ucitm_MaterialButton__init_0), "$setText", $rt_wrapFunction1(ucitm_MaterialButton_setText), "$addClickListener", $rt_wrapFunction1(ucitm_MaterialButton_addClickListener)],
     ju_Iterator, 0, jl_Object, [], 3, 3, 0, 0, 0,
     ju_ListIterator, 0, jl_Object, [ju_Iterator], 3, 3, 0, 0, 0,
     ju_Collections$5, 0, jl_Object, [ju_ListIterator], 0, 0, 0, 0, ["$_init_", $rt_wrapFunction0(ju_Collections$5__init_0)],
@@ -4867,27 +5550,30 @@
     ju_TemplateCollections$AbstractImmutableMap, 0, ju_AbstractMap, [], 1, 0, 0, 0, ["$_init_", $rt_wrapFunction0(ju_TemplateCollections$AbstractImmutableMap__init_)],
     ju_Collections$2, 0, ju_TemplateCollections$AbstractImmutableMap, [], 0, 0, 0, 0, ["$_init_", $rt_wrapFunction0(ju_Collections$2__init_0), "$entrySet", $rt_wrapFunction0(ju_Collections$2_entrySet), "$get", $rt_wrapFunction1(ju_Collections$2_get)],
     jl_Long, 0, jl_Number, [jl_Comparable], 0, 3, 0, jl_Long_$callClinit, 0,
-    ucita_IsWidget, 0, jl_Object, [], 3, 3, 0, 0, 0,
-    ucitw_Widget, 0, jl_Object, [ucita_IsWidget], 1, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ucitw_Widget__init_), "$getElement", $rt_wrapFunction0(ucitw_Widget_getElement)],
-    ucitw_Button, 0, ucitw_Widget, [], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ucitw_Button__init_0), "$setText", $rt_wrapFunction1(ucitw_Button_setText), "$setType", $rt_wrapFunction1(ucitw_Button_setType), "$addClickListener", $rt_wrapFunction1(ucitw_Button_addClickListener)],
+    jl_Enum, 0, jl_Object, [jl_Comparable, ji_Serializable], 1, 3, 0, 0, ["$_init_4", $rt_wrapFunction2(jl_Enum__init_)],
+    ucitb_Button$Type, 0, jl_Enum, [], 12, 3, 0, ucitb_Button$Type_$callClinit, ["$getCssClass", $rt_wrapFunction0(ucitb_Button$Type_getCssClass)],
+    ucitb_TableWidget, 0, ucitb_Widget, [], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ucitb_TableWidget__init_0), "$setHeaders", $rt_wrapFunction1(ucitb_TableWidget_setHeaders), "$addRow", $rt_wrapFunction1(ucitb_TableWidget_addRow), "$clearBody", $rt_wrapFunction0(ucitb_TableWidget_clearBody)],
     otj_JSObject, 0, jl_Object, [], 3, 3, 0, 0, 0,
+    ucitm_MaterialDrawer$MDCDrawer, 0, jl_Object, [otj_JSObject], 1, 0, 0, 0, 0]);
+    $rt_metadata([ucitm_MaterialMenu$MDCMenu, 0, jl_Object, [otj_JSObject], 1, 0, 0, 0, 0,
     otjde_EventTarget, 0, jl_Object, [otj_JSObject], 3, 3, 0, 0, 0,
     otjde_GamepadEventTarget, 0, jl_Object, [otjde_EventTarget], 3, 3, 0, 0, 0,
     jl_CharSequence, 0, jl_Object, [], 3, 3, 0, 0, 0,
     jl_Error, 0, jl_Throwable, [], 0, 3, 0, 0, ["$_init_0", $rt_wrapFunction1(jl_Error__init_0)],
     jl_LinkageError, 0, jl_Error, [], 0, 3, 0, 0, ["$_init_0", $rt_wrapFunction1(jl_LinkageError__init_0)],
     otjde_LoadEventTarget, 0, jl_Object, [otjde_EventTarget], 3, 3, 0, 0, 0,
-    ju_Comparator, 0, jl_Object, [], 3, 3, 0, 0, 0]);
-    $rt_metadata([jl_String$_clinit_$lambda$_93_0, 0, jl_Object, [ju_Comparator], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(jl_String$_clinit_$lambda$_93_0__init_0)],
+    ucitb_Button, 0, ucitb_Widget, [], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ucitb_Button__init_0), "$setText", $rt_wrapFunction1(ucitb_Button_setText), "$setType", $rt_wrapFunction1(ucitb_Button_setType), "$addClickListener", $rt_wrapFunction1(ucitb_Button_addClickListener)],
+    ju_Comparator, 0, jl_Object, [], 3, 3, 0, 0, 0,
+    jl_String$_clinit_$lambda$_93_0, 0, jl_Object, [ju_Comparator], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(jl_String$_clinit_$lambda$_93_0__init_0)],
     jl_StringIndexOutOfBoundsException, 0, jl_IndexOutOfBoundsException, [], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(jl_StringIndexOutOfBoundsException__init_0)],
     ju_Collections$_clinit_$lambda$_59_0, 0, jl_Object, [ju_Comparator], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ju_Collections$_clinit_$lambda$_59_0__init_0)],
     otjde_EventListener, 0, jl_Object, [otj_JSObject], 3, 3, 0, 0, 0,
-    ucits_UserProfilePage$onShow$lambda$_1_0, 0, jl_Object, [otjde_EventListener], 0, 3, 0, 0, ["$_init_6", $rt_wrapFunction1(ucits_UserProfilePage$onShow$lambda$_1_0__init_0), "$handleEvent", $rt_wrapFunction1(ucits_UserProfilePage$onShow$lambda$_1_0_handleEvent), "$handleEvent$exported$0", $rt_wrapFunction1(ucits_UserProfilePage$onShow$lambda$_1_0_handleEvent$exported$0)],
+    ucits_UserProfilePage$onShow$lambda$_1_0, 0, jl_Object, [otjde_EventListener], 0, 3, 0, 0, ["$_init_9", $rt_wrapFunction1(ucits_UserProfilePage$onShow$lambda$_1_0__init_0), "$handleEvent", $rt_wrapFunction1(ucits_UserProfilePage$onShow$lambda$_1_0_handleEvent), "$handleEvent$exported$0", $rt_wrapFunction1(ucits_UserProfilePage$onShow$lambda$_1_0_handleEvent$exported$0)],
     ucits_HelloService_Factory, 0, jl_Object, [], 0, 3, 0, 0, 0,
-    ucitw_Alert, 0, ucitw_Widget, [], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ucitw_Alert__init_0), "$setText", $rt_wrapFunction1(ucitw_Alert_setText), "$setType0", $rt_wrapFunction1(ucitw_Alert_setType)],
     otci_Base46, 0, jl_Object, [], 4, 3, 0, 0, 0,
+    ucits_MaterialDemoPage, 0, jl_Object, [], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ucits_MaterialDemoPage__init_0), "$onShow", $rt_wrapFunction0(ucits_MaterialDemoPage_onShow)],
     ucits_BootstrapperImpl, 0, jl_Object, [], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ucits_BootstrapperImpl__init_0), "$run", $rt_wrapFunction0(ucits_BootstrapperImpl_run)],
-    jl_AbstractStringBuilder, 0, jl_Object, [ji_Serializable, jl_CharSequence], 0, 0, 0, 0, ["$_init_", $rt_wrapFunction0(jl_AbstractStringBuilder__init_1), "$_init_2", $rt_wrapFunction1(jl_AbstractStringBuilder__init_2), "$_init_0", $rt_wrapFunction1(jl_AbstractStringBuilder__init_4), "$_init_4", $rt_wrapFunction1(jl_AbstractStringBuilder__init_6), "$append3", $rt_wrapFunction1(jl_AbstractStringBuilder_append), "$append4", $rt_wrapFunction1(jl_AbstractStringBuilder_append0), "$insert0", $rt_wrapFunction2(jl_AbstractStringBuilder_insert),
+    jl_AbstractStringBuilder, 0, jl_Object, [ji_Serializable, jl_CharSequence], 0, 0, 0, 0, ["$_init_", $rt_wrapFunction0(jl_AbstractStringBuilder__init_1), "$_init_2", $rt_wrapFunction1(jl_AbstractStringBuilder__init_2), "$_init_0", $rt_wrapFunction1(jl_AbstractStringBuilder__init_4), "$_init_7", $rt_wrapFunction1(jl_AbstractStringBuilder__init_6), "$append3", $rt_wrapFunction1(jl_AbstractStringBuilder_append), "$append4", $rt_wrapFunction1(jl_AbstractStringBuilder_append0), "$insert0", $rt_wrapFunction2(jl_AbstractStringBuilder_insert),
     "$append5", $rt_wrapFunction1(jl_AbstractStringBuilder_append1), "$append1", $rt_wrapFunction2(jl_AbstractStringBuilder_append2), "$insert1", $rt_wrapFunction3(jl_AbstractStringBuilder_insert0), "$append6", $rt_wrapFunction1(jl_AbstractStringBuilder_append3), "$insert2", $rt_wrapFunction2(jl_AbstractStringBuilder_insert1), "$insert3", $rt_wrapFunction3(jl_AbstractStringBuilder_insert2), "$append7", $rt_wrapFunction1(jl_AbstractStringBuilder_append4), "$insert4", $rt_wrapFunction2(jl_AbstractStringBuilder_insert3),
     "$insert", $rt_wrapFunction2(jl_AbstractStringBuilder_insert4), "$ensureCapacity", $rt_wrapFunction1(jl_AbstractStringBuilder_ensureCapacity), "$toString", $rt_wrapFunction0(jl_AbstractStringBuilder_toString)],
     jl_Appendable, 0, jl_Object, [], 3, 3, 0, 0, 0,
@@ -4895,6 +5581,7 @@
     "$insert5", $rt_wrapFunction2(jl_StringBuilder_insert0), "$insert6", $rt_wrapFunction2(jl_StringBuilder_insert1), "$insert8", $rt_wrapFunction2(jl_StringBuilder_insert2), "$toString", $rt_wrapFunction0(jl_StringBuilder_toString), "$ensureCapacity", $rt_wrapFunction1(jl_StringBuilder_ensureCapacity), "$insert", $rt_wrapFunction2(jl_StringBuilder_insert3), "$insert4", $rt_wrapFunction2(jl_StringBuilder_insert4), "$insert2", $rt_wrapFunction2(jl_StringBuilder_insert5), "$insert0", $rt_wrapFunction2(jl_StringBuilder_insert6)],
     ju_ConcurrentModificationException, 0, jl_RuntimeException, [], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ju_ConcurrentModificationException__init_0)],
     jlr_AnnotatedElement, 0, jl_Object, [], 3, 3, 0, 0, 0,
+    ucitm_MaterialButton$MDCRipple, 0, jl_Object, [otj_JSObject], 1, 0, 0, 0, 0,
     ucits_AppSecurityProvider_Factory, 0, jl_Object, [], 0, 3, 0, 0, 0,
     ucits_DashboardPage$onShow$lambda$_1_0, 0, jl_Object, [otjde_EventListener], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ucits_DashboardPage$onShow$lambda$_1_0__init_0), "$handleEvent", $rt_wrapFunction1(ucits_DashboardPage$onShow$lambda$_1_0_handleEvent), "$handleEvent$exported$0", $rt_wrapFunction1(ucits_DashboardPage$onShow$lambda$_1_0_handleEvent$exported$0)],
     ucits_LoginPage_Factory, 0, jl_Object, [], 0, 3, 0, 0, 0,
@@ -4907,98 +5594,115 @@
     jl_Cloneable, 0, jl_Object, [], 3, 3, 0, 0, 0,
     ju_ArrayList, 0, ju_AbstractList, [jl_Cloneable, ji_Serializable, ju_RandomAccess], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ju_ArrayList__init_0), "$_init_2", $rt_wrapFunction1(ju_ArrayList__init_2), "$ensureCapacity", $rt_wrapFunction1(ju_ArrayList_ensureCapacity), "$get0", $rt_wrapFunction1(ju_ArrayList_get), "$size1", $rt_wrapFunction0(ju_ArrayList_size), "$add", $rt_wrapFunction1(ju_ArrayList_add)],
     uciti_NavigationImpl, 0, jl_Object, [ucita_Navigation], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(uciti_NavigationImpl__init_0), "$goTo0", $rt_wrapFunction1(uciti_NavigationImpl_goTo), "$goTo", $rt_wrapFunction2(uciti_NavigationImpl_goTo0)],
-    ucitw_Container, 0, ucitw_Widget, [], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ucitw_Container__init_0)],
     otjb_StorageProvider, 0, jl_Object, [], 3, 3, 0, 0, 0,
     otjc_JSArrayReader, 0, jl_Object, [otj_JSObject], 3, 3, 0, 0, 0,
     otjb_Window, 0, jl_Object, [otj_JSObject, otjb_WindowEventTarget, otjb_StorageProvider, otjc_JSArrayReader], 1, 3, 0, 0, ["$get$exported$0", $rt_wrapFunction1(otjb_Window_get$exported$0), "$addEventListener$exported$1", $rt_wrapFunction2(otjb_Window_addEventListener$exported$1), "$removeEventListener$exported$2", $rt_wrapFunction2(otjb_Window_removeEventListener$exported$2), "$removeEventListener$exported$3", $rt_wrapFunction3(otjb_Window_removeEventListener$exported$3), "$dispatchEvent$exported$4", $rt_wrapFunction1(otjb_Window_dispatchEvent$exported$4),
     "$getLength$exported$5", $rt_wrapFunction0(otjb_Window_getLength$exported$5), "$addEventListener$exported$6", $rt_wrapFunction3(otjb_Window_addEventListener$exported$6)],
     ucits_UserProfilePage, 0, jl_Object, [], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ucits_UserProfilePage__init_0), "$onShow", $rt_wrapFunction0(ucits_UserProfilePage_onShow)],
-    jl_String, 0, jl_Object, [ji_Serializable, jl_Comparable, jl_CharSequence], 0, 3, 0, jl_String_$callClinit, ["$_init_", $rt_wrapFunction0(jl_String__init_2), "$_init_15", $rt_wrapFunction1(jl_String__init_3), "$_init_5", $rt_wrapFunction3(jl_String__init_4), "$charAt", $rt_wrapFunction1(jl_String_charAt), "$length", $rt_wrapFunction0(jl_String_length), "$isEmpty", $rt_wrapFunction0(jl_String_isEmpty), "$substring", $rt_wrapFunction2(jl_String_substring), "$substring0", $rt_wrapFunction1(jl_String_substring0),
+    jl_String, 0, jl_Object, [ji_Serializable, jl_Comparable, jl_CharSequence], 0, 3, 0, jl_String_$callClinit, ["$_init_", $rt_wrapFunction0(jl_String__init_2), "$_init_16", $rt_wrapFunction1(jl_String__init_3), "$_init_8", $rt_wrapFunction3(jl_String__init_4), "$charAt", $rt_wrapFunction1(jl_String_charAt), "$length", $rt_wrapFunction0(jl_String_length), "$isEmpty", $rt_wrapFunction0(jl_String_isEmpty), "$substring", $rt_wrapFunction2(jl_String_substring), "$substring0", $rt_wrapFunction1(jl_String_substring0),
     "$subSequence", $rt_wrapFunction2(jl_String_subSequence), "$replace", $rt_wrapFunction2(jl_String_replace), "$toString", $rt_wrapFunction0(jl_String_toString), "$toCharArray", $rt_wrapFunction0(jl_String_toCharArray), "$equals", $rt_wrapFunction1(jl_String_equals), "$hashCode", $rt_wrapFunction0(jl_String_hashCode)],
-    ucitw_Column, 0, ucitw_Widget, [], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ucitw_Column__init_0), "$span", $rt_wrapFunction1(ucitw_Column_span)],
+    ucitb_Container, 0, ucitb_Widget, [], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ucitb_Container__init_0)],
     ucits_UserProfilePage_Binder, 0, jl_Object, [], 0, 3, 0, 0, 0,
     jl_NegativeArraySizeException, 0, jl_RuntimeException, [], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(jl_NegativeArraySizeException__init_0)],
     otjc_JSFinalizationRegistryConsumer, 0, jl_Object, [otj_JSObject], 3, 3, 0, 0, 0,
     otji_JSWrapper$_clinit_$lambda$_30_0, 0, jl_Object, [otjc_JSFinalizationRegistryConsumer], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(otji_JSWrapper$_clinit_$lambda$_30_0__init_0), "$accept", $rt_wrapFunction1(otji_JSWrapper$_clinit_$lambda$_30_0_accept), "$accept$exported$0", $rt_wrapFunction1(otji_JSWrapper$_clinit_$lambda$_30_0_accept$exported$0)],
     otji_JSWrapper$_clinit_$lambda$_30_1, 0, jl_Object, [otjc_JSFinalizationRegistryConsumer], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(otji_JSWrapper$_clinit_$lambda$_30_1__init_0), "$accept", $rt_wrapFunction1(otji_JSWrapper$_clinit_$lambda$_30_1_accept), "$accept$exported$0", $rt_wrapFunction1(otji_JSWrapper$_clinit_$lambda$_30_1_accept$exported$0)],
     ju_Map$Entry, 0, jl_Object, [], 3, 3, 0, 0, 0,
-    jl_IncompatibleClassChangeError, 0, jl_LinkageError, [], 0, 3, 0, 0, ["$_init_0", $rt_wrapFunction1(jl_IncompatibleClassChangeError__init_0)],
-    jl_NoSuchMethodError, 0, jl_IncompatibleClassChangeError, [], 0, 3, 0, 0, ["$_init_0", $rt_wrapFunction1(jl_NoSuchMethodError__init_0)],
+    ucitb_Alert, 0, ucitb_Widget, [], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ucitb_Alert__init_0), "$setText", $rt_wrapFunction1(ucitb_Alert_setText), "$setType0", $rt_wrapFunction1(ucitb_Alert_setType)],
+    jl_IncompatibleClassChangeError, 0, jl_LinkageError, [], 0, 3, 0, 0, ["$_init_0", $rt_wrapFunction1(jl_IncompatibleClassChangeError__init_0)]]);
+    $rt_metadata([jl_NoSuchMethodError, 0, jl_IncompatibleClassChangeError, [], 0, 3, 0, 0, ["$_init_0", $rt_wrapFunction1(jl_NoSuchMethodError__init_0)],
+    ucitb_Container_Factory, 0, jl_Object, [], 0, 3, 0, 0, 0,
     jl_IllegalArgumentException, 0, jl_RuntimeException, [], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(jl_IllegalArgumentException__init_0), "$_init_0", $rt_wrapFunction1(jl_IllegalArgumentException__init_2)],
     jl_NumberFormatException, 0, jl_IllegalArgumentException, [], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(jl_NumberFormatException__init_2), "$_init_0", $rt_wrapFunction1(jl_NumberFormatException__init_1)],
-    jl_Enum, 0, jl_Object, [jl_Comparable, ji_Serializable], 1, 3, 0, 0, ["$_init_7", $rt_wrapFunction2(jl_Enum__init_)],
-    ucitw_Button$Type, 0, jl_Enum, [], 12, 3, 0, ucitw_Button$Type_$callClinit, ["$getCssClass", $rt_wrapFunction0(ucitw_Button$Type_getCssClass)],
     ju_AbstractList$1, 0, jl_Object, [ju_Iterator], 0, 0, 0, 0, ["$_init_3", $rt_wrapFunction1(ju_AbstractList$1__init_0), "$hasNext", $rt_wrapFunction0(ju_AbstractList$1_hasNext), "$next", $rt_wrapFunction0(ju_AbstractList$1_next)],
-    ucits_LoginPage$onShow$lambda$_1_1, 0, jl_Object, [otjde_EventListener], 0, 3, 0, 0, ["$_init_18", $rt_wrapFunction1(ucits_LoginPage$onShow$lambda$_1_1__init_0), "$handleEvent", $rt_wrapFunction1(ucits_LoginPage$onShow$lambda$_1_1_handleEvent), "$handleEvent$exported$0", $rt_wrapFunction1(ucits_LoginPage$onShow$lambda$_1_1_handleEvent$exported$0)],
-    ucits_LoginPage$onShow$lambda$_1_0, 0, jl_Object, [otjde_EventListener], 0, 3, 0, 0, ["$_init_18", $rt_wrapFunction1(ucits_LoginPage$onShow$lambda$_1_0__init_0), "$handleEvent", $rt_wrapFunction1(ucits_LoginPage$onShow$lambda$_1_0_handleEvent), "$handleEvent$exported$0", $rt_wrapFunction1(ucits_LoginPage$onShow$lambda$_1_0_handleEvent$exported$0)],
+    ucits_LoginPage$onShow$lambda$_1_1, 0, jl_Object, [otjde_EventListener], 0, 3, 0, 0, ["$_init_19", $rt_wrapFunction1(ucits_LoginPage$onShow$lambda$_1_1__init_0), "$handleEvent", $rt_wrapFunction1(ucits_LoginPage$onShow$lambda$_1_1_handleEvent), "$handleEvent$exported$0", $rt_wrapFunction1(ucits_LoginPage$onShow$lambda$_1_1_handleEvent$exported$0)],
+    ucits_LoginPage$onShow$lambda$_1_0, 0, jl_Object, [otjde_EventListener], 0, 3, 0, 0, ["$_init_19", $rt_wrapFunction1(ucits_LoginPage$onShow$lambda$_1_0__init_0), "$handleEvent", $rt_wrapFunction1(ucits_LoginPage$onShow$lambda$_1_0_handleEvent), "$handleEvent$exported$0", $rt_wrapFunction1(ucits_LoginPage$onShow$lambda$_1_0_handleEvent$exported$0)],
     ucits_DashboardPage$onShow$lambda$_1_3, 0, jl_Object, [otjde_EventListener], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ucits_DashboardPage$onShow$lambda$_1_3__init_0), "$handleEvent", $rt_wrapFunction1(ucits_DashboardPage$onShow$lambda$_1_3_handleEvent), "$handleEvent$exported$0", $rt_wrapFunction1(ucits_DashboardPage$onShow$lambda$_1_3_handleEvent$exported$0)],
-    ucits_DashboardPage$onShow$lambda$_1_4, 0, jl_Object, [otjde_EventListener], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ucits_DashboardPage$onShow$lambda$_1_4__init_0), "$handleEvent", $rt_wrapFunction1(ucits_DashboardPage$onShow$lambda$_1_4_handleEvent), "$handleEvent$exported$0", $rt_wrapFunction1(ucits_DashboardPage$onShow$lambda$_1_4_handleEvent$exported$0)]]);
-    $rt_metadata([ucits_DashboardPage$onShow$lambda$_1_1, 0, jl_Object, [otjde_EventListener], 0, 3, 0, 0, ["$_init_9", $rt_wrapFunction1(ucits_DashboardPage$onShow$lambda$_1_1__init_0), "$handleEvent", $rt_wrapFunction1(ucits_DashboardPage$onShow$lambda$_1_1_handleEvent), "$handleEvent$exported$0", $rt_wrapFunction1(ucits_DashboardPage$onShow$lambda$_1_1_handleEvent$exported$0)],
-    ucits_DashboardPage$onShow$lambda$_1_2, 0, jl_Object, [otjde_EventListener], 0, 3, 0, 0, ["$_init_9", $rt_wrapFunction1(ucits_DashboardPage$onShow$lambda$_1_2__init_0), "$handleEvent", $rt_wrapFunction1(ucits_DashboardPage$onShow$lambda$_1_2_handleEvent), "$handleEvent$exported$0", $rt_wrapFunction1(ucits_DashboardPage$onShow$lambda$_1_2_handleEvent$exported$0)],
-    ucits_DashboardPage$onShow$lambda$_1_7, 0, jl_Object, [otjde_EventListener], 0, 3, 0, 0, ["$_init_12", $rt_wrapFunction2(ucits_DashboardPage$onShow$lambda$_1_7__init_0), "$handleEvent", $rt_wrapFunction1(ucits_DashboardPage$onShow$lambda$_1_7_handleEvent), "$handleEvent$exported$0", $rt_wrapFunction1(ucits_DashboardPage$onShow$lambda$_1_7_handleEvent$exported$0)],
+    ucits_DashboardPage$onShow$lambda$_1_4, 0, jl_Object, [otjde_EventListener], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ucits_DashboardPage$onShow$lambda$_1_4__init_0), "$handleEvent", $rt_wrapFunction1(ucits_DashboardPage$onShow$lambda$_1_4_handleEvent), "$handleEvent$exported$0", $rt_wrapFunction1(ucits_DashboardPage$onShow$lambda$_1_4_handleEvent$exported$0)],
+    ucits_DashboardPage$onShow$lambda$_1_1, 0, jl_Object, [otjde_EventListener], 0, 3, 0, 0, ["$_init_10", $rt_wrapFunction1(ucits_DashboardPage$onShow$lambda$_1_1__init_0), "$handleEvent", $rt_wrapFunction1(ucits_DashboardPage$onShow$lambda$_1_1_handleEvent), "$handleEvent$exported$0", $rt_wrapFunction1(ucits_DashboardPage$onShow$lambda$_1_1_handleEvent$exported$0)],
+    ucits_DashboardPage$onShow$lambda$_1_2, 0, jl_Object, [otjde_EventListener], 0, 3, 0, 0, ["$_init_10", $rt_wrapFunction1(ucits_DashboardPage$onShow$lambda$_1_2__init_0), "$handleEvent", $rt_wrapFunction1(ucits_DashboardPage$onShow$lambda$_1_2_handleEvent), "$handleEvent$exported$0", $rt_wrapFunction1(ucits_DashboardPage$onShow$lambda$_1_2_handleEvent$exported$0)],
+    ucits_DashboardPage$onShow$lambda$_1_7, 0, jl_Object, [otjde_EventListener], 0, 3, 0, 0, ["$_init_13", $rt_wrapFunction2(ucits_DashboardPage$onShow$lambda$_1_7__init_0), "$handleEvent", $rt_wrapFunction1(ucits_DashboardPage$onShow$lambda$_1_7_handleEvent), "$handleEvent$exported$0", $rt_wrapFunction1(ucits_DashboardPage$onShow$lambda$_1_7_handleEvent$exported$0)],
     ucits_LoginPage_Binder, 0, jl_Object, [], 0, 3, 0, 0, 0,
-    ucits_DashboardPage$onShow$lambda$_1_8, 0, jl_Object, [otjde_EventListener], 0, 3, 0, 0, ["$_init_13", $rt_wrapFunction2(ucits_DashboardPage$onShow$lambda$_1_8__init_0), "$handleEvent", $rt_wrapFunction1(ucits_DashboardPage$onShow$lambda$_1_8_handleEvent), "$handleEvent$exported$0", $rt_wrapFunction1(ucits_DashboardPage$onShow$lambda$_1_8_handleEvent$exported$0)],
-    ucits_DashboardPage$onShow$lambda$_1_5, 0, jl_Object, [otjde_EventListener], 0, 3, 0, 0, ["$_init_9", $rt_wrapFunction1(ucits_DashboardPage$onShow$lambda$_1_5__init_0), "$handleEvent", $rt_wrapFunction1(ucits_DashboardPage$onShow$lambda$_1_5_handleEvent), "$handleEvent$exported$0", $rt_wrapFunction1(ucits_DashboardPage$onShow$lambda$_1_5_handleEvent$exported$0)],
-    ucits_DashboardPage$onShow$lambda$_1_6, 0, jl_Object, [otjde_EventListener], 0, 3, 0, 0, ["$_init_11", $rt_wrapFunction2(ucits_DashboardPage$onShow$lambda$_1_6__init_0), "$handleEvent", $rt_wrapFunction1(ucits_DashboardPage$onShow$lambda$_1_6_handleEvent), "$handleEvent$exported$0", $rt_wrapFunction1(ucits_DashboardPage$onShow$lambda$_1_6_handleEvent$exported$0)],
+    ucits_DashboardPage$onShow$lambda$_1_8, 0, jl_Object, [otjde_EventListener], 0, 3, 0, 0, ["$_init_14", $rt_wrapFunction2(ucits_DashboardPage$onShow$lambda$_1_8__init_0), "$handleEvent", $rt_wrapFunction1(ucits_DashboardPage$onShow$lambda$_1_8_handleEvent), "$handleEvent$exported$0", $rt_wrapFunction1(ucits_DashboardPage$onShow$lambda$_1_8_handleEvent$exported$0)],
+    ucits_DashboardPage$onShow$lambda$_1_5, 0, jl_Object, [otjde_EventListener], 0, 3, 0, 0, ["$_init_10", $rt_wrapFunction1(ucits_DashboardPage$onShow$lambda$_1_5__init_0), "$handleEvent", $rt_wrapFunction1(ucits_DashboardPage$onShow$lambda$_1_5_handleEvent), "$handleEvent$exported$0", $rt_wrapFunction1(ucits_DashboardPage$onShow$lambda$_1_5_handleEvent$exported$0)],
+    ucits_DashboardPage$onShow$lambda$_1_6, 0, jl_Object, [otjde_EventListener], 0, 3, 0, 0, ["$_init_12", $rt_wrapFunction2(ucits_DashboardPage$onShow$lambda$_1_6__init_0), "$handleEvent", $rt_wrapFunction1(ucits_DashboardPage$onShow$lambda$_1_6_handleEvent), "$handleEvent$exported$0", $rt_wrapFunction1(ucits_DashboardPage$onShow$lambda$_1_6_handleEvent$exported$0)],
     jlr_Array, 0, jl_Object, [], 4, 3, 0, 0, 0,
-    ucitw_TableWidget, 0, ucitw_Widget, [], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ucitw_TableWidget__init_0), "$setHeaders", $rt_wrapFunction1(ucitw_TableWidget_setHeaders), "$addRow", $rt_wrapFunction1(ucitw_TableWidget_addRow), "$clearBody", $rt_wrapFunction0(ucitw_TableWidget_clearBody)],
+    ucitm_MaterialTextField, 0, ucitm_MaterialWidget, [ucita_TakesValue], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ucitm_MaterialTextField__init_0), "$_init_0", $rt_wrapFunction1(ucitm_MaterialTextField__init_2), "$setValue0", $rt_wrapFunction1(ucitm_MaterialTextField_setValue)],
     ji_Provider, 0, jl_Object, [], 3, 3, 0, 0, 0,
-    ju_HashMap$AbstractMapIterator, 0, jl_Object, [], 0, 0, 0, 0, ["$_init_16", $rt_wrapFunction1(ju_HashMap$AbstractMapIterator__init_0), "$hasNext", $rt_wrapFunction0(ju_HashMap$AbstractMapIterator_hasNext), "$checkConcurrentMod", $rt_wrapFunction0(ju_HashMap$AbstractMapIterator_checkConcurrentMod), "$makeNext", $rt_wrapFunction0(ju_HashMap$AbstractMapIterator_makeNext)],
+    ucitm_MaterialFAB$MDCRipple, 0, jl_Object, [otj_JSObject], 1, 0, 0, 0, 0,
+    ucitm_MaterialDrawer, 0, ucitm_MaterialWidget, [], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ucitm_MaterialDrawer__init_0), "$initialize", $rt_wrapFunction0(ucitm_MaterialDrawer_initialize), "$open", $rt_wrapFunction0(ucitm_MaterialDrawer_open), "$addItem", $rt_wrapFunction2(ucitm_MaterialDrawer_addItem)],
+    ju_HashMap$AbstractMapIterator, 0, jl_Object, [], 0, 0, 0, 0, ["$_init_17", $rt_wrapFunction1(ju_HashMap$AbstractMapIterator__init_0), "$hasNext", $rt_wrapFunction0(ju_HashMap$AbstractMapIterator_hasNext), "$checkConcurrentMod", $rt_wrapFunction0(ju_HashMap$AbstractMapIterator_checkConcurrentMod), "$makeNext", $rt_wrapFunction0(ju_HashMap$AbstractMapIterator_makeNext)],
     jl_NullPointerException, 0, jl_RuntimeException, [], 0, 3, 0, 0, ["$_init_0", $rt_wrapFunction1(jl_NullPointerException__init_1), "$_init_", $rt_wrapFunction0(jl_NullPointerException__init_2)],
     otpp_ResourceAccessor, 0, jl_Object, [], 4, 0, 0, 0, 0,
-    ucita_TakesValue, 0, jl_Object, [], 3, 3, 0, 0, 0,
-    ucitu_ListWidget, 0, ucitw_Widget, [ucita_TakesValue], 1, 3, 0, 0, ["$_init_0", $rt_wrapFunction1(ucitu_ListWidget__init_), "$setValue", $rt_wrapFunction1(ucitu_ListWidget_setValue)],
+    ucitu_ListWidget, 0, ucitb_Widget, [ucita_TakesValue], 1, 3, 0, 0, ["$_init_0", $rt_wrapFunction1(ucitu_ListWidget__init_), "$setValue1", $rt_wrapFunction1(ucitu_ListWidget_setValue)],
     ucits_TaskListWidget, 0, ucitu_ListWidget, [], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ucits_TaskListWidget__init_0)],
     ucits_GreetingService, 0, jl_Object, [], 3, 3, 0, 0, 0,
     jl_NoSuchFieldError, 0, jl_IncompatibleClassChangeError, [], 0, 3, 0, 0, ["$_init_0", $rt_wrapFunction1(jl_NoSuchFieldError__init_0)],
     ucits_DashboardPage_Binder, 0, jl_Object, [], 0, 3, 0, 0, 0,
+    ucitm_MaterialMenu, 0, ucitm_MaterialWidget, [], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ucitm_MaterialMenu__init_0), "$addItem", $rt_wrapFunction2(ucitm_MaterialMenu_addItem), "$setAnchor", $rt_wrapFunction1(ucitm_MaterialMenu_setAnchor)],
     ucits_DashboardPage, 0, jl_Object, [], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ucits_DashboardPage__init_0), "$onShow", $rt_wrapFunction0(ucits_DashboardPage_onShow)],
     otci_IntegerUtil, 0, jl_Object, [], 4, 3, 0, 0, 0,
-    ucitw_Checkbox, 0, ucitw_Widget, [ucita_TakesValue], 0, 3, 0, 0, ["$_init_0", $rt_wrapFunction1(ucitw_Checkbox__init_0), "$getValue0", $rt_wrapFunction0(ucitw_Checkbox_getValue), "$addChangeHandler", $rt_wrapFunction1(ucitw_Checkbox_addChangeHandler)],
     jl_Math, 0, jl_Object, [], 4, 3, 0, 0, 0,
+    ucitm_MaterialDrawer_Factory, 0, jl_Object, [], 0, 3, 0, 0, 0,
     otjc_JSWeakMap, 0, jl_Object, [otj_JSObject], 1, 3, 0, 0, 0,
-    ju_HashMap$HashMapEntrySet, 0, ju_AbstractSet, [], 0, 0, 0, 0, ["$_init_16", $rt_wrapFunction1(ju_HashMap$HashMapEntrySet__init_0), "$iterator", $rt_wrapFunction0(ju_HashMap$HashMapEntrySet_iterator)],
+    ju_HashMap$HashMapEntrySet, 0, ju_AbstractSet, [], 0, 0, 0, 0, ["$_init_17", $rt_wrapFunction1(ju_HashMap$HashMapEntrySet__init_0), "$iterator", $rt_wrapFunction0(ju_HashMap$HashMapEntrySet_iterator)],
+    ucitb_Checkbox, 0, ucitb_Widget, [ucita_TakesValue], 0, 3, 0, 0, ["$_init_0", $rt_wrapFunction1(ucitb_Checkbox__init_0), "$getValue0", $rt_wrapFunction0(ucitb_Checkbox_getValue), "$addChangeHandler", $rt_wrapFunction1(ucitb_Checkbox_addChangeHandler)],
     ucits_DashboardPage_Factory, 0, jl_Object, [], 0, 3, 0, 0, 0,
+    ucitb_TableWidget_Factory, 0, jl_Object, [], 0, 3, 0, 0, 0,
+    ucits_MaterialDemoPage$onShow$lambda$_1_4, 0, jl_Object, [otjde_EventListener], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ucits_MaterialDemoPage$onShow$lambda$_1_4__init_0), "$handleEvent", $rt_wrapFunction1(ucits_MaterialDemoPage$onShow$lambda$_1_4_handleEvent), "$handleEvent$exported$0", $rt_wrapFunction1(ucits_MaterialDemoPage$onShow$lambda$_1_4_handleEvent$exported$0)],
     otjc_JSObjects, 0, jl_Object, [], 4, 3, 0, 0, 0,
-    ucitw_Navbar, 0, ucitw_Widget, [], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ucitw_Navbar__init_0), "$setBrand", $rt_wrapFunction1(ucitw_Navbar_setBrand), "$setSticky", $rt_wrapFunction1(ucitw_Navbar_setSticky), "$addLink", $rt_wrapFunction2(ucitw_Navbar_addLink)],
+    ucits_MaterialDemoPage$onShow$lambda$_1_3, 0, jl_Object, [otjde_EventListener], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ucits_MaterialDemoPage$onShow$lambda$_1_3__init_0), "$handleEvent", $rt_wrapFunction1(ucits_MaterialDemoPage$onShow$lambda$_1_3_handleEvent), "$handleEvent$exported$0", $rt_wrapFunction1(ucits_MaterialDemoPage$onShow$lambda$_1_3_handleEvent$exported$0)],
+    ucits_MaterialDemoPage$onShow$lambda$_1_5, 0, jl_Object, [otjde_EventListener], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ucits_MaterialDemoPage$onShow$lambda$_1_5__init_0), "$handleEvent", $rt_wrapFunction1(ucits_MaterialDemoPage$onShow$lambda$_1_5_handleEvent), "$handleEvent$exported$0", $rt_wrapFunction1(ucits_MaterialDemoPage$onShow$lambda$_1_5_handleEvent$exported$0)],
+    ucitb_Column, 0, ucitb_Widget, [], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ucitb_Column__init_0), "$span", $rt_wrapFunction1(ucitb_Column_span)],
     otji_JS, 0, jl_Object, [], 4, 0, 0, 0, 0,
     uciti_NavigationImpl_Factory, 0, jl_Object, [], 0, 3, 0, 0, 0,
+    ucitb_Alert$Type, 0, jl_Enum, [], 12, 3, 0, ucitb_Alert$Type_$callClinit, ["$getCssClass", $rt_wrapFunction0(ucitb_Alert$Type_getCssClass)],
     otciu_UnicodeHelper, 0, jl_Object, [], 4, 3, 0, 0, 0,
-    ju_Objects, 0, jl_Object, [], 4, 3, 0, 0, 0,
-    ju_MapEntry, 0, jl_Object, [ju_Map$Entry, jl_Cloneable], 0, 0, 0, 0, ["$_init_17", $rt_wrapFunction2(ju_MapEntry__init_0), "$getKey", $rt_wrapFunction0(ju_MapEntry_getKey), "$getValue", $rt_wrapFunction0(ju_MapEntry_getValue)],
-    ju_HashMap$HashEntry, 0, ju_MapEntry, [], 0, 0, 0, 0, ["$_init_20", $rt_wrapFunction2(ju_HashMap$HashEntry__init_0)],
+    ucitm_MaterialMenu_Factory, 0, jl_Object, [], 0, 3, 0, 0, 0,
+    ju_Objects, 0, jl_Object, [], 4, 3, 0, 0, 0]);
+    $rt_metadata([ju_MapEntry, 0, jl_Object, [ju_Map$Entry, jl_Cloneable], 0, 0, 0, 0, ["$_init_18", $rt_wrapFunction2(ju_MapEntry__init_0), "$getKey", $rt_wrapFunction0(ju_MapEntry_getKey), "$getValue", $rt_wrapFunction0(ju_MapEntry_getValue)],
+    ju_HashMap$HashEntry, 0, ju_MapEntry, [], 0, 0, 0, 0, ["$_init_21", $rt_wrapFunction2(ju_HashMap$HashEntry__init_0)],
     jlr_Type, 0, jl_Object, [], 3, 3, 0, 0, 0,
-    ucits_TaskWidget, 0, ucitw_Widget, [ucitu_HasModel], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ucits_TaskWidget__init_0), "$setModel0", $rt_wrapFunction1(ucits_TaskWidget_setModel), "$setModel", $rt_wrapFunction1(ucits_TaskWidget_setModel0)],
+    ucits_TaskWidget, 0, ucitb_Widget, [ucitu_HasModel], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ucits_TaskWidget__init_0), "$setModel0", $rt_wrapFunction1(ucits_TaskWidget_setModel), "$setModel", $rt_wrapFunction1(ucits_TaskWidget_setModel0)],
+    ucits_MaterialDemoPage_Binder, 0, jl_Object, [], 0, 3, 0, 0, 0,
     jl_ArrayStoreException, 0, jl_RuntimeException, [], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(jl_ArrayStoreException__init_0)],
+    ucitb_Card, 0, ucitb_Widget, [], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ucitb_Card__init_0), "$setTitle", $rt_wrapFunction1(ucitb_Card_setTitle), "$setText", $rt_wrapFunction1(ucitb_Card_setText), "$addContent", $rt_wrapFunction1(ucitb_Card_addContent)],
+    ucitm_MaterialButton_Factory, 0, jl_Object, [], 0, 3, 0, 0, 0,
     ucits_HelloService, 0, jl_Object, [ucits_GreetingService], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ucits_HelloService__init_0), "$getGreeting", $rt_wrapFunction0(ucits_HelloService_getGreeting)],
+    ucitb_Switch, 0, ucitb_Widget, [ucita_TakesValue], 0, 3, 0, 0, ["$_init_0", $rt_wrapFunction1(ucitb_Switch__init_0), "$isChecked", $rt_wrapFunction0(ucitb_Switch_isChecked), "$addChangeHandler", $rt_wrapFunction1(ucitb_Switch_addChangeHandler)],
+    ucitm_MaterialFAB, 0, ucitm_MaterialWidget, [], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ucitm_MaterialFAB__init_0), "$_init_0", $rt_wrapFunction1(ucitm_MaterialFAB__init_2), "$addClickListener", $rt_wrapFunction1(ucitm_MaterialFAB_addClickListener)],
     ucits_LoginPage, 0, jl_Object, [], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ucits_LoginPage__init_0), "$onShow", $rt_wrapFunction0(ucits_LoginPage_onShow)],
     ucits_App, 0, jl_Object, [], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ucits_App__init_0), "$onModuleLoad", $rt_wrapFunction0(ucits_App_onModuleLoad)],
-    ju_HashMap, 0, ju_AbstractMap, [jl_Cloneable, ji_Serializable], 0, 3, 0, 0, ["$newElementArray", $rt_wrapFunction1(ju_HashMap_newElementArray), "$_init_", $rt_wrapFunction0(ju_HashMap__init_0), "$_init_2", $rt_wrapFunction1(ju_HashMap__init_2), "$_init_19", $rt_wrapFunction2(ju_HashMap__init_4), "$clear", $rt_wrapFunction0(ju_HashMap_clear), "$containsKey", $rt_wrapFunction1(ju_HashMap_containsKey), "$entrySet", $rt_wrapFunction0(ju_HashMap_entrySet), "$get", $rt_wrapFunction1(ju_HashMap_get), "$entryByKey",
+    ju_HashMap, 0, ju_AbstractMap, [jl_Cloneable, ji_Serializable], 0, 3, 0, 0, ["$newElementArray", $rt_wrapFunction1(ju_HashMap_newElementArray), "$_init_", $rt_wrapFunction0(ju_HashMap__init_0), "$_init_2", $rt_wrapFunction1(ju_HashMap__init_2), "$_init_20", $rt_wrapFunction2(ju_HashMap__init_4), "$clear", $rt_wrapFunction0(ju_HashMap_clear), "$containsKey", $rt_wrapFunction1(ju_HashMap_containsKey), "$entrySet", $rt_wrapFunction0(ju_HashMap_entrySet), "$get", $rt_wrapFunction1(ju_HashMap_get), "$entryByKey",
     $rt_wrapFunction1(ju_HashMap_entryByKey), "$findNonNullKeyEntry", $rt_wrapFunction3(ju_HashMap_findNonNullKeyEntry), "$findNullKeyEntry", $rt_wrapFunction0(ju_HashMap_findNullKeyEntry), "$put", $rt_wrapFunction2(ju_HashMap_put), "$rehash0", $rt_wrapFunction1(ju_HashMap_rehash), "$rehash", $rt_wrapFunction0(ju_HashMap_rehash0)],
+    ucitm_MaterialFAB_Factory, 0, jl_Object, [], 0, 3, 0, 0, 0,
     otji_JSWrapper, 0, jl_Object, [], 4, 3, 0, otji_JSWrapper_$callClinit, 0,
-    ju_HashSet, 0, ju_AbstractSet, [jl_Cloneable, ji_Serializable], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ju_HashSet__init_0), "$_init_16", $rt_wrapFunction1(ju_HashSet__init_2), "$add", $rt_wrapFunction1(ju_HashSet_add), "$clear", $rt_wrapFunction0(ju_HashSet_clear), "$contains", $rt_wrapFunction1(ju_HashSet_contains)],
+    ucitm_MaterialTextField$MDCTextField, 0, jl_Object, [otj_JSObject], 1, 0, 0, 0, 0,
+    ju_HashSet, 0, ju_AbstractSet, [jl_Cloneable, ji_Serializable], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ju_HashSet__init_0), "$_init_17", $rt_wrapFunction1(ju_HashSet__init_2), "$add", $rt_wrapFunction1(ju_HashSet_add), "$clear", $rt_wrapFunction0(ju_HashSet_clear), "$contains", $rt_wrapFunction1(ju_HashSet_contains)],
     otjc_JSMap, 0, jl_Object, [otj_JSObject], 1, 3, 0, 0, 0,
     otp_Platform, 0, jl_Object, [], 4, 3, 0, 0, 0,
+    ucitm_MaterialTextField_Factory, 0, jl_Object, [], 0, 3, 0, 0, 0,
     ucits_TaskListWidget_Factory$createInstance$lambda$_2_0, 0, jl_Object, [ji_Provider], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ucits_TaskListWidget_Factory$createInstance$lambda$_2_0__init_0), "$get1", $rt_wrapFunction0(ucits_TaskListWidget_Factory$createInstance$lambda$_2_0_get), "$get2", $rt_wrapFunction0(ucits_TaskListWidget_Factory$createInstance$lambda$_2_0_get0)],
-    ucitw_Card, 0, ucitw_Widget, [], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ucitw_Card__init_0), "$setTitle", $rt_wrapFunction1(ucitw_Card_setTitle), "$setText", $rt_wrapFunction1(ucitw_Card_setText), "$addContent", $rt_wrapFunction1(ucitw_Card_addContent)],
-    jl_Boolean, 0, jl_Object, [ji_Serializable, jl_Comparable], 0, 3, 0, jl_Boolean_$callClinit, ["$_init_22", $rt_wrapFunction1(jl_Boolean__init_0), "$booleanValue", $rt_wrapFunction0(jl_Boolean_booleanValue)],
-    ucitw_Row, 0, ucitw_Widget, [], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ucitw_Row__init_0)],
-    jl_NoClassDefFoundError, 0, jl_LinkageError, [], 0, 3, 0, 0, 0]);
-    $rt_metadata([ju_NoSuchElementException, 0, jl_RuntimeException, [], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ju_NoSuchElementException__init_0)],
+    jl_Boolean, 0, jl_Object, [ji_Serializable, jl_Comparable], 0, 3, 0, jl_Boolean_$callClinit, ["$_init_23", $rt_wrapFunction1(jl_Boolean__init_0), "$booleanValue", $rt_wrapFunction0(jl_Boolean_booleanValue)],
+    jl_NoClassDefFoundError, 0, jl_LinkageError, [], 0, 3, 0, 0, 0,
+    ju_NoSuchElementException, 0, jl_RuntimeException, [], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ju_NoSuchElementException__init_0)],
     otjc_JSWeakRef, 0, jl_Object, [otj_JSObject], 1, 3, 0, 0, 0,
-    otci_CharFlow, 0, jl_Object, [], 0, 3, 0, 0, ["$_init_15", $rt_wrapFunction1(otci_CharFlow__init_0)],
+    ucits_MaterialDemoPage$onShow$lambda$_1_0, 0, jl_Object, [otjde_EventListener], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ucits_MaterialDemoPage$onShow$lambda$_1_0__init_0), "$handleEvent", $rt_wrapFunction1(ucits_MaterialDemoPage$onShow$lambda$_1_0_handleEvent), "$handleEvent$exported$0", $rt_wrapFunction1(ucits_MaterialDemoPage$onShow$lambda$_1_0_handleEvent$exported$0)],
+    ucitb_Row, 0, ucitb_Widget, [], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ucitb_Row__init_0)],
+    ucits_MaterialDemoPage$onShow$lambda$_1_2, 0, jl_Object, [otjde_EventListener], 0, 3, 0, 0, ["$_init_6", $rt_wrapFunction1(ucits_MaterialDemoPage$onShow$lambda$_1_2__init_0), "$handleEvent", $rt_wrapFunction1(ucits_MaterialDemoPage$onShow$lambda$_1_2_handleEvent), "$handleEvent$exported$0", $rt_wrapFunction1(ucits_MaterialDemoPage$onShow$lambda$_1_2_handleEvent$exported$0)],
+    ucits_MaterialDemoPage$onShow$lambda$_1_1, 0, jl_Object, [otjde_EventListener], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ucits_MaterialDemoPage$onShow$lambda$_1_1__init_0), "$handleEvent", $rt_wrapFunction1(ucits_MaterialDemoPage$onShow$lambda$_1_1_handleEvent), "$handleEvent$exported$0", $rt_wrapFunction1(ucits_MaterialDemoPage$onShow$lambda$_1_1_handleEvent$exported$0)],
+    otci_CharFlow, 0, jl_Object, [], 0, 3, 0, 0, ["$_init_16", $rt_wrapFunction1(otci_CharFlow__init_0)],
+    ucits_MaterialDemoPage_Factory, 0, jl_Object, [], 0, 3, 0, 0, 0,
     otjc_JSFinalizationRegistry, 0, jl_Object, [otj_JSObject], 1, 3, 0, 0, 0,
+    ucitb_RadioButton, 0, ucitb_Widget, [], 0, 3, 0, 0, ["$_init_11", $rt_wrapFunction2(ucitb_RadioButton__init_0), "$addChangeHandler", $rt_wrapFunction1(ucitb_RadioButton_addChangeHandler)],
     ucits_TaskListWidget_Factory, 0, jl_Object, [], 0, 3, 0, 0, 0,
-    ucitw_Slider, 0, ucitw_Widget, [ucita_TakesValue], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ucitw_Slider__init_0), "$setMin", $rt_wrapFunction1(ucitw_Slider_setMin), "$setMax", $rt_wrapFunction1(ucitw_Slider_setMax), "$getValue1", $rt_wrapFunction0(ucitw_Slider_getValue), "$setValue1", $rt_wrapFunction1(ucitw_Slider_setValue), "$setValue0", $rt_wrapFunction1(ucitw_Slider_setValue0), "$addChangeHandler", $rt_wrapFunction1(ucitw_Slider_addChangeHandler)],
-    ucits_Task, 0, jl_Object, [], 0, 3, 0, 0, ["$_init_14", $rt_wrapFunction2(ucits_Task__init_0), "$getTitle", $rt_wrapFunction0(ucits_Task_getTitle), "$isCompleted", $rt_wrapFunction0(ucits_Task_isCompleted)],
+    ucitb_Navbar, 0, ucitb_Widget, [], 0, 3, 0, 0, ["$_init_", $rt_wrapFunction0(ucitb_Navbar__init_0), "$setBrand", $rt_wrapFunction1(ucitb_Navbar_setBrand), "$setSticky", $rt_wrapFunction1(ucitb_Navbar_setSticky), "$addLink", $rt_wrapFunction2(ucitb_Navbar_addLink)],
+    ucits_Task, 0, jl_Object, [], 0, 3, 0, 0, ["$_init_15", $rt_wrapFunction2(ucits_Task__init_0), "$getTitle", $rt_wrapFunction0(ucits_Task_getTitle), "$isCompleted", $rt_wrapFunction0(ucits_Task_isCompleted)],
     jl_Class, 0, jl_Object, [jlr_AnnotatedElement, jlr_Type], 0, 3, 0, 0, ["$getPlatformClass", $rt_wrapFunction0(jl_Class_getPlatformClass), "$isInstance", $rt_wrapFunction1(jl_Class_isInstance), "$getName", $rt_wrapFunction0(jl_Class_getName), "$isPrimitive", $rt_wrapFunction0(jl_Class_isPrimitive), "$getComponentType", $rt_wrapFunction0(jl_Class_getComponentType)],
-    ucitw_Switch, 0, ucitw_Widget, [ucita_TakesValue], 0, 3, 0, 0, ["$_init_0", $rt_wrapFunction1(ucitw_Switch__init_0), "$isChecked", $rt_wrapFunction0(ucitw_Switch_isChecked), "$addChangeHandler", $rt_wrapFunction1(ucitw_Switch_addChangeHandler)],
-    ju_HashMap$EntryIterator, 0, ju_HashMap$AbstractMapIterator, [ju_Iterator], 0, 0, 0, 0, ["$_init_16", $rt_wrapFunction1(ju_HashMap$EntryIterator__init_0), "$next1", $rt_wrapFunction0(ju_HashMap$EntryIterator_next), "$next", $rt_wrapFunction0(ju_HashMap$EntryIterator_next0)],
-    ucitw_RadioButton, 0, ucitw_Widget, [], 0, 3, 0, 0, ["$_init_10", $rt_wrapFunction2(ucitw_RadioButton__init_0), "$addChangeHandler", $rt_wrapFunction1(ucitw_RadioButton_addChangeHandler)],
+    ju_HashMap$EntryIterator, 0, ju_HashMap$AbstractMapIterator, [ju_Iterator], 0, 0, 0, 0, ["$_init_17", $rt_wrapFunction1(ju_HashMap$EntryIterator__init_0), "$next1", $rt_wrapFunction0(ju_HashMap$EntryIterator_next), "$next", $rt_wrapFunction0(ju_HashMap$EntryIterator_next0)],
     ucits_UserProfilePage_Factory, 0, jl_Object, [], 0, 3, 0, 0, 0,
     ju_Arrays$ArrayAsList, 0, ju_AbstractList, [ju_RandomAccess], 0, 0, 0, 0, ["$_init_1", $rt_wrapFunction1(ju_Arrays$ArrayAsList__init_0), "$get0", $rt_wrapFunction1(ju_Arrays$ArrayAsList_get), "$size1", $rt_wrapFunction0(ju_Arrays$ArrayAsList_size)],
-    ju_Collections, 0, jl_Object, [], 0, 3, 0, ju_Collections_$callClinit, 0,
-    ucitw_Alert$Type, 0, jl_Enum, [], 12, 3, 0, ucitw_Alert$Type_$callClinit, ["$getCssClass", $rt_wrapFunction0(ucitw_Alert$Type_getCssClass)]]);
+    ju_Collections, 0, jl_Object, [], 0, 3, 0, ju_Collections_$callClinit, 0]);
     function $rt_array(cls, data) {
         this.$monitor = null;
         this.$id$ = 0;
@@ -5030,9 +5734,9 @@
         }
         return new $rt_array(this.type, dataCopy);
     });
-    $rt_stringPool(["Either src or dest is null", "String is null", "String is empty", "String contains invalid digits: ", "String contains digits out of radix ", ": ", "The value is too big for int type: ", "Illegal radix: ", "btn ", "alert ", "null", ";", "=", "dashboard", "user-profile", "login", "username", "admin", "userId", "name", "Unknown page role: ", "N/A", "col-", "idSpan", "backBtn", "nameSpan", "PRIMARY", "btn-primary", "SUCCESS", "btn-success", "DANGER", "btn-danger", "WARNING", "btn-warning",
-    "INFO", "btn-info", "adminLoginBtn", "loginBtn", "div", "container", "taskList", "userTable", "Tearay App", "Home", "Profile", "Guest", "Welcome ", "Go to User Profile", "options", "Option A", "Option B", "This is an info alert from the Widget library!", "Logout", "Enable Notifications", "I agree to the terms", "Review Code PR #101", "Update Documentation", "Deploy to Staging", "ID", "Name", "Role", "Status", "1", "Alice", "Admin", "Active", "2", "Bob", "User", "Inactive", "3", "Charlie", "Developer", "Logout (Disabled)",
-    "Logout (Enabled)", "OFF", "ON", "Notifications: ", "Slider value: ", "12345", "TeaVM User", "0", " sticky-top", "", "[TODO] ", "[DONE] ", "Hello from Injected Service! Time: ", "Administrator", "user", "RegularUser", "object", "function", "string", "number", "undefined", "alert-primary", "alert-success", "alert-danger", "alert-warning", "alert-info"]);
+    $rt_stringPool(["Either src or dest is null", "String is null", "String is empty", "String contains invalid digits: ", "String contains digits out of radix ", ": ", "The value is too big for int type: ", "Illegal radix: ", "PRIMARY", "btn-primary", "SUCCESS", "btn-success", "DANGER", "btn-danger", "WARNING", "btn-warning", "INFO", "btn-info", "btn ", "Inbox", "Star", "Open Drawer", "Refresh", "Settings", "TeaVM User", "null", ";", "=", "material-demo", "dashboard", "user-profile", "login", "username", "admin",
+    "userId", "name", "Unknown page role: ", "N/A", "idSpan", "backBtn", "nameSpan", "alert ", "adminLoginBtn", "loginBtn", "", "mdc-input-", "div", "container", "taskList", "userTable", "Tearay App", "Home", "Profile", "Guest", "Welcome ", "Go to User Profile", "options", "Option A", "Option B", "This is an info alert from the Widget library!", "Logout", "Enable Notifications", "I agree to the terms", "Review Code PR #101", "Update Documentation", "Deploy to Staging", "ID", "Name", "Role", "Status", "1", "Alice",
+    "Admin", "Active", "2", "Bob", "User", "Inactive", "3", "Charlie", "Developer", "Logout (Disabled)", "Logout (Enabled)", "OFF", "ON", "Notifications: ", "Slider value: ", "12345", "0", "col-", "alert-primary", "alert-success", "alert-danger", "alert-warning", "alert-info", "[TODO] ", "[DONE] ", "drawer", "fab", "menu", "toggleButton", "nameInput", "Hello from Injected Service! Time: ", "add", "Administrator", "user", "RegularUser", "object", "function", "string", "number", "undefined", " sticky-top"]);
     jl_String.prototype.toString = function() {
         return $rt_ustr(this);
     };
@@ -5746,6 +6450,24 @@
         c[$rt_jso_marker] = true;
         c.handleEvent = c.$handleEvent$exported$0;
         c = ucits_DashboardPage$onShow$lambda$_1_6.prototype;
+        c[$rt_jso_marker] = true;
+        c.handleEvent = c.$handleEvent$exported$0;
+        c = ucits_MaterialDemoPage$onShow$lambda$_1_4.prototype;
+        c[$rt_jso_marker] = true;
+        c.handleEvent = c.$handleEvent$exported$0;
+        c = ucits_MaterialDemoPage$onShow$lambda$_1_3.prototype;
+        c[$rt_jso_marker] = true;
+        c.handleEvent = c.$handleEvent$exported$0;
+        c = ucits_MaterialDemoPage$onShow$lambda$_1_5.prototype;
+        c[$rt_jso_marker] = true;
+        c.handleEvent = c.$handleEvent$exported$0;
+        c = ucits_MaterialDemoPage$onShow$lambda$_1_0.prototype;
+        c[$rt_jso_marker] = true;
+        c.handleEvent = c.$handleEvent$exported$0;
+        c = ucits_MaterialDemoPage$onShow$lambda$_1_2.prototype;
+        c[$rt_jso_marker] = true;
+        c.handleEvent = c.$handleEvent$exported$0;
+        c = ucits_MaterialDemoPage$onShow$lambda$_1_1.prototype;
         c[$rt_jso_marker] = true;
         c.handleEvent = c.$handleEvent$exported$0;
     })();

@@ -2,7 +2,7 @@ package uk.co.instanto.tearay.sample;
 
 import org.teavm.jso.dom.html.HTMLElement;
 import org.teavm.jso.browser.Window;
-import uk.co.instanto.tearay.widgets.Widget;
+import uk.co.instanto.tearay.bootstrap.Widget;
 import uk.co.instanto.tearay.ui.HasModel;
 import uk.co.instanto.tearay.api.Dependent;
 

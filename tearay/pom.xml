@@ -10,7 +10,8 @@
   <modules>
     <module>tearay-api</module>
     <module>tearay-processor</module>
-    <module>tearay-widgets</module>
+    <module>tearay-widgets-bootstrap</module>
+    <module>tearay-widgets-material</module>
     <module>tearay-ui</module>
     <module>tearay-app</module>
   </modules>

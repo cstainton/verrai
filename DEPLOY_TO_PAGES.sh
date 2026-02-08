@@ -14,6 +14,9 @@ mkdir -p ../dist/tearay
 # 3. Copy static assets
 echo "Copying static assets..."
 cp tearay-app/src/main/webapp/index.html ../dist/index.html
+if [ -f "tearay-app/src/main/webapp/material.html" ]; then
+    cp tearay-app/src/main/webapp/material.html ../dist/material.html
+fi
 
 # 4. Copy generated JavaScript
 echo "Copying generated JS..."
