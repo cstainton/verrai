@@ -12,7 +12,7 @@ This document compares the current state of the **Tearay** framework with **Erra
 | **Attribute Merging** | Merges `class`, `style`, `id` from template | Merges `class`, `style`, `id` (implemented in `TemplatedProcessor`) | ✅ Parity |
 | **Nested Components** | `@Inject @DataField MyComponent c;` auto-instantiated | `@Inject @DataField MyComponent c;` manual instantiation required often | ⚠️ Partial |
 | **Event Handling** | `@EventHandler("field")` for UI events | `@EventHandler("field")` for UI events | ✅ Parity |
-| **Native Event Sinks** | `@SinkNative` | **Missing** | ❌ Missing |
+| **Native Event Sinks** | `@SinkNative` | **Supported** (String based) | ✅ Parity |
 | **Shadow DOM** | Supported | Not Supported | ⚪ Low Priority |
 
 ### Advice:
