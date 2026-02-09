@@ -46,7 +46,11 @@ public class CodecGenerator {
                 String getterPrefix = rawType.equalsIgnoreCase("boolean") ? "is" : "get";
 
                 if (TypeUtils.getProtoType(rawType) != null || TypeUtils.isMap(rawType)) {
-                    toWire.addCode("    .$L(pojo.$L$L())\n", fieldName, getterPrefix, capName);
+                    if ("byte[]".equals(rawType)) {
+                        toWire.addCode("    .$L($T.of(pojo.$L$L()))\n", fieldName, ClassName.get("okio", "ByteString"), getterPrefix, capName);
+                    } else {
+                        toWire.addCode("    .$L(pojo.$L$L())\n", fieldName, getterPrefix, capName);
+                    }
                 } else if (TypeUtils.isCollection(rawType)) {
                     generateCollectionToWire(toWire, fieldName, rawType, getterPrefix, capName);
                 } else if (isEnum(enclosed.asType())) {
@@ -80,7 +84,11 @@ public class CodecGenerator {
                 String rawType = enclosed.asType().toString();
 
                 if (TypeUtils.getProtoType(rawType) != null || TypeUtils.isMap(rawType)) {
-                    fromWire.addStatement("pojo.set$L(wire.$L)", capName, fieldName);
+                    if ("byte[]".equals(rawType)) {
+                        fromWire.addStatement("pojo.set$L(wire.$L.toByteArray())", capName, fieldName);
+                    } else {
+                        fromWire.addStatement("pojo.set$L(wire.$L)", capName, fieldName);
+                    }
                 } else if (TypeUtils.isCollection(rawType)) {
                     generateCollectionFromWire(fromWire, fieldName, rawType, capName);
                 } else if (isEnum(enclosed.asType())) {
@@ -184,15 +192,14 @@ public class CodecGenerator {
         if (typeMirror.getKind() == javax.lang.model.type.TypeKind.DECLARED) {
             javax.lang.model.element.TypeElement typeElement = (javax.lang.model.element.TypeElement) ((javax.lang.model.type.DeclaredType) typeMirror)
                     .asElement();
-            String packageName = ((javax.lang.model.element.PackageElement) typeElement.getEnclosingElement())
-                    .getQualifiedName().toString();
+
             // This logic is slightly flawed for inner enums where enclosing is not package
             // Find package
             Element enclosing = typeElement.getEnclosingElement();
             while (enclosing.getKind() != ElementKind.PACKAGE) {
                 enclosing = enclosing.getEnclosingElement();
             }
-            packageName = ((javax.lang.model.element.PackageElement) enclosing).getQualifiedName().toString();
+            String packageName = ((javax.lang.model.element.PackageElement) enclosing).getQualifiedName().toString();
 
             String simpleName = typeElement.getSimpleName().toString();
             // reconstruct simple name for nested types? e.g. RpcPacket.Type

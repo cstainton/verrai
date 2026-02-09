@@ -51,6 +51,12 @@
         <version>1.0.0-SNAPSHOT</version>
         <scope>provided</scope>
      </dependency>
+     <dependency>
+        <groupId>org.teavm</groupId>
+        <artifactId>teavm-core</artifactId>
+        <version>${teavm.version}</version>
+        <scope>provided</scope>
+     </dependency>
   </dependencies>
 
   <build>

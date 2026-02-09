@@ -17,12 +17,19 @@
     <module>tearay-integration-tests</module>
     <module>tearay-demo</module>
     <module>tearay-rpc-client</module>
+    <module>tearay-api</module>
+    <module>tearay-processor</module>
+    <module>tearay-widgets-bootstrap</module>
+    <module>tearay-widgets-material</module>
+    <module>tearay-ui</module>
+    <module>tearay-persistence</module>
+    <module>tearay-app</module>
   </modules>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <teavm.version>0.10.0</teavm.version>
-    <maven.compiler.release>17</maven.compiler.release>
+    <teavm.version>0.13.0</teavm.version>
+    <maven.compiler.release>21</maven.compiler.release>
     <wire.version>4.9.3</wire.version>
     <slf4j.version>2.0.12</slf4j.version>
   </properties>
@@ -58,6 +65,18 @@
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-simple</artifactId>
         <version>${slf4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.teavm</groupId>
+        <artifactId>teavm-junit</artifactId>
+        <version>${teavm.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.13.2</version>
+        <scope>test</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>
