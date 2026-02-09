@@ -8,6 +8,7 @@ import uk.co.instanto.tearay.api.Bound;
 import uk.co.instanto.tearay.api.Model;
 import uk.co.instanto.tearay.api.TakesValue;
 import uk.co.instanto.tearay.api.EventHandler;
+import uk.co.instanto.tearay.api.SinkNative;
 
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
@@ -251,6 +252,31 @@ public class TemplatedProcessor extends AbstractProcessor {
                 }
 
                 bindMethod.endControlFlow();
+            }
+        }
+
+        // SINK NATIVE LOGIC
+        for (VariableElement field : fields) {
+            SinkNative sinkNative = field.getAnnotation(SinkNative.class);
+            if (sinkNative != null) {
+                String[] events = sinkNative.value();
+                if (events.length > 0) {
+                    // Check if IsWidget
+                    TypeElement isWidgetType = processingEnv.getElementUtils().getTypeElement("uk.co.instanto.tearay.api.IsWidget");
+                    boolean isWidget = isWidgetType != null && processingEnv.getTypeUtils().isAssignable(field.asType(), isWidgetType.asType());
+
+                    if (isWidget) {
+                        bindMethod.beginControlFlow("if (target.$L != null)", field.getSimpleName());
+                        for (String event : events) {
+                             bindMethod.addCode("((uk.co.instanto.tearay.api.IsWidget)target.$L).getElement().addEventListener($S, e -> ((uk.co.instanto.tearay.api.IsWidget)target.$L).onBrowserEvent(e));\n",
+                                 field.getSimpleName(), event, field.getSimpleName());
+                        }
+                        bindMethod.endControlFlow();
+                    } else {
+                         processingEnv.getMessager().printMessage(Diagnostic.Kind.WARNING,
+                            "@SinkNative is only supported on fields implementing IsWidget. Field '" + field.getSimpleName() + "' is ignored.", field);
+                    }
+                }
             }
         }
 

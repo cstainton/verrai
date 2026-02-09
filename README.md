@@ -49,7 +49,7 @@ Deploy the generated `.war` file to any Servlet container (Tomcat, Jetty).
 @Templated // Binds to DashboardPage.html
 public class DashboardPage {
     @Inject @DataField
-    private Button myButton;
+    Button myButton; // Package-private access
 
     @PageShowing
     public void onOpen() {
@@ -64,6 +64,27 @@ public class DashboardPage {
 // ...
 nav.goTo("dashboard");
 ```
+
+### Event Handling
+You can handle UI events using `@EventHandler` or `@SinkNative`.
+
+**Using `@EventHandler`:**
+Binds a method in the `@Templated` bean to an event on a `@DataField`.
+```java
+@Inject @DataField Button submit;
+
+@EventHandler("submit")
+public void onSubmit(ClickEvent e) { ... }
+```
+
+**Using `@SinkNative`:**
+Declaratively sinks native events on a Widget field, delegating to the Widget's `onBrowserEvent` method.
+```java
+@Inject
+@SinkNative({"click", "mouseover"})
+MyCustomWidget widget; // Field must be accessible (package-private or public)
+```
+*Note: The widget must implement `IsWidget` and override `onBrowserEvent(Event)` to handle the events.*
 
 ## Documentation
 
