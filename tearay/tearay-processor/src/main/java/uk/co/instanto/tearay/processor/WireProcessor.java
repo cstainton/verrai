@@ -278,12 +278,6 @@ public class WireProcessor extends AbstractProcessor {
              decodeProto.addStatement("throw new $T(\"Cannot instantiate abstract class $L\")", UnsupportedOperationException.class, targetClass);
         } else {
             decodeProto.addStatement("$T value = new $T()", targetClass, targetClass);
-            decodeProto.addStatement("long token = -1L");
-            decodeProto.beginControlFlow("try");
-            decodeProto.addStatement("token = reader.beginMessage()");
-            decodeProto.nextControlFlow("catch ($T e)", IllegalStateException.class);
-            decodeProto.endControlFlow();
-
             decodeProto.beginControlFlow("for (int tag; (tag = reader.nextTag()) != -1; )");
             decodeProto.beginControlFlow("switch (tag)");
 
@@ -304,11 +298,6 @@ public class WireProcessor extends AbstractProcessor {
 
             decodeProto.endControlFlow(); // switch
             decodeProto.endControlFlow(); // for
-
-            decodeProto.beginControlFlow("if (token != -1L)");
-            decodeProto.addStatement("reader.endMessage(token)");
-            decodeProto.endControlFlow();
-
             decodeProto.addStatement("return value");
         }
 
@@ -378,14 +367,18 @@ public class WireProcessor extends AbstractProcessor {
              builder.addStatement("if ($L == null) $L = new $T<>()", accessor, accessor, ArrayList.class);
 
              if (isProto(elementType)) {
+                 builder.addStatement("long token = reader.beginMessage()");
                  builder.addStatement("$T item = registry.getCodec($T.class).decode(reader)", elementType, TypeName.get(elementType));
+                 builder.addStatement("reader.endMessage(token)");
                  builder.addStatement("$L.add(item)", accessor);
              } else if (isString(elementType)) {
                  builder.addStatement("$L.add(reader.readString())", accessor);
              }
         } else if (isProto(type)) {
              // Nested Message
+             builder.addStatement("long token = reader.beginMessage()");
              builder.addStatement("$L = registry.getCodec($T.class).decode(reader)", accessor, TypeName.get(type));
+             builder.addStatement("reader.endMessage(token)");
         }
     }
 
