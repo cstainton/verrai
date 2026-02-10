@@ -6,4 +6,5 @@ package dev.verrai.api.binding;
  */
 public interface BinderLifecycle {
     void addBinding(Subscription subscription);
+    void clearBindings();
 }

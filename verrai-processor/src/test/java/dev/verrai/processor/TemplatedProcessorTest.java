@@ -120,6 +120,7 @@ public class TemplatedProcessorTest {
             "    public MyWidget name;",
             "",
             "    public void addBinding(Subscription s) {}",
+            "    public void clearBindings() {}",
             "}"
         );
 
