@@ -80,7 +80,8 @@ public class BindableProcessor extends AbstractProcessor {
                 .addModifiers(Modifier.PRIVATE)
                 .addParameter(String.class, "property")
                 .addParameter(Object.class, "value")
-                .beginControlFlow("for ($T handler : handlers)", handlerClass)
+                .addStatement("$T copy = new $T(handlers)", ParameterizedTypeName.get(listClass, handlerClass), arrayListClass)
+                .beginControlFlow("for ($T handler : copy)", handlerClass)
                 .addStatement("handler.onPropertyChange(property, value)")
                 .endControlFlow()
                 .build());
