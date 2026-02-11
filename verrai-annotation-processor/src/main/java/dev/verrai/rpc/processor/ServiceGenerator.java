@@ -16,7 +16,7 @@ public class ServiceGenerator {
 
     private static final ClassName RPC_CLIENT = ClassName.get("uk.co.instanto.client.service", "RpcClient");
     private static final ClassName RPC_PACKET = ClassName.get("uk.co.instanto.client.service.proto", "RpcPacket");
-    private static final ClassName SERVICE_DISPATCHER = ClassName.get("dev.verrai.rpc.common.transport",
+    private static final ClassName SERVICE_DISPATCHER = ClassName.get("uk.co.instanto.client.service.transport",
             "ServiceDispatcher");
     private static final ClassName TRANSPORT = ClassName.get("dev.verrai.rpc.common.transport", "Transport");
 
