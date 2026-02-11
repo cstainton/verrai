@@ -389,7 +389,7 @@ public class UnitRegistry {
     }
 
     public void registerDispatcher(String serviceId,
-            dev.verrai.rpc.common.transport.ServiceDispatcher dispatcher) {
+            uk.co.instanto.client.service.transport.ServiceDispatcher dispatcher) {
         if (rpcServer != null) {
             rpcServer.registerDispatcher(serviceId, dispatcher);
         } else {

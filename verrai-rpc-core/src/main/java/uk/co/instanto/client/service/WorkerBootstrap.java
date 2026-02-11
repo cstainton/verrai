@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.co.instanto.client.service.proto.RpcPacket;
 import dev.verrai.rpc.common.transport.Transport;
-import dev.verrai.rpc.common.transport.ServiceDispatcher;
+import uk.co.instanto.client.service.transport.ServiceDispatcher;
 import java.util.HashMap;
 import java.util.Map;
 

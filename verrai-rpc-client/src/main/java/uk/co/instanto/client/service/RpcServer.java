@@ -1,7 +1,7 @@
 package uk.co.instanto.client.service;
 
 import uk.co.instanto.client.service.proto.RpcPacket;
-import dev.verrai.rpc.common.transport.ServiceDispatcher;
+import uk.co.instanto.client.service.transport.ServiceDispatcher;
 import dev.verrai.rpc.common.transport.Transport;
 import java.util.HashMap;
 import java.util.Map;

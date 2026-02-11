@@ -116,10 +116,10 @@ public class TearayProcessor extends AbstractProcessor {
         wireGenerator.addProtoFile(relativePath, protoContent);
 
         // We primarily output to CLASS_OUTPUT so it ends up in target/classes
-        // FileObject fileObject = filer.createResource(StandardLocation.CLASS_OUTPUT,
-        // "", relativePath);
-        // try (Writer writer = fileObject.openWriter()) {
-        // writer.write(protoContent);
-        // }
+        javax.tools.FileObject fileObject = filer.createResource(javax.tools.StandardLocation.CLASS_OUTPUT,
+         "", relativePath);
+        try (java.io.Writer writer = fileObject.openWriter()) {
+         writer.write(protoContent);
+        }
     }
 }
