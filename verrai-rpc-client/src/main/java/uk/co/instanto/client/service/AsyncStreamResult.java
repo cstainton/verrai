@@ -1,7 +1,7 @@
 package uk.co.instanto.client.service;
 
+import java.util.concurrent.Flow;
 import java.util.function.Consumer;
-import uk.co.instanto.client.service.flow.Publisher;
 
 /**
  * A safe, non-blocking stream result for subscription-style RPC calls.
@@ -9,7 +9,7 @@ import uk.co.instanto.client.service.flow.Publisher;
  * 
  * @param <T> The type of data in the stream.
  */
-public interface AsyncStreamResult<T> extends Publisher<T> {
+public interface AsyncStreamResult<T> extends Flow.Publisher<T> {
 
     /**
      * Subscribes to the stream.
@@ -32,10 +32,10 @@ public interface AsyncStreamResult<T> extends Publisher<T> {
             }
 
             @Override
-            public void subscribe(uk.co.instanto.client.service.flow.Subscriber<? super R> subscriber) {
-                 AsyncStreamResult.this.subscribe(new uk.co.instanto.client.service.flow.Subscriber<T>() {
+            public void subscribe(Flow.Subscriber<? super R> subscriber) {
+                 AsyncStreamResult.this.subscribe(new Flow.Subscriber<T>() {
                      @Override
-                     public void onSubscribe(uk.co.instanto.client.service.flow.Subscription subscription) {
+                     public void onSubscribe(Flow.Subscription subscription) {
                          subscriber.onSubscribe(subscription);
                      }
 
