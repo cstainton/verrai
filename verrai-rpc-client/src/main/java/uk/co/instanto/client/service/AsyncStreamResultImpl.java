@@ -2,6 +2,7 @@ package uk.co.instanto.client.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Flow;
 import java.util.function.Consumer;
 
 public class AsyncStreamResultImpl<T> implements AsyncStreamResult<T> {
@@ -32,13 +33,13 @@ public class AsyncStreamResultImpl<T> implements AsyncStreamResult<T> {
     }
 
     @Override
-    public void subscribe(uk.co.instanto.client.service.flow.Subscriber<? super T> subscriber) {
+    public void subscribe(Flow.Subscriber<? super T> subscriber) {
         final Subscription sub = subscribe(
                 subscriber::onNext,
                 subscriber::onError,
                 subscriber::onComplete);
 
-        uk.co.instanto.client.service.flow.Subscription flowSub = new uk.co.instanto.client.service.flow.Subscription() {
+        Flow.Subscription flowSub = new Flow.Subscription() {
             @Override
             public void request(long n) {
                 if (client != null && requestId != null) {
@@ -103,7 +104,6 @@ public class AsyncStreamResultImpl<T> implements AsyncStreamResult<T> {
         List<Subscriber<T>> subs;
         synchronized (subscribers) {
             subs = new ArrayList<>(subscribers);
-            subscribers.clear();
         }
         for (Subscriber<T> sub : subs) {
             try {
