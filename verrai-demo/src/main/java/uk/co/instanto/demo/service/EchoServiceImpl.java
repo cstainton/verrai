@@ -3,9 +3,11 @@ package uk.co.instanto.demo.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.co.instanto.demo.service.dto.*;
+import dev.verrai.rpc.common.annotation.Service;
 import java.util.HashMap;
 import java.util.Map;
 
+@Service
 public class EchoServiceImpl implements EchoService {
     private static final Logger logger = LoggerFactory.getLogger(EchoServiceImpl.class);
     private final String nodeId;

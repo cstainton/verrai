@@ -6,7 +6,6 @@ import dev.verrai.rpc.common.annotation.Service;
 import uk.co.instanto.client.service.AsyncResult;
 import uk.co.instanto.client.service.AsyncStreamResult;
 
-@Service
 public interface EchoService {
     AsyncResult<Greeting> echo(Greeting greeting);
 

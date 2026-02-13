@@ -296,26 +296,13 @@ public class UnitRegistry {
         return getServiceInternal(serviceClass);
     }
 
-    private <T> T getServiceInternal(Class<T> serviceClass) {
-        String serviceId = serviceClass.getName();
-
-        // 1. Check local
-        if (localServices.containsKey(serviceId)) {
-            return serviceClass.cast(localServices.get(serviceId));
-        }
-
-        // 2. Check cached stubs
-        if (serviceStubs.containsKey(serviceId)) {
-            return serviceClass.cast(serviceStubs.get(serviceId));
-        }
-
-        // 3. Create remote stub
+    public RpcClient getClientForService(String serviceId) {
         String nodeId = serviceToNode.get(serviceId);
         if (nodeId == null) {
             return null; // Not found yet
         }
 
-        RpcClient client = nodeClients.computeIfAbsent(nodeId, nid -> {
+        return nodeClients.computeIfAbsent(nodeId, nid -> {
             Transport transport = null;
             if (transportResolver != null) {
                 transport = transportResolver.apply(nid);
@@ -337,6 +324,26 @@ public class UnitRegistry {
             }
             return rpcClient;
         });
+    }
+
+    private <T> T getServiceInternal(Class<T> serviceClass) {
+        String serviceId = serviceClass.getName();
+
+        // 1. Check local
+        if (localServices.containsKey(serviceId)) {
+            return serviceClass.cast(localServices.get(serviceId));
+        }
+
+        // 2. Check cached stubs
+        if (serviceStubs.containsKey(serviceId)) {
+            return serviceClass.cast(serviceStubs.get(serviceId));
+        }
+
+        // 3. Create remote stub
+        RpcClient client = getClientForService(serviceId);
+        if (client == null) {
+            return null;
+        }
 
         ServiceFactory<T> factory = (ServiceFactory<T>) factories.get(serviceClass);
         if (factory == null) {

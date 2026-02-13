@@ -97,21 +97,33 @@ public class TearayRunner {
     }
 
     private static void registerProvider(UnitRegistry registry, Object value) {
-        for (Class<?> iface : value.getClass().getInterfaces()) {
-            if (isService(iface)) {
-                System.out.println("Auto-registering local service: " + iface.getName());
-                registry.registerLocal(iface.getName(), value);
+        boolean implAnnotated = isService(value.getClass());
 
-                // Auto-register Dispatcher (Reflective load)
+        for (Class<?> iface : value.getClass().getInterfaces()) {
+            boolean ifaceAnnotated = isService(iface);
+
+            if (implAnnotated || ifaceAnnotated) {
+                if (iface.getName().startsWith("java.") || iface.getName().startsWith("javax.")) {
+                    continue;
+                }
+
+                // Try to load Dispatcher to confirm it is a valid service
                 try {
                     String dispatcherName = iface.getName() + "_Dispatcher";
                     Class<?> dispatcherClass = Class.forName(dispatcherName);
+
+                    System.out.println("Auto-registering local service: " + iface.getName());
+                    registry.registerLocal(iface.getName(), value);
+
                     // Use no-arg constructor if possible, or look for specific one
                     uk.co.instanto.client.service.transport.ServiceDispatcher dispatcher = (uk.co.instanto.client.service.transport.ServiceDispatcher) dispatcherClass
                             .getDeclaredConstructor().newInstance();
                     registry.registerDispatcher(iface.getName(), dispatcher);
                 } catch (Exception e) {
-                    // Dispatcher might not exist or failed to load
+                    // Dispatcher not found, so maybe not a service or not generated yet.
+                    if (ifaceAnnotated) {
+                        System.out.println("Warning: Service dispatcher not found for " + iface.getName());
+                    }
                 }
             }
         }

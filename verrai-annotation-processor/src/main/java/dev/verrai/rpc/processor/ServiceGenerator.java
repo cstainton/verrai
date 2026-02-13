@@ -15,6 +15,7 @@ import okio.ByteString;
 public class ServiceGenerator {
 
     private static final ClassName RPC_CLIENT = ClassName.get("uk.co.instanto.client.service", "RpcClient");
+    private static final ClassName UNIT_REGISTRY = ClassName.get("uk.co.instanto.client.service", "UnitRegistry");
     private static final ClassName RPC_PACKET = ClassName.get("uk.co.instanto.client.service.proto", "RpcPacket");
     private static final ClassName SERVICE_DISPATCHER = ClassName.get("uk.co.instanto.client.service.transport",
             "ServiceDispatcher");
@@ -22,9 +23,23 @@ public class ServiceGenerator {
 
     public List<JavaFile> generate(TypeElement typeElement) {
         List<JavaFile> files = new ArrayList<>();
-        files.add(generateStub(typeElement));
-        files.add(generateDispatcher(typeElement));
-        files.add(generateFactory(typeElement));
+        TypeElement serviceInterface = typeElement;
+
+        if (typeElement.getKind() == ElementKind.CLASS) {
+            for (TypeMirror iface : typeElement.getInterfaces()) {
+                if (!iface.toString().startsWith("java.") && !iface.toString().startsWith("javax.")) {
+                     // Best effort resolution
+                     if (iface instanceof javax.lang.model.type.DeclaredType) {
+                         serviceInterface = (TypeElement) ((javax.lang.model.type.DeclaredType) iface).asElement();
+                         break;
+                     }
+                }
+            }
+        }
+
+        files.add(generateStub(serviceInterface));
+        files.add(generateDispatcher(serviceInterface));
+        files.add(generateFactory(serviceInterface));
         return files;
     }
 
@@ -41,12 +56,25 @@ public class ServiceGenerator {
                 .addModifiers(Modifier.PUBLIC)
                 .addSuperinterface(ParameterizedTypeName.get(factoryInterface, serviceType));
 
+        // Singleton instance
+        typeSpec.addField(FieldSpec.builder(serviceType, "instance", Modifier.PRIVATE, Modifier.STATIC).build());
+
+        // getInstance() for IOC
+        MethodSpec.Builder getInstance = MethodSpec.methodBuilder("getInstance")
+                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                .returns(serviceType)
+                .beginControlFlow("if (instance == null)")
+                .addStatement("instance = new $T()", stubType)
+                .endControlFlow()
+                .addStatement("return instance");
+        typeSpec.addMethod(getInstance.build());
+
         MethodSpec.Builder create = MethodSpec.methodBuilder("create")
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(Override.class)
                 .addParameter(RPC_CLIENT, "client")
                 .returns(serviceType)
-                .addStatement("return new $T(client)", stubType);
+                .addStatement("return getInstance()");
 
         typeSpec.addMethod(create.build());
 
@@ -63,16 +91,16 @@ public class ServiceGenerator {
                 .addModifiers(Modifier.PUBLIC)
                 .addSuperinterface(serviceType);
 
-        // Field: RpcClient
-        typeSpec.addField(RPC_CLIENT, "client", Modifier.PRIVATE, Modifier.FINAL);
-
         // Constructor
         MethodSpec.Builder ctor = MethodSpec.constructorBuilder()
-                .addModifiers(Modifier.PUBLIC)
-                .addParameter(RPC_CLIENT, "client")
-                .addStatement("this.client = client");
+                .addModifiers(Modifier.PUBLIC);
+        typeSpec.addMethod(ctor.build());
 
-        // Register codecs
+        // Register codecs helper
+        MethodSpec.Builder registerCodecs = MethodSpec.methodBuilder("registerCodecs")
+                .addModifiers(Modifier.PRIVATE)
+                .addParameter(RPC_CLIENT, "client");
+
         Set<String> referencedTypes = new HashSet<>();
         for (Element enclosed : typeElement.getEnclosedElements()) {
             if (enclosed.getKind() == ElementKind.METHOD) {
@@ -105,9 +133,21 @@ public class ServiceGenerator {
         for (String type : referencedTypes) {
             ClassName typeName = ClassName.bestGuess(type);
             ClassName codecName = ClassName.bestGuess(type + "Codec");
-            ctor.addStatement("client.registerCodec($T.class, new $T())", typeName, codecName);
+            registerCodecs.addStatement("client.registerCodec($T.class, new $T())", typeName, codecName);
         }
-        typeSpec.addMethod(ctor.build());
+        typeSpec.addMethod(registerCodecs.build());
+
+        // getClient helper
+        MethodSpec.Builder getClient = MethodSpec.methodBuilder("getClient")
+                .addModifiers(Modifier.PRIVATE)
+                .returns(RPC_CLIENT)
+                .addStatement("$T client = $T.getInstance().getClientForService($S)", RPC_CLIENT, UNIT_REGISTRY, packageName + "." + simpleName)
+                .beginControlFlow("if (client == null)")
+                .addStatement("throw new RuntimeException(\"Service not available: \" + $S)", packageName + "." + simpleName)
+                .endControlFlow()
+                .addStatement("registerCodecs(client)")
+                .addStatement("return client");
+        typeSpec.addMethod(getClient.build());
 
         // Methods
         for (Element enclosed : typeElement.getEnclosedElements()) {
@@ -129,7 +169,7 @@ public class ServiceGenerator {
 
                     if (retStr.startsWith("uk.co.instanto.client.service.AsyncStreamResult")) {
                         // Call invokeStreamStub
-                        methodBuilder.addStatement("$T rawResult = ($T) client.invokeStreamStub($S, $S, $L)",
+                        methodBuilder.addStatement("$T rawResult = ($T) getClient().invokeStreamStub($S, $S, $L)",
                                 ParameterizedTypeName.get(
                                         ClassName.get("uk.co.instanto.client.service", "AsyncStreamResult"),
                                         ClassName.get(Object.class)),
@@ -164,7 +204,7 @@ public class ServiceGenerator {
 
                     } else if (retStr.startsWith("uk.co.instanto.client.service.AsyncResult")) {
                         // Call invokeStub, which returns AsyncResult<Object>
-                        methodBuilder.addStatement("$T rawResult = ($T) client.invokeStub($S, $S, $L)",
+                        methodBuilder.addStatement("$T rawResult = ($T) getClient().invokeStub($S, $S, $L)",
                                 ParameterizedTypeName.get(ClassName.get("uk.co.instanto.client.service", "AsyncResult"),
                                         ClassName.get(Object.class)),
                                 ParameterizedTypeName.get(ClassName.get("uk.co.instanto.client.service", "AsyncResult"),
