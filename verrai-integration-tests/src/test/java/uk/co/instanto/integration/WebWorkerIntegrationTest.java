@@ -18,6 +18,11 @@ import uk.co.instanto.integration.service.MyDataService_Dispatcher;
 import uk.co.instanto.integration.service.dto.MyData;
 import uk.co.instanto.integration.service.dto.Employee;
 import uk.co.instanto.integration.service.dto.Organization;
+import uk.co.instanto.integration.service.AuthenticationService;
+import uk.co.instanto.integration.service.AuthenticationService_Stub;
+import uk.co.instanto.integration.service.AuthenticationService_Dispatcher;
+import uk.co.instanto.integration.service.dto.LogonRequest;
+import uk.co.instanto.client.service.dto.LogonResponse;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -50,6 +55,8 @@ public class WebWorkerIntegrationTest {
         WorkerBootstrap serverBootstrap = new WorkerBootstrap(serverTransport);
         serverBootstrap.registerDispatcher("uk.co.instanto.integration.service.MyDataService",
                 new MyDataService_Dispatcher());
+        serverBootstrap.registerDispatcher("uk.co.instanto.integration.service.AuthenticationService",
+                new AuthenticationService_Dispatcher());
 
         // Register Implementation
         UnitRegistry.register("uk.co.instanto.integration.service.MyDataService", new MyDataService() {
@@ -67,6 +74,16 @@ public class WebWorkerIntegrationTest {
             }
         });
 
+        UnitRegistry.register("uk.co.instanto.integration.service.AuthenticationService", new AuthenticationService() {
+            @Override
+            public AsyncResult<LogonResponse> login(LogonRequest request) {
+                logger.info("JVM Server received login for: " + request.getUsername());
+                uk.co.instanto.client.service.AsyncResultImpl<LogonResponse> res = new uk.co.instanto.client.service.AsyncResultImpl<>();
+                res.complete(new LogonResponse("signed-jwt-token-" + request.getUsername(), "stomp-address"));
+                return res;
+            }
+        });
+
         // --- 2. Client Setup (Simulated WebWorker) ---
 
         // The transport inside the Worker
@@ -80,23 +97,45 @@ public class WebWorkerIntegrationTest {
             try {
                 logger.info("[Worker] Starting...");
                 UnitRegistry.getInstance().registerRemote(MyDataService.class.getName(), "simulated-worker-node", workerTransport);
-                MyDataService workerStub = new MyDataService_Stub();
+                UnitRegistry.getInstance().registerRemote(AuthenticationService.class.getName(), "simulated-worker-node", workerTransport);
 
+                MyDataService workerStub = new MyDataService_Stub();
+                AuthenticationService authStub = new AuthenticationService_Stub();
+
+                // 1. Existing Test
                 MyData req = new MyData();
                 req.setId("worker-1");
                 req.setContent("Hello from Worker");
 
-                logger.info("[Worker] Calling service...");
-                // Note: Integration tests might be using synchronous stub methods if not
-                // updated to AsyncResult?
-                // Checking StompTransportTest passed suggests Stub generation works.
-                // If it returns void, we can't wait for completion easily unless we check side
-                // effects.
-                // Assuming processData is void for now based on previous file view.
-
+                logger.info("[Worker] Calling MyDataService...");
                 workerStub.processData(req);
+                logger.info("[Worker] MyDataService Call returned.");
 
-                logger.info("[Worker] Call returned (Async/Void).");
+                // 2. New Authentication Test
+                LogonRequest loginReq = new LogonRequest("user123", "secret");
+                logger.info("[Worker] Calling AuthenticationService.login...");
+                AsyncResult<LogonResponse> loginResult = authStub.login(loginReq);
+
+                // Block/Wait for result (simulated by checking if we can attach callback)
+                final CountDownLatch loginLatch = new CountDownLatch(1);
+                loginResult.thenAccept(response -> {
+                    try {
+                        logger.info("[Worker] Login Success! Token: " + response.getJwtToken());
+                        if (!"signed-jwt-token-user123".equals(response.getJwtToken())) {
+                             throw new RuntimeException("Unexpected token: " + response.getJwtToken());
+                        }
+                        loginLatch.countDown();
+                    } catch (Exception e) {
+                        workerError.set(e);
+                        loginLatch.countDown();
+                    }
+                });
+
+                if (!loginLatch.await(2000, TimeUnit.MILLISECONDS)) {
+                     throw new RuntimeException("Login timed out");
+                }
+
+                logger.info("[Worker] All calls complete.");
                 doneLatch.countDown();
 
             } catch (Exception e) {
@@ -123,29 +162,6 @@ public class WebWorkerIntegrationTest {
         broker.subscribe("/user/queue/rpc", message -> {
             // Received response from Server via STOMP
             logger.info("[Bridge] Received STOMP message from Server. Forwarding to Worker.");
-            byte[] payload = message.getBody().getBytes(java.nio.charset.StandardCharsets.UTF_8);
-            // STOMP body is string, but RPC payload is base64 encoded by StompTransport?
-            // Let's check StompTransport implementation.
-            // StompTransport.send() encodes to Base64 String if using Text STOMP?
-            // Or does it send bytes? StompClient.send takes String.
-            // So StompTransport likely encodes to Base64.
-            // RpcClient expects bytes.
-
-            // Wait, StompTransport on the Server side will decode/encode.
-            // Bridge needs to behave like the Browser Stomp Client (stomp.js).
-            // stomp.js receives text.
-
-            // If the packet is Base64 encoded in the STOMP body, we just pass the bytes of
-            // the body?
-            // No, the Worker expects the RAW RPC bytes (Proto).
-            // So if STOMP payload is Base64, Bridge must Decode Base64 -> Bytes -> Worker.
-
-            // Let's assume StompTransport uses Base64.
-            // We need to decode it.
-            // Since we don't have the Base64 utility handy in test, let's verify
-            // assumptions.
-            // StompTransport.java in the codebase:
-            // "client.send(destination, Base64.getEncoder().encodeToString(data));"
 
             try {
                 byte[] decoded = java.util.Base64.getDecoder().decode(message.getBody());
@@ -157,9 +173,8 @@ public class WebWorkerIntegrationTest {
 
         // Loop to forward Worker -> Server
         long start = System.currentTimeMillis();
-        boolean success = false;
 
-        while (System.currentTimeMillis() - start < 5000) {
+        while (System.currentTimeMillis() - start < 10000) { // Increased timeout for multiple calls
             byte[] msg = workerTransport.pollOutgoing(100, TimeUnit.MILLISECONDS);
             if (msg != null) {
                 logger.info("[Bridge] Received bytes from Worker. Wrapping in STOMP and sending to Server.");
@@ -167,7 +182,6 @@ public class WebWorkerIntegrationTest {
                 String base64 = java.util.Base64.getEncoder().encodeToString(msg);
                 // Send to Server destination
                 broker.send("/app/rpc", base64);
-                success = true; // At least we sent something
             }
             if (doneLatch.getCount() == 0)
                 break;
@@ -175,6 +189,10 @@ public class WebWorkerIntegrationTest {
 
         if (workerError.get() != null) {
             throw new RuntimeException("Worker failed", workerError.get());
+        }
+
+        if (doneLatch.getCount() > 0) {
+             throw new RuntimeException("Test Timed Out - Worker did not finish");
         }
 
         // Assert we actually verified the loop
