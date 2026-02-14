@@ -184,9 +184,10 @@ public class ServiceGenerator {
 
                         if (protoType != null) {
                             String adapterStr = TypeUtils.getAdapterType(innerType);
+                            String adapterExpr = adapterStr.startsWith("ProtoAdapter.") ? "com.squareup.wire." + adapterStr : adapterStr.substring(0, adapterStr.lastIndexOf('.')) + ".ADAPTER";
                             methodBuilder.addStatement(
-                                    "return rawResult.map(bytes -> { try { return $L.ADAPTER.decode((byte[]) bytes); } catch(Exception e) { throw new RuntimeException(e); } })",
-                                    adapterStr.substring(0, adapterStr.lastIndexOf('.')));
+                                    "return rawResult.map(bytes -> { try { return $L.decode((byte[]) bytes); } catch(Exception e) { throw new RuntimeException(e); } })",
+                                    adapterExpr);
                         } else {
                             ClassName retClass = ClassName.bestGuess(innerType);
                             ClassName retCodec = ClassName.bestGuess(innerType + "Codec");
@@ -218,9 +219,10 @@ public class ServiceGenerator {
 
                         if (protoType != null) {
                             String adapterStr = TypeUtils.getAdapterType(innerType);
+                            String adapterExpr = adapterStr.startsWith("ProtoAdapter.") ? "com.squareup.wire." + adapterStr : adapterStr.substring(0, adapterStr.lastIndexOf('.')) + ".ADAPTER";
                             methodBuilder.addStatement(
-                                    "return rawResult.thenApply(bytes -> { try { return $L.ADAPTER.decode((byte[]) bytes); } catch(Exception e) { throw new RuntimeException(e); } })",
-                                    adapterStr.substring(0, adapterStr.lastIndexOf('.')));
+                                    "return rawResult.thenApply(bytes -> { try { return $L.decode((byte[]) bytes); } catch(Exception e) { throw new RuntimeException(e); } })",
+                                    adapterExpr);
                         } else if (innerType.equals("java.lang.Void") || innerType.equals("Void")) {
                             methodBuilder.addStatement("return rawResult.thenApply(bytes -> null)");
                         } else {
@@ -293,8 +295,9 @@ public class ServiceGenerator {
                     dispatch.beginControlFlow("try");
                     if (protoType != null) {
                         String adapterStr = TypeUtils.getAdapterType(paramType);
-                        dispatch.addStatement("service.$L($L.ADAPTER.decode(packet.payload))", methodName,
-                                adapterStr.substring(0, adapterStr.lastIndexOf('.')));
+                        String adapterExpr = adapterStr.startsWith("ProtoAdapter.") ? "com.squareup.wire." + adapterStr : adapterStr.substring(0, adapterStr.lastIndexOf('.')) + ".ADAPTER";
+                        dispatch.addStatement("service.$L($L.decode(packet.payload))", methodName,
+                                adapterExpr);
                     } else {
                         ClassName paramClass = ClassName.bestGuess(paramType);
                         ClassName paramCodec = ClassName.bestGuess(paramType + "Codec");
@@ -385,12 +388,22 @@ public class ServiceGenerator {
                                             ".payload($T.EMPTY).build()))",
                                             RPC_PACKET, RPC_PACKET, RPC_PACKET, ByteString.class);
                                 } else {
-                                    dispatch.addStatement("Codec retCodec = new $T()",
-                                            ClassName.bestGuess(actualRetType + "Codec"));
-                                    dispatch.addStatement("transport.send($T.ADAPTER.encode(" +
-                                            "new $T.Builder().type($T.Type.RESPONSE).requestId(packet.requestId)" +
-                                            ".payload($T.of(((com.squareup.wire.Message)retCodec.toWire(val)).encode())).build()))",
-                                            RPC_PACKET, RPC_PACKET, RPC_PACKET, ByteString.class);
+                                    String retProtoType = TypeUtils.getProtoType(actualRetType);
+                                    if (retProtoType != null) {
+                                        String adapterStr = TypeUtils.getAdapterType(actualRetType);
+                                        String adapterExpr = adapterStr.startsWith("ProtoAdapter.") ? "com.squareup.wire." + adapterStr : adapterStr.substring(0, adapterStr.lastIndexOf('.')) + ".ADAPTER";
+                                        dispatch.addStatement("transport.send($T.ADAPTER.encode(" +
+                                                "new $T.Builder().type($T.Type.RESPONSE).requestId(packet.requestId)" +
+                                                ".payload($T.of($L.encode(val))).build()))",
+                                                RPC_PACKET, RPC_PACKET, RPC_PACKET, ByteString.class, adapterExpr);
+                                    } else {
+                                        dispatch.addStatement("Codec retCodec = new $T()",
+                                                ClassName.bestGuess(actualRetType + "Codec"));
+                                        dispatch.addStatement("transport.send($T.ADAPTER.encode(" +
+                                                "new $T.Builder().type($T.Type.RESPONSE).requestId(packet.requestId)" +
+                                                ".payload($T.of(((com.squareup.wire.Message)retCodec.toWire(val)).encode())).build()))",
+                                                RPC_PACKET, RPC_PACKET, RPC_PACKET, ByteString.class);
+                                    }
                                 }
                                 dispatch.nextControlFlow("catch (Exception e)");
                                 dispatch.addStatement("e.printStackTrace()");
