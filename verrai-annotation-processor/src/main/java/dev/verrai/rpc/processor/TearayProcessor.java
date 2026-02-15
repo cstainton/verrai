@@ -50,6 +50,8 @@ public class TearayProcessor extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+        messager.printMessage(Diagnostic.Kind.NOTE, "TearayProcessor: Started processing round. Annotations: " + annotations);
+
         if (roundEnv.processingOver()) {
             generateServiceFile();
             return false;
@@ -65,6 +67,8 @@ public class TearayProcessor extends AbstractProcessor {
             portableElements.addAll(roundEnv.getElementsAnnotatedWith(Portable.class));
             portableElements
                     .addAll(roundEnv.getElementsAnnotatedWith(dev.verrai.rpc.common.annotation.Event.class));
+
+            messager.printMessage(Diagnostic.Kind.NOTE, "TearayProcessor: Found " + portableElements.size() + " portable elements.");
 
             if (!portableElements.isEmpty()) {
                 // 1. Generate all .proto files
