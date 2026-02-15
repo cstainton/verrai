@@ -49,6 +49,8 @@ public class UnitRegistry {
 
     private final Map<String, String> defaultHeaders = new HashMap<>();
 
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(UnitRegistry.class);
+
     public UnitRegistry() {
     }
 
@@ -113,37 +115,17 @@ public class UnitRegistry {
     }
 
     private void loadGeneratedCodecs() {
-        // In a real reflection-free environment, we might need a generated Registry
-        // class
-        // that calls this. For now, we'll try to load known DTOs or scan if possible?
-        // Actually, without reflection, we need the Annotation Processor to generate a
-        // loader.
-        // BUT, for this MVP, let's just manually register the ones we know about in
-        // configureStomp,
-        // or try to load them by name if we know the package.
+        // Use ServiceLoader to find all registered CodecLoader implementations.
+        // This avoids manual registration and reflection on hardcoded strings.
+        java.util.ServiceLoader<dev.verrai.rpc.common.serialization.CodecLoader> loader = java.util.ServiceLoader
+                .load(dev.verrai.rpc.common.serialization.CodecLoader.class);
 
-        // Better: The Annotation Processor should generate a "CodecRegistryLoader"
-        // service.
-        // For now, let's just catch exceptions and try to load.
-        String[] dtos = {
-                "uk.co.instanto.client.service.dto.proto.NodeAnnouncedEvent",
-                "uk.co.instanto.client.service.dto.proto.NodeHeartbeatEvent",
-                "uk.co.instanto.client.service.dto.proto.NodeDepartedEvent",
-                "uk.co.instanto.demo.service.dto.Greeting",
-                "uk.co.instanto.demo.service.dto.Country",
-                "uk.co.instanto.demo.service.dto.MyData"
-        };
-
-        for (String dto : dtos) {
+        for (dev.verrai.rpc.common.serialization.CodecLoader codecLoader : loader) {
             try {
-                Class<?> dtoClass = Class.forName(dto);
-                Class<?> codecClass = Class.forName(dto + "JsonCodec");
-                Object codec = codecClass.getDeclaredConstructor().newInstance();
-                dev.verrai.rpc.common.serialization.JsonCodecRegistry.register(
-                        (Class) dtoClass, (dev.verrai.rpc.common.serialization.JsonCodec) codec);
-            } catch (Throwable e) {
-                // Ignore if not found
-                // System.out.println("Could not load JsonCodec for: " + dto);
+                codecLoader.load();
+            } catch (Exception e) {
+                // Log error but continue
+                logger.error("Failed to load codecs from loader: " + codecLoader.getClass().getName(), e);
             }
         }
     }
