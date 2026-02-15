@@ -2,7 +2,10 @@ package uk.co.instanto.client.service;
 
 import org.junit.Test;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class AsyncStreamResultImplTest {
 
@@ -37,5 +40,62 @@ public class AsyncStreamResultImplTest {
 
         result.onNext("world");
         assertEquals(1, count.get());
+    }
+
+    @Test
+    public void testErrorPropagation() {
+        AsyncStreamResultImpl<String> result = new AsyncStreamResultImpl<>();
+        AtomicReference<Throwable> errorRef = new AtomicReference<>();
+
+        result.subscribe(item -> {}, errorRef::set, () -> {});
+
+        Exception ex = new Exception("test error");
+        result.onError(ex);
+
+        assertEquals(ex, errorRef.get());
+    }
+
+    @Test
+    public void testErrorPropagationWithMultipleSubscribers() {
+        AsyncStreamResultImpl<String> result = new AsyncStreamResultImpl<>();
+        AtomicInteger count = new AtomicInteger(0);
+
+        result.subscribe(item -> {}, e -> count.incrementAndGet(), () -> {});
+        result.subscribe(item -> {}, e -> count.incrementAndGet(), () -> {});
+
+        result.onError(new Exception("test error"));
+
+        assertEquals(2, count.get());
+    }
+
+    @Test
+    public void testErrorPropagationClearsSubscribers() {
+        AsyncStreamResultImpl<String> result = new AsyncStreamResultImpl<>();
+        AtomicInteger nextCount = new AtomicInteger(0);
+        AtomicInteger errorCount = new AtomicInteger(0);
+
+        result.subscribe(item -> nextCount.incrementAndGet(), e -> errorCount.incrementAndGet(), () -> {});
+
+        result.onError(new Exception("test error"));
+        assertEquals(1, errorCount.get());
+
+        result.onNext("after error");
+        assertEquals(0, nextCount.get());
+    }
+
+    @Test
+    public void testErrorInErrorHandlerDoesNotStopOtherSubscribers() {
+        AsyncStreamResultImpl<String> result = new AsyncStreamResultImpl<>();
+        AtomicInteger errorCount = new AtomicInteger(0);
+
+        result.subscribe(item -> {}, e -> {
+            throw new RuntimeException("Oops");
+        }, () -> {});
+
+        result.subscribe(item -> {}, e -> errorCount.incrementAndGet(), () -> {});
+
+        result.onError(new Exception("test error"));
+
+        assertEquals(1, errorCount.get());
     }
 }
