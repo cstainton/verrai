@@ -7,9 +7,12 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.ArrayList;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class UnitRegistry {
     private static final UnitRegistry INSTANCE = new UnitRegistry();
+    private static final Logger logger = LoggerFactory.getLogger(UnitRegistry.class);
 
     private final Map<String, Object> localServices = new HashMap<>();
 
@@ -113,38 +116,16 @@ public class UnitRegistry {
     }
 
     private void loadGeneratedCodecs() {
-        // In a real reflection-free environment, we might need a generated Registry
-        // class
-        // that calls this. For now, we'll try to load known DTOs or scan if possible?
-        // Actually, without reflection, we need the Annotation Processor to generate a
-        // loader.
-        // BUT, for this MVP, let's just manually register the ones we know about in
-        // configureStomp,
-        // or try to load them by name if we know the package.
+        try {
+            java.util.ServiceLoader<dev.verrai.rpc.common.serialization.CodecLoader> loader =
+                    java.util.ServiceLoader.load(dev.verrai.rpc.common.serialization.CodecLoader.class);
 
-        // Better: The Annotation Processor should generate a "CodecRegistryLoader"
-        // service.
-        // For now, let's just catch exceptions and try to load.
-        String[] dtos = {
-                "uk.co.instanto.client.service.dto.proto.NodeAnnouncedEvent",
-                "uk.co.instanto.client.service.dto.proto.NodeHeartbeatEvent",
-                "uk.co.instanto.client.service.dto.proto.NodeDepartedEvent",
-                "uk.co.instanto.demo.service.dto.Greeting",
-                "uk.co.instanto.demo.service.dto.Country",
-                "uk.co.instanto.demo.service.dto.MyData"
-        };
-
-        for (String dto : dtos) {
-            try {
-                Class<?> dtoClass = Class.forName(dto);
-                Class<?> codecClass = Class.forName(dto + "JsonCodec");
-                Object codec = codecClass.getDeclaredConstructor().newInstance();
-                dev.verrai.rpc.common.serialization.JsonCodecRegistry.register(
-                        (Class) dtoClass, (dev.verrai.rpc.common.serialization.JsonCodec) codec);
-            } catch (Throwable e) {
-                // Ignore if not found
-                // System.out.println("Could not load JsonCodec for: " + dto);
+            for (dev.verrai.rpc.common.serialization.CodecLoader cl : loader) {
+                cl.load();
             }
+        } catch (Throwable e) {
+            // Log error properly in real app
+            e.printStackTrace();
         }
     }
 
@@ -275,7 +256,7 @@ public class UnitRegistry {
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error("Error processing pending callbacks for service: {}", serviceId, e);
             }
         }
     }
@@ -389,6 +370,10 @@ public class UnitRegistry {
     // Optional RpcServer for handling inbound requests
     private RpcServer rpcServer;
 
+    public RpcServer getRpcServer() {
+        return rpcServer;
+    }
+
     public void initRpcServer(Transport transport) {
         if (this.rpcServer == null) {
             this.rpcServer = new RpcServer(transport, this);
@@ -423,7 +408,8 @@ public class UnitRegistry {
         System.out.println("Cleaning up " + staleNodes.size() + " stale nodes");
 
         for (String nodeId : staleNodes) {
-            removeNodeState(nodeId);
+            logger.info("Cleaning up stale node: {}", nodeId);
+            removeNode(nodeId);
         }
 
         serviceToNode.entrySet().removeIf(entry -> staleNodes.contains(entry.getValue()));
