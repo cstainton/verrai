@@ -409,26 +409,37 @@ public class UnitRegistry {
 
     public void cleanupStaleServices(long timeoutMs) {
         long now = System.currentTimeMillis();
-        List<String> staleNodes = new ArrayList<>();
+        Set<String> staleNodes = new HashSet<>();
         for (Map.Entry<String, Long> entry : lastHeartbeats.entrySet()) {
             if (now - entry.getValue() > timeoutMs) {
                 staleNodes.add(entry.getKey());
             }
         }
 
-        for (String nodeId : staleNodes) {
-            System.out.println("Cleaning up stale node: " + nodeId);
-            removeNode(nodeId);
+        if (staleNodes.isEmpty()) {
+            return;
         }
+
+        System.out.println("Cleaning up " + staleNodes.size() + " stale nodes");
+
+        for (String nodeId : staleNodes) {
+            removeNodeState(nodeId);
+        }
+
+        serviceToNode.entrySet().removeIf(entry -> staleNodes.contains(entry.getValue()));
     }
 
     public void removeNode(String nodeId) {
-        lastHeartbeats.remove(nodeId);
-        nodeToTransport.remove(nodeId);
-        nodeClients.remove(nodeId);
+        removeNodeState(nodeId);
         serviceToNode.entrySet().removeIf(entry -> entry.getValue().equals(nodeId));
         // We should also invalidate stubs if needed, but for now simple removal
         // suffices
+    }
+
+    private void removeNodeState(String nodeId) {
+        lastHeartbeats.remove(nodeId);
+        nodeToTransport.remove(nodeId);
+        nodeClients.remove(nodeId);
     }
 
     public void reset() {
