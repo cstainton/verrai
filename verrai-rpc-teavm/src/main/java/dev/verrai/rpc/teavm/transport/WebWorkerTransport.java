@@ -6,13 +6,13 @@ import org.teavm.jso.dom.events.MessageEvent;
 import org.teavm.jso.typedarrays.Uint8Array;
 import dev.verrai.rpc.common.transport.MessageHandler;
 import dev.verrai.rpc.common.transport.Transport;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class WebWorkerTransport implements Transport {
 
     private final JSObject worker;
-    private final List<MessageHandler> handlers = new ArrayList<>();
+    private final List<MessageHandler> handlers = new CopyOnWriteArrayList<>();
 
     public WebWorkerTransport(JSObject worker) {
         this.worker = worker;
@@ -30,9 +30,7 @@ public class WebWorkerTransport implements Transport {
 
     @Override
     public void addMessageHandler(MessageHandler handler) {
-        synchronized (handlers) {
-            handlers.add(handler);
-        }
+        handlers.add(handler);
     }
 
     public void handleIncoming(MessageEvent event) {
@@ -44,18 +42,14 @@ public class WebWorkerTransport implements Transport {
                 bytes[i] = (byte) array.get(i);
             }
 
-            List<MessageHandler> currentHandlers;
-            synchronized (handlers) {
-                currentHandlers = new ArrayList<>(handlers);
-            }
-            for (MessageHandler handler : currentHandlers) {
+            for (MessageHandler handler : handlers) {
                 handler.onMessage(bytes);
             }
         }
     }
 
     @JSBody(params = { "target",
-            "transport" }, script = "target.onmessage = function(e) { transport.@uk.co.instanto.client.service.transport.WebWorkerTransport::handleIncoming(*)(e); };")
+            "transport" }, script = "target.onmessage = function(e) { transport.@dev.verrai.rpc.teavm.transport.WebWorkerTransport::handleIncoming(*)(e); };")
     private static native void listen(JSObject target, WebWorkerTransport transport);
 
     @JSBody(params = { "worker", "message" }, script = "worker.postMessage(message);")
