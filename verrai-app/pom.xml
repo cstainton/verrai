@@ -90,6 +90,36 @@
     </dependency>
   </dependencies>
 
+  <profiles>
+    <profile>
+        <id>jre</id>
+        <properties>
+            <teavm.compile.phase>none</teavm.compile.phase>
+        </properties>
+        <build>
+            <plugins>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <version>3.0.0</version>
+                    <configuration>
+                        <mainClass>dev.verrai.sample.JreApp</mainClass>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </build>
+    </profile>
+    <profile>
+        <id>default</id>
+        <activation>
+            <activeByDefault>true</activeByDefault>
+        </activation>
+        <properties>
+            <teavm.compile.phase>compile</teavm.compile.phase>
+        </properties>
+    </profile>
+  </profiles>
+
   <build>
     <plugins>
       <!-- Compiler Plugin: Runs the Annotation Processor -->
@@ -119,6 +149,7 @@
         <executions>
           <execution>
             <id>web-client</id>
+            <phase>${teavm.compile.phase}</phase>
             <goals>
               <goal>compile</goal>
             </goals>
@@ -131,6 +162,7 @@
           </execution>
           <execution>
             <id>web-worker</id>
+            <phase>${teavm.compile.phase}</phase>
             <goals>
               <goal>compile</goal>
             </goals>
