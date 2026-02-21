@@ -174,52 +174,8 @@ public class TemplatedProcessor extends AbstractProcessor {
         bindMethod.addStatement("fragment.appendChild(root.getFirstChild())");
         bindMethod.endControlFlow();
 
-        // Process @DataField replacements
-        for (VariableElement field : fields) {
-            DataField dataField = field.getAnnotation(DataField.class);
-            if (dataField != null) {
-                bindMethod.beginControlFlow("if (el_$L != null)", field.getSimpleName());
-
-                // Check if the field type is HTMLElement
-                TypeElement htmlElementType = processingEnv.getElementUtils()
-                        .getTypeElement("org.teavm.jso.dom.html.HTMLElement");
-                boolean isHtmlElement = htmlElementType != null
-                        && processingEnv.getTypeUtils().isAssignable(field.asType(), htmlElementType.asType());
-
-                if (isHtmlElement) {
-                    bindMethod.addStatement("target.$L = ($T) el_$L",
-                            field.getSimpleName(),
-                            com.squareup.javapoet.TypeName.get(field.asType()),
-                            field.getSimpleName());
-                } else {
-                    // Assume Widget or Component with 'element' field
-                    bindMethod.beginControlFlow("if (target.$L != null)", field.getSimpleName());
-
-                    TypeElement isWidgetType = processingEnv.getElementUtils()
-                            .getTypeElement("dev.verrai.api.IsWidget");
-                    boolean isWidget = isWidgetType != null
-                            && processingEnv.getTypeUtils().isAssignable(field.asType(), isWidgetType.asType());
-
-                    if (isWidget) {
-                        bindMethod.addStatement("$T widgetElement = ((dev.verrai.api.IsWidget)target.$L).getElement()",
-                                htmlElementClass, field.getSimpleName());
-                    } else {
-                        bindMethod.addStatement("$T widgetElement = target.$L.element", htmlElementClass,
-                                field.getSimpleName());
-                    }
-
-                    bindMethod.beginControlFlow("if (widgetElement != null)");
-                    bindMethod.addStatement("el_$L.getParentNode().replaceChild(widgetElement, el_$L)",
-                            field.getSimpleName(), field.getSimpleName());
-                    bindMethod.endControlFlow();
-
-                    bindMethod.endControlFlow();
-                }
-                bindMethod.endControlFlow();
-            }
-        }
-
-        // RESTRICTED ACCESS LOGIC
+        // RESTRICTED ACCESS LOGIC — must run before replacement so injected widgets are
+        // never inserted into the DOM when the user lacks the required role.
         ClassName navImplFactoryClass = ClassName.get("dev.verrai.impl", "NavigationImpl_Factory");
         ClassName navigationClass = ClassName.get("dev.verrai.api", "Navigation");
         for (VariableElement field : fields) {
@@ -243,12 +199,56 @@ public class TemplatedProcessor extends AbstractProcessor {
                     bindMethod.beginControlFlow("if ($L)", roleCheck.toString());
                     bindMethod.addStatement("el_$L.getParentNode().removeChild(el_$L)", field.getSimpleName(),
                             field.getSimpleName());
-                    bindMethod.addStatement("el_$L = null", field.getSimpleName()); // Null out so event
-                                                                                    // handlers/bindings don't crash
-                    bindMethod.endControlFlow(); // end if authorized
+                    bindMethod.addStatement("el_$L = null", field.getSimpleName()); // Null out so replacement and event handlers don't run
+                    bindMethod.endControlFlow(); // end if unauthorized
                     bindMethod.endControlFlow(); // end if securityProvider != null
                     bindMethod.endControlFlow(); // end if el_ != null
                 }
+            }
+        }
+
+        // Process @DataField replacements — el_<field> is null if RestrictedAccess removed it above
+        for (VariableElement field : fields) {
+            DataField dataField = field.getAnnotation(DataField.class);
+            if (dataField != null) {
+                bindMethod.beginControlFlow("if (el_$L != null)", field.getSimpleName());
+
+                // Check if the field type is HTMLElement
+                TypeElement htmlElementType = processingEnv.getElementUtils()
+                        .getTypeElement("org.teavm.jso.dom.html.HTMLElement");
+                boolean isHtmlElement = htmlElementType != null
+                        && processingEnv.getTypeUtils().isAssignable(field.asType(), htmlElementType.asType());
+
+                if (isHtmlElement) {
+                    bindMethod.addStatement("target.$L = ($T) el_$L",
+                            field.getSimpleName(),
+                            com.squareup.javapoet.TypeName.get(field.asType()),
+                            field.getSimpleName());
+                } else {
+                    // Injected widget/composite — replace placeholder with the component's element
+                    bindMethod.beginControlFlow("if (target.$L != null)", field.getSimpleName());
+
+                    TypeElement isWidgetType = processingEnv.getElementUtils()
+                            .getTypeElement("dev.verrai.api.IsWidget");
+                    boolean isWidget = isWidgetType != null
+                            && processingEnv.getTypeUtils().isAssignable(field.asType(), isWidgetType.asType());
+
+                    if (isWidget) {
+                        bindMethod.addStatement("$T widgetElement = ((dev.verrai.api.IsWidget)target.$L).getElement()",
+                                htmlElementClass, field.getSimpleName());
+                    } else {
+                        bindMethod.addStatement("$T widgetElement = target.$L.element", htmlElementClass,
+                                field.getSimpleName());
+                    }
+
+                    bindMethod.beginControlFlow("if (widgetElement != null)");
+                    bindMethod.addStatement("el_$L.getParentNode().replaceChild(widgetElement, el_$L)",
+                            field.getSimpleName(), field.getSimpleName());
+                    bindMethod.endControlFlow();
+
+                    bindMethod.endControlFlow();
+                }
+                bindMethod.endControlFlow();
             }
         }
 
