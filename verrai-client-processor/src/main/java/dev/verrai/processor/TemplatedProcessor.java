@@ -186,14 +186,12 @@ public class TemplatedProcessor extends AbstractProcessor {
                 if (roles.length > 0) {
                     bindMethod.beginControlFlow("if (el_$L != null)", field.getSimpleName());
                     bindMethod.addStatement("$T nav = ($T) $T.getInstance()", navigationClass, navigationClass, navImplFactoryClass);
-                    bindMethod.beginControlFlow("if (((dev.verrai.impl.NavigationImpl)nav).securityProvider != null)");
-
-                    // Build role check
+                    // Build role check — hasRole() is null-safe so no outer null-guard needed
                     StringBuilder roleCheck = new StringBuilder();
                     for (int i = 0; i < roles.length; i++) {
                         if (i > 0)
                             roleCheck.append(" && ");
-                        roleCheck.append("!((dev.verrai.impl.NavigationImpl)nav).securityProvider.hasRole(\"").append(roles[i]).append("\")");
+                        roleCheck.append("!((dev.verrai.impl.NavigationImpl)nav).hasRole(\"").append(roles[i]).append("\")");
                     }
 
                     bindMethod.beginControlFlow("if ($L)", roleCheck.toString());
@@ -201,7 +199,6 @@ public class TemplatedProcessor extends AbstractProcessor {
                             field.getSimpleName());
                     bindMethod.addStatement("el_$L = null", field.getSimpleName()); // Null out so replacement and event handlers don't run
                     bindMethod.endControlFlow(); // end if unauthorized
-                    bindMethod.endControlFlow(); // end if securityProvider != null
                     bindMethod.endControlFlow(); // end if el_ != null
                 }
             }

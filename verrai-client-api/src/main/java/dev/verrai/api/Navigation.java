@@ -6,4 +6,6 @@ public interface Navigation {
     void goTo(String role);
     void goTo(String role, Map<String, String> state);
     void start();
+    void addListener(NavigationListener listener);
+    void removeListener(NavigationListener listener);
 }

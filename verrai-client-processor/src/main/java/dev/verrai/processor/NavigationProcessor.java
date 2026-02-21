@@ -56,6 +56,12 @@ public class NavigationProcessor extends AbstractProcessor {
                     role = pageAnno.path();
                 }
                 if (role.isEmpty()) {
+                    processingEnv.getMessager().printMessage(Diagnostic.Kind.WARNING,
+                            "@Page on " + typeElement.getSimpleName()
+                            + " declares neither 'role' nor 'path'. "
+                            + "Falling back to class simple name \""
+                            + typeElement.getSimpleName() + "\" as the navigation role.",
+                            typeElement);
                     role = typeElement.getSimpleName().toString();
                 }
 
@@ -175,7 +181,7 @@ public class NavigationProcessor extends AbstractProcessor {
         if (securityProviderImpl != null) {
             ClassName providerFactory = ClassName
                     .bestGuess(securityProviderImpl.getQualifiedName().toString() + "_Factory");
-            getInstance.addStatement("instance.securityProvider = $T.getInstance()", providerFactory);
+            getInstance.addStatement("instance.setSecurityProvider($T.getInstance())", providerFactory);
         }
 
         // Register popstate listener once after instance is fully initialized

@@ -35,7 +35,12 @@ public class NavigationImplWriter implements PageVisitor {
 
         navBuilder = TypeSpec.classBuilder("NavigationImpl")
                 .addModifiers(Modifier.PUBLIC)
-                .addSuperinterface(navigationInterface);
+                .addSuperinterface(navigationInterface)
+                .addJavadoc(
+                        "Generated singleton router that implements {@link dev.verrai.api.Navigation}.\n\n"
+                        + "@implNote <b>Thread safety:</b> This class is intentionally not thread-safe. "
+                        + "TeaVM compiles to single-threaded JavaScript; there is only ever one thread "
+                        + "of execution so no synchronisation is generated or required.\n");
 
         // Singleton instance
         navBuilder.addField(FieldSpec.builder(ClassName.bestGuess("dev.verrai.impl.NavigationImpl"), "instance")
@@ -53,10 +58,54 @@ public class NavigationImplWriter implements PageVisitor {
                 .build());
 
         if (securityProviderImpl != null) {
+            // Private field — accessed externally only via hasRole() and setSecurityProvider()
             navBuilder.addField(FieldSpec.builder(securityProviderInterface, "securityProvider")
-                    .addModifiers(Modifier.PUBLIC)
+                    .addModifiers(Modifier.PRIVATE)
+                    .build());
+
+            // Package-private setter used by NavigationImpl_Factory (same package)
+            navBuilder.addMethod(MethodSpec.methodBuilder("setSecurityProvider")
+                    .addParameter(securityProviderInterface, "provider")
+                    .addStatement("this.securityProvider = provider")
                     .build());
         }
+
+        // Always generate hasRole() so @RestrictedAccess binder code can call it regardless
+        // of whether a SecurityProvider was found. Returns true (open access) when none is configured.
+        MethodSpec.Builder hasRoleMethod = MethodSpec.methodBuilder("hasRole")
+                .addModifiers(Modifier.PUBLIC)
+                .returns(boolean.class)
+                .addParameter(String.class, "role");
+        if (securityProviderImpl != null) {
+            hasRoleMethod.addStatement(
+                    "return this.securityProvider != null && this.securityProvider.hasRole(role)");
+        } else {
+            hasRoleMethod.addStatement("return true");
+        }
+        navBuilder.addMethod(hasRoleMethod.build());
+
+        // Navigation listener list
+        ClassName listenerInterface = ClassName.get("dev.verrai.api", "NavigationListener");
+        ParameterizedTypeName listOfListeners = ParameterizedTypeName.get(
+                ClassName.get("java.util", "List"), listenerInterface);
+        navBuilder.addField(FieldSpec.builder(listOfListeners, "listeners")
+                .addModifiers(Modifier.PRIVATE)
+                .initializer("new $T<>()", ArrayList.class)
+                .build());
+
+        navBuilder.addMethod(MethodSpec.methodBuilder("addListener")
+                .addModifiers(Modifier.PUBLIC)
+                .addAnnotation(Override.class)
+                .addParameter(listenerInterface, "listener")
+                .addStatement("this.listeners.add(listener)")
+                .build());
+
+        navBuilder.addMethod(MethodSpec.methodBuilder("removeListener")
+                .addModifiers(Modifier.PUBLIC)
+                .addAnnotation(Override.class)
+                .addParameter(listenerInterface, "listener")
+                .addStatement("this.listeners.remove(listener)")
+                .build());
 
         // goTo(role) — delegates to goTo(role, emptyMap)
         MethodSpec.Builder goToSimple = MethodSpec.methodBuilder("goTo")
@@ -85,6 +134,8 @@ public class NavigationImplWriter implements PageVisitor {
         navBuilder.addMethod(buildRegisterPopstateListenerMethod(windowClass));
         navBuilder.addMethod(buildCallPageHidingMethod());
         navBuilder.addMethod(buildCallPageHiddenMethod());
+        navBuilder.addMethod(buildEncodeStateMethod());
+        navBuilder.addMethod(buildDecodeStateMethod());
 
         JavaFile.builder("dev.verrai.impl", navBuilder.build())
                 .build()
@@ -132,14 +183,13 @@ public class NavigationImplWriter implements PageVisitor {
         // 3. Clear the DOM
         method.addStatement("body.setInnerText(\"\")");
 
-        // 4. Build URL hash for the new page
-        // Encode ';' in keys/values so the separator is unambiguous when parsing
+        // 4. Build URL hash for the new page — keys and values are percent-encoded
         method.addStatement("$T hash = new $T(\"#\" + role)", StringBuilder.class, StringBuilder.class);
         method.beginControlFlow("for ($T entry : state.entrySet())",
                 ParameterizedTypeName.get(Map.Entry.class, String.class, String.class));
         method.addStatement(
-                "hash.append(\";\").append(entry.getKey().replace(\";\", \"%3B\"))" +
-                ".append(\"=\").append(entry.getValue().replace(\";\", \"%3B\"))");
+                "hash.append(\";\").append(encodeState(entry.getKey()))" +
+                ".append(\"=\").append(encodeState(entry.getValue()))");
         method.endControlFlow();
 
         // Only push to history when navigating programmatically (not from popstate)
@@ -147,7 +197,15 @@ public class NavigationImplWriter implements PageVisitor {
         method.addStatement("$T.current().getHistory().pushState(null, null, hash.toString())", windowClass);
         method.endControlFlow();
 
-        // 5. Instantiate and mount the new page
+        // 5. Notify listeners that navigation is about to happen
+        method.beginControlFlow("for (dev.verrai.api.NavigationListener l : this.listeners)");
+        method.addStatement("l.onNavigating(role)");
+        method.endControlFlow();
+
+        // 6. Instantiate and mount the new page
+        // NOTE: Page instantiation uses <PageClass>_Factory.getInstance(), a synchronous
+        // singleton factory generated by IOCProcessor. If a factory is replaced with an
+        // async variant, this switch must be refactored to await the factory first.
         method.beginControlFlow("switch (role)");
         for (PageDefinition page : collectedPages) {
             generatePageCase(page, method, windowClass);
@@ -207,8 +265,13 @@ public class NavigationImplWriter implements PageVisitor {
         }
 
         // Only mount if @PageShowing did not navigate away (currentPage identity check)
-        method.addStatement("  if (this.currentPage == page_$L && page_$L.element != null) body.appendChild(page_$L.element)",
-                varName, varName, varName);
+        // Fire onNavigated only when the mount actually completes
+        method.addCode(
+                "  if (this.currentPage == page_$L && page_$L.element != null) {\n"
+                + "    body.appendChild(page_$L.element);\n"
+                + "    for (dev.verrai.api.NavigationListener l : this.listeners) l.onNavigated($S);\n"
+                + "  }\n",
+                varName, varName, varName, role);
         method.addStatement("  break");
     }
 
@@ -259,7 +322,7 @@ public class NavigationImplWriter implements PageVisitor {
         method.beginControlFlow("for (int i = 1; i < parts.length; i++)");
         method.addStatement("$T[] kv = parts[i].split($S, 2)", String.class, "=");
         method.beginControlFlow("if (kv.length == 2)");
-        method.addStatement("state.put(kv[0].replace(\"%3B\", \";\"), kv[1].replace(\"%3B\", \";\"))");
+        method.addStatement("state.put(decodeState(kv[0]), decodeState(kv[1]))");
         method.endControlFlow();
         method.endControlFlow();
         method.addStatement("goTo(role, state)");
@@ -304,6 +367,44 @@ public class NavigationImplWriter implements PageVisitor {
                 method.endControlFlow();
             }
         }
+
+        return method.build();
+    }
+
+    /**
+     * Generates encodeState(String value) — percent-encodes characters that would
+     * break the hash format. '%' is encoded first to prevent double-encoding.
+     */
+    private MethodSpec buildEncodeStateMethod() {
+        MethodSpec.Builder method = MethodSpec.methodBuilder("encodeState")
+                .addModifiers(Modifier.PRIVATE)
+                .returns(String.class)
+                .addParameter(String.class, "value");
+
+        method.addStatement("$T s = value.replace($S, $S)", String.class, "%", "%25");
+        method.addStatement("s = s.replace($S, $S)", ";", "%3B");
+        method.addStatement("s = s.replace($S, $S)", "#", "%23");
+        method.addStatement("s = s.replace($S, $S)", " ", "%20");
+        method.addStatement("return s");
+
+        return method.build();
+    }
+
+    /**
+     * Generates decodeState(String value) — reverses encodeState. '%25' is decoded
+     * last to avoid prematurely unescaping encoded percent signs.
+     */
+    private MethodSpec buildDecodeStateMethod() {
+        MethodSpec.Builder method = MethodSpec.methodBuilder("decodeState")
+                .addModifiers(Modifier.PRIVATE)
+                .returns(String.class)
+                .addParameter(String.class, "value");
+
+        method.addStatement("$T s = value.replace($S, $S)", String.class, "%3B", ";");
+        method.addStatement("s = s.replace($S, $S)", "%23", "#");
+        method.addStatement("s = s.replace($S, $S)", "%20", " ");
+        method.addStatement("s = s.replace($S, $S)", "%25", "%");
+        method.addStatement("return s");
 
         return method.build();
     }

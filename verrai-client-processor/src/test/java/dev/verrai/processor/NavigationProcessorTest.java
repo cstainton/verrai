@@ -493,4 +493,154 @@ public class NavigationProcessorTest {
             .contentsAsUtf8String()
             .contains("this.currentPage == page_");
     }
+
+    @Test
+    public void testNoRoleOrPathEmitsWarning() {
+        JavaFileObject source = JavaFileObjects.forSourceLines(
+            "dev.verrai.processor.NoRolePage",
+            "package dev.verrai.processor;",
+            "",
+            "import dev.verrai.api.Page;",
+            "import org.teavm.jso.dom.html.HTMLElement;",
+            "",
+            "@Page",
+            "public class NoRolePage {",
+            "    public HTMLElement element;",
+            "}"
+        );
+
+        Compilation compilation = javac()
+            .withProcessors(new NavigationProcessor(), new IOCProcessor())
+            .compile(source);
+
+        assertThat(compilation).succeeded();
+        assertThat(compilation).hadWarningContaining("neither 'role' nor 'path'");
+
+        // Class name used as fallback role
+        assertThat(compilation)
+            .generatedSourceFile("dev.verrai.impl.NavigationImpl")
+            .contentsAsUtf8String()
+            .contains("case \"NoRolePage\"");
+    }
+
+    @Test
+    public void testSecurityProviderIsPrivateWithHasRoleMethod() {
+        JavaFileObject source = JavaFileObjects.forSourceLines(
+            "dev.verrai.processor.SimplePage",
+            "package dev.verrai.processor;",
+            "",
+            "import dev.verrai.api.Page;",
+            "import org.teavm.jso.dom.html.HTMLElement;",
+            "",
+            "@Page(role = \"home\", startingPage = true)",
+            "public class SimplePage {",
+            "    public HTMLElement element;",
+            "}"
+        );
+
+        Compilation compilation = javac()
+            .withProcessors(new NavigationProcessor(), new IOCProcessor())
+            .compile(source);
+
+        assertThat(compilation).succeeded();
+
+        // securityProvider must NOT be public
+        assertThat(compilation)
+            .generatedSourceFile("dev.verrai.impl.NavigationImpl")
+            .contentsAsUtf8String()
+            .doesNotContain("public dev.verrai.security.SecurityProvider securityProvider");
+
+        // hasRole() public method must exist
+        assertThat(compilation)
+            .generatedSourceFile("dev.verrai.impl.NavigationImpl")
+            .contentsAsUtf8String()
+            .contains("public boolean hasRole");
+
+        // Factory uses setter not direct field assignment
+        assertThat(compilation)
+            .generatedSourceFile("dev.verrai.impl.NavigationImpl_Factory")
+            .contentsAsUtf8String()
+            .doesNotContain("instance.securityProvider =");
+    }
+
+    @Test
+    public void testFullUrlEncodingHelpersGenerated() {
+        JavaFileObject source = JavaFileObjects.forSourceLines(
+            "dev.verrai.processor.SimplePage",
+            "package dev.verrai.processor;",
+            "",
+            "import dev.verrai.api.Page;",
+            "import org.teavm.jso.dom.html.HTMLElement;",
+            "",
+            "@Page(role = \"home\", startingPage = true)",
+            "public class SimplePage {",
+            "    public HTMLElement element;",
+            "}"
+        );
+
+        Compilation compilation = javac()
+            .withProcessors(new NavigationProcessor(), new IOCProcessor())
+            .compile(source);
+
+        assertThat(compilation).succeeded();
+
+        // encodeState encodes % first to prevent double-encoding
+        assertThat(compilation)
+            .generatedSourceFile("dev.verrai.impl.NavigationImpl")
+            .contentsAsUtf8String()
+            .contains("encodeState");
+
+        assertThat(compilation)
+            .generatedSourceFile("dev.verrai.impl.NavigationImpl")
+            .contentsAsUtf8String()
+            .contains("decodeState");
+
+        // % must be encoded/decoded as %25
+        assertThat(compilation)
+            .generatedSourceFile("dev.verrai.impl.NavigationImpl")
+            .contentsAsUtf8String()
+            .contains("%25");
+    }
+
+    @Test
+    public void testNavigationListenerMethodsGenerated() {
+        JavaFileObject source = JavaFileObjects.forSourceLines(
+            "dev.verrai.processor.SimplePage",
+            "package dev.verrai.processor;",
+            "",
+            "import dev.verrai.api.Page;",
+            "import org.teavm.jso.dom.html.HTMLElement;",
+            "",
+            "@Page(role = \"home\", startingPage = true)",
+            "public class SimplePage {",
+            "    public HTMLElement element;",
+            "}"
+        );
+
+        Compilation compilation = javac()
+            .withProcessors(new NavigationProcessor(), new IOCProcessor())
+            .compile(source);
+
+        assertThat(compilation).succeeded();
+
+        assertThat(compilation)
+            .generatedSourceFile("dev.verrai.impl.NavigationImpl")
+            .contentsAsUtf8String()
+            .contains("addListener");
+
+        assertThat(compilation)
+            .generatedSourceFile("dev.verrai.impl.NavigationImpl")
+            .contentsAsUtf8String()
+            .contains("removeListener");
+
+        assertThat(compilation)
+            .generatedSourceFile("dev.verrai.impl.NavigationImpl")
+            .contentsAsUtf8String()
+            .contains("onNavigating");
+
+        assertThat(compilation)
+            .generatedSourceFile("dev.verrai.impl.NavigationImpl")
+            .contentsAsUtf8String()
+            .contains("onNavigated");
+    }
 }
