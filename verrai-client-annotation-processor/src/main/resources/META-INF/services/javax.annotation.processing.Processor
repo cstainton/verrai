@@ -1,0 +1,7 @@
+dev.verrai.processor.BindableProcessor
+dev.verrai.processor.IOCProcessor
+dev.verrai.processor.WireProcessor
+dev.verrai.processor.I18nProcessor
+dev.verrai.processor.TemplatedProcessor
+dev.verrai.processor.NavigationProcessor
+dev.verrai.processor.PersistenceProcessor

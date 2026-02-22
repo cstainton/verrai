@@ -2,8 +2,8 @@ package dev.verrai.rpc.teavm.transport;
 
 import dev.verrai.rpc.common.transport.stomp.StompClient;
 import dev.verrai.rpc.common.transport.stomp.StompSubscriptionCallback;
-import uk.co.instanto.teavm.stomp.Message;
-import uk.co.instanto.teavm.stomp.MessageCallback;
+import dev.verrai.teavm.stomp.Message;
+import dev.verrai.teavm.stomp.MessageCallback;
 import java.util.HashMap;
 import java.util.Map;
 import org.teavm.jso.JSObject;
@@ -12,9 +12,9 @@ import org.teavm.jso.core.JSObjects;
 
 public class TeaVMStompClientAdapter implements StompClient {
 
-    private final uk.co.instanto.teavm.stomp.StompClient jsoClient;
+    private final dev.verrai.teavm.stomp.StompClient jsoClient;
 
-    public TeaVMStompClientAdapter(uk.co.instanto.teavm.stomp.StompClient jsoClient) {
+    public TeaVMStompClientAdapter(dev.verrai.teavm.stomp.StompClient jsoClient) {
         this.jsoClient = jsoClient;
     }
 

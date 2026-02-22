@@ -26,11 +26,11 @@ jobs:
 
       - name: Build with Maven
         run: |
-          cd tearay
-          mvn -B clean package
+          cd verrai
+          mvn -B clean package -pl verrai-client-annotation-processor,verrai-client-api,verrai-client-security,verrai-client-processor,verrai-client-app -am
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: tearay/tearay-app/target/tearay-app-1.0-SNAPSHOT-gh-pages
+          publish_dir: verrai/verrai-client-app/target/verrai-client-app-1.0-SNAPSHOT-gh-pages

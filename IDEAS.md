@@ -14,9 +14,9 @@ This document outlines potential enhancements and features for the Verrai framew
 
 ### RPC Modernization & Standardization
 **Goal**: complete the transition to a fully generated, type-safe RPC layer.
--   **Current State**: Mix of manual `uk.co.instanto.client.service.RpcClient` and new `dev.verrai.api.wire` generators.
+-   **Current State**: Mix of manual `dev.verrai.client.service.RpcClient` and new `dev.verrai.api.wire` generators.
 -   **Proposal**:
-    -   Deprecate and remove `uk.co.instanto` packages.
+    -   Deprecate and remove `dev.verrai` packages.
     -   Ensure `ServiceGenerator` (in `verrai-annotation-processor`) produces fully functional client stubs.
     -   Standardize on `dev.verrai.api.wire` for all serialization.
     -   Implement "Shared Interfaces" pattern: Define service interface in a common module, generate client proxy and server endpoint automatically.

@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package uk.co.instanto.client.service.proto;
+package dev.verrai.client.service.proto;
 
 /**
  * Envelope for event messages in the publish-subscribe system.

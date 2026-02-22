@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>dev.verrai</groupId>
+    <artifactId>verrai-parent-pom</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>verrai-client-security</artifactId>
+  <name>Verrai Security</name>
+  <description>Client-side security annotations and interfaces for Verrai</description>
+
+  <dependencies>
+      <!-- Core Client API for Widget Interface -->
+      <dependency>
+          <groupId>dev.verrai</groupId>
+          <artifactId>verrai-client-api</artifactId>
+          <version>${project.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>jakarta.inject</groupId>
+          <artifactId>jakarta.inject-api</artifactId>
+          <scope>provided</scope>
+      </dependency>
+  </dependencies>
+
+</project>

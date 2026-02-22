@@ -3,7 +3,7 @@ set -e
 
 # 1. Build the project
 echo "Building Verrai App..."
-cd tearay
+cd verrai
 mvn clean package
 
 # 2. Create distribution directory
@@ -22,7 +22,7 @@ fi
 echo "Copying generated JS..."
 # Note: The path depends on where TeaVM outputs. Usually target/verrai-app-1.0-SNAPSHOT/teavm/classes.js
 # Or target/generated/teavm/classes.js
-JS_PATH="verrai-app/target/verrai-app-1.0-SNAPSHOT/tearay/classes.js"
+JS_PATH="verrai-app/target/verrai-app-1.0-SNAPSHOT/verrai/classes.js"
 if [ ! -f "$JS_PATH" ]; then
     # Fallback/Check
     JS_PATH=$(find verrai-app/target -name classes.js | head -n 1)

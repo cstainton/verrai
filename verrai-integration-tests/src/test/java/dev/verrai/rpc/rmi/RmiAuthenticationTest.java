@@ -5,13 +5,13 @@ import dev.verrai.client.service.transport.rmi.RmiTransport;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import uk.co.instanto.client.service.AsyncResult;
-import uk.co.instanto.client.service.AsyncResultImpl;
-import uk.co.instanto.client.service.RpcClient;
-import uk.co.instanto.client.service.UnitRegistry;
-import uk.co.instanto.client.service.dto.LogonResponse;
-import uk.co.instanto.client.service.dto.LogonRequest;
-import uk.co.instanto.integration.service.AuthenticationService;
+import dev.verrai.client.service.AsyncResult;
+import dev.verrai.client.service.AsyncResultImpl;
+import dev.verrai.client.service.RpcClient;
+import dev.verrai.client.service.UnitRegistry;
+import dev.verrai.client.service.dto.LogonResponse;
+import dev.verrai.client.service.dto.LogonRequest;
+import dev.verrai.integration.service.AuthenticationService;
 
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -56,7 +56,7 @@ public class RmiAuthenticationTest {
         UnitRegistry.getInstance().initRpcServer(serverTransport);
 
         // Register Dispatcher
-        UnitRegistry.getInstance().registerDispatcher(AuthenticationService.class.getName(), new uk.co.instanto.integration.service.AuthenticationService_Dispatcher());
+        UnitRegistry.getInstance().registerDispatcher(AuthenticationService.class.getName(), new dev.verrai.integration.service.AuthenticationService_Dispatcher());
     }
 
     @After
@@ -97,8 +97,8 @@ public class RmiAuthenticationTest {
         assertNotNull("RpcClient should not be null", rpcClient);
 
         // Register Codecs
-        rpcClient.registerCodec(LogonRequest.class, new uk.co.instanto.client.service.dto.LogonRequestCodec());
-        rpcClient.registerCodec(LogonResponse.class, new uk.co.instanto.client.service.dto.LogonResponseCodec());
+        rpcClient.registerCodec(LogonRequest.class, new dev.verrai.client.service.dto.LogonRequestCodec());
+        rpcClient.registerCodec(LogonResponse.class, new dev.verrai.client.service.dto.LogonResponseCodec());
 
         // Invoke Login
         LogonRequest request = new LogonRequest("testUser", "password");

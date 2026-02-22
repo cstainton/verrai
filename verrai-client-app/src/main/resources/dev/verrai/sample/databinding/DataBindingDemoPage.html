@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>DataBinding Demo</title>
+</head>
+
+<body>
+    <div>
+        <h1>Welcome to the Client-Side DataBinding Demo!</h1>
+        <p>This page validates the `@Bound` and `@Model` implementations within the `verrai-client-processor` package.
+        </p>
+
+        <hr />
+        <h3>Interactive Property Binding</h3>
+
+        <div>
+            <label>Name:</label>
+            <input type="text" data-field="name" />
+        </div>
+        <div>
+            <label>Street (Nested Property):</label>
+            <input type="text" data-field="street" />
+        </div>
+
+        <hr />
+        <h3>Live Output</h3>
+        <p>Your Name is: <input type="text" data-field="nameOutput" readonly="readonly" /></p>
+        <p>Your Street is: <input type="text" data-field="streetOutput" readonly="readonly" /></p>
+
+        <hr />
+        <button data-field="backBtn">Return to Dashboard</button>
+    </div>
+</body>
+
+</html>

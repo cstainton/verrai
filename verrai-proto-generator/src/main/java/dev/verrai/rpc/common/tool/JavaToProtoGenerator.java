@@ -210,7 +210,7 @@ public class JavaToProtoGenerator {
 
         StringBuilder sb = new StringBuilder();
         sb.append("package ").append(packageName).append(";\n\n");
-        sb.append("import uk.co.instanto.client.service.RpcClient;\n");
+        sb.append("import dev.verrai.client.service.RpcClient;\n");
         sb.append("import dev.verrai.rpc.common.codec.Codec;\n");
         sb.append("import java.util.HashMap;\n");
         // Add wildcard import for .dto package if it exists
@@ -297,8 +297,8 @@ public class JavaToProtoGenerator {
 
         StringBuilder sb = new StringBuilder();
         sb.append("package ").append(packageName).append(";\n\n");
-        sb.append("import uk.co.instanto.client.service.RpcServer;\n");
-        sb.append("import uk.co.instanto.client.service.proto.RpcPacket;\n");
+        sb.append("import dev.verrai.client.service.RpcServer;\n");
+        sb.append("import dev.verrai.client.service.proto.RpcPacket;\n");
         sb.append("import dev.verrai.rpc.common.transport.ServiceDispatcher;\n");
         sb.append("import dev.verrai.rpc.common.codec.Codec;\n");
         sb.append("import com.squareup.wire.Message;\n");

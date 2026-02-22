@@ -17,7 +17,7 @@ import org.teavm.jso.typedarrays.Uint8Array;
 import com.squareup.wire.Message;
 
 import okio.ByteString;
-import uk.co.instanto.client.service.proto.RpcPacket;
+import dev.verrai.client.service.proto.RpcPacket;
 import dev.verrai.rpc.common.codec.Codec;
 
 public class WebWorkerService {
@@ -37,7 +37,7 @@ public class WebWorkerService {
     }
 
     @JSBody(params = { "target",
-            "client" }, script = "target.onmessage = function(e) { client.@uk.co.instanto.client.service.WebWorkerService::handleMessage(*)(e); };")
+            "client" }, script = "target.onmessage = function(e) { client.@dev.verrai.client.service.WebWorkerService::handleMessage(*)(e); };")
     private static native void listenToWorker(JSObject target, WebWorkerService client);
 
     private void listenToWorker(JSObject worker) {

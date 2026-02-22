@@ -83,32 +83,32 @@ OS name: "mac os x", version: "26.2", arch: "aarch64", family: "mac"
 [DEBUG] Using local repository at /Users/carls/.m2/repository
 [DEBUG] Using manager EnhancedLocalRepositoryManager with priority 10.0 for /Users/carls/.m2/repository
 [INFO] Scanning for projects...
-[DEBUG] Extension realms for project uk.co.instanto:tearay-parent-pom:pom:1.0.0-SNAPSHOT: (none)
+[DEBUG] Extension realms for project dev.verrai:verrai-parent-pom:pom:1.0.0-SNAPSHOT: (none)
 [DEBUG] Looking up lifecycle mappings for packaging pom from ClassRealm[plexus.core, parent: null]
-[DEBUG] Extension realms for project uk.co.instanto:teavm-stomp:jar:1.0.0-SNAPSHOT: (none)
+[DEBUG] Extension realms for project dev.verrai:teavm-stomp:jar:1.0.0-SNAPSHOT: (none)
 [DEBUG] Looking up lifecycle mappings for packaging jar from ClassRealm[plexus.core, parent: null]
-[DEBUG] Extension realms for project uk.co.instanto:tearay-rpc-common:jar:1.0.0-SNAPSHOT: (none)
+[DEBUG] Extension realms for project dev.verrai:verrai-rpc-common:jar:1.0.0-SNAPSHOT: (none)
 [DEBUG] Looking up lifecycle mappings for packaging jar from ClassRealm[plexus.core, parent: null]
-[DEBUG] Extension realms for project uk.co.instanto:tearay-rpc-core:jar:1.0.0-SNAPSHOT: (none)
+[DEBUG] Extension realms for project dev.verrai:verrai-rpc-core:jar:1.0.0-SNAPSHOT: (none)
 [DEBUG] Looking up lifecycle mappings for packaging jar from ClassRealm[plexus.core, parent: null]
-[DEBUG] Extension realms for project uk.co.instanto:tearay-proto-generator:jar:1.0.0-SNAPSHOT: (none)
+[DEBUG] Extension realms for project dev.verrai:verrai-proto-generator:jar:1.0.0-SNAPSHOT: (none)
 [DEBUG] Looking up lifecycle mappings for packaging jar from ClassRealm[plexus.core, parent: null]
-[DEBUG] Extension realms for project uk.co.instanto:tearay-annotation-processor:jar:1.0.0-SNAPSHOT: (none)
+[DEBUG] Extension realms for project dev.verrai:verrai-annotation-processor:jar:1.0.0-SNAPSHOT: (none)
 [DEBUG] Looking up lifecycle mappings for packaging jar from ClassRealm[plexus.core, parent: null]
-[DEBUG] Extension realms for project uk.co.instanto:tearay-rpc-teavm:jar:1.0.0-SNAPSHOT: (none)
+[DEBUG] Extension realms for project dev.verrai:verrai-rpc-teavm:jar:1.0.0-SNAPSHOT: (none)
 [DEBUG] Looking up lifecycle mappings for packaging jar from ClassRealm[plexus.core, parent: null]
-[DEBUG] Extension realms for project uk.co.instanto:tearay-integration-tests:jar:1.0.0-SNAPSHOT: (none)
+[DEBUG] Extension realms for project dev.verrai:verrai-integration-tests:jar:1.0.0-SNAPSHOT: (none)
 [DEBUG] Looking up lifecycle mappings for packaging jar from ClassRealm[plexus.core, parent: null]
-[DEBUG] Extension realms for project uk.co.instanto:tearay-demo:jar:1.0.0-SNAPSHOT: (none)
+[DEBUG] Extension realms for project dev.verrai:verrai-demo:jar:1.0.0-SNAPSHOT: (none)
 [DEBUG] Looking up lifecycle mappings for packaging jar from ClassRealm[plexus.core, parent: null]
 [DEBUG] === REACTOR BUILD PLAN ================================================
-[DEBUG] Project: uk.co.instanto:tearay-integration-tests:jar:1.0.0-SNAPSHOT
+[DEBUG] Project: dev.verrai:verrai-integration-tests:jar:1.0.0-SNAPSHOT
 [DEBUG] Tasks:   [clean, compile]
 [DEBUG] Style:   Regular
 [DEBUG] =======================================================================
 [INFO] 
-[INFO] --------------< uk.co.instanto:tearay-integration-tests >---------------
-[INFO] Building tearay-integration-tests 1.0.0-SNAPSHOT
+[INFO] --------------< dev.verrai:verrai-integration-tests >---------------
+[INFO] Building verrai-integration-tests 1.0.0-SNAPSHOT
 [INFO]   from pom.xml
 [INFO] --------------------------------[ jar ]---------------------------------
 [DEBUG] Lifecycle clean -> [pre-clean, clean, post-clean]
@@ -128,7 +128,7 @@ OS name: "mac os x", version: "26.2", arch: "aarch64", family: "mac"
 [DEBUG] Lifecycle default -> [validate, initialize, generate-sources, process-sources, generate-resources, process-resources, compile, process-classes, generate-test-sources, process-test-sources, generate-test-resources, process-test-resources, test-compile, process-test-classes, test, prepare-package, package, pre-integration-test, integration-test, post-integration-test, verify, install, deploy]
 [DEBUG] Lifecycle site -> [pre-site, site, post-site, site-deploy]
 [DEBUG] === PROJECT BUILD PLAN ================================================
-[DEBUG] Project:       uk.co.instanto:tearay-integration-tests:1.0.0-SNAPSHOT
+[DEBUG] Project:       dev.verrai:verrai-integration-tests:1.0.0-SNAPSHOT
 [DEBUG] Dependencies (collect): []
 [DEBUG] Dependencies (resolve): [compile]
 [DEBUG] Repositories (dependencies): [tos-releases (https://artifacts.tonofstain.co.uk/repository/tos-releases, default, releases+snapshots), tos-snapshots (https://artifacts.tonofstain.co.uk/repository/tos-snapshots, default, releases+snapshots), central (https://repo.maven.apache.org/maven2, default, releases)]
@@ -181,8 +181,8 @@ OS name: "mac os x", version: "26.2", arch: "aarch64", family: "mac"
 <configuration>
   <annotationProcessorPaths>
     <path>
-      <groupId>uk.co.instanto</groupId>
-      <artifactId>tearay-annotation-processor</artifactId>
+      <groupId>dev.verrai</groupId>
+      <artifactId>verrai-annotation-processor</artifactId>
       <version>1.0.0-SNAPSHOT</version>
     </path>
   </annotationProcessorPaths>
@@ -223,32 +223,32 @@ OS name: "mac os x", version: "26.2", arch: "aarch64", family: "mac"
   <verbose default-value="false">${maven.compiler.verbose}</verbose>
 </configuration>
 [DEBUG] =======================================================================
-[DEBUG] Skipped remote request for uk.co.instanto:tearay-rpc-common:1.0.0-SNAPSHOT/maven-metadata.xml locally installed metadata up-to-date
-[DEBUG] Skipped remote request for uk.co.instanto:tearay-rpc-common:1.0.0-SNAPSHOT/maven-metadata.xml locally installed metadata up-to-date
-[DEBUG] Skipped remote request for uk.co.instanto:tearay-rpc-common:1.0.0-SNAPSHOT/maven-metadata.xml locally installed metadata up-to-date
-[DEBUG] Skipped remote request for uk.co.instanto:tearay-rpc-common:1.0.0-SNAPSHOT/maven-metadata.xml locally installed metadata up-to-date
-[DEBUG] Skipped remote request for uk.co.instanto:tearay-parent-pom:1.0.0-SNAPSHOT/maven-metadata.xml locally installed metadata up-to-date
-[DEBUG] Skipped remote request for uk.co.instanto:tearay-parent-pom:1.0.0-SNAPSHOT/maven-metadata.xml locally installed metadata up-to-date
-[DEBUG] Skipped remote request for uk.co.instanto:tearay-rpc-core:1.0.0-SNAPSHOT/maven-metadata.xml locally installed metadata up-to-date
-[DEBUG] Skipped remote request for uk.co.instanto:tearay-rpc-core:1.0.0-SNAPSHOT/maven-metadata.xml locally installed metadata up-to-date
-[DEBUG] Skipped remote request for uk.co.instanto:tearay-rpc-core:1.0.0-SNAPSHOT/maven-metadata.xml locally installed metadata up-to-date
-[DEBUG] Skipped remote request for uk.co.instanto:tearay-rpc-core:1.0.0-SNAPSHOT/maven-metadata.xml locally installed metadata up-to-date
-[DEBUG] Skipped remote request for uk.co.instanto:teavm-stomp:1.0.0-SNAPSHOT/maven-metadata.xml locally installed metadata up-to-date
-[DEBUG] Skipped remote request for uk.co.instanto:teavm-stomp:1.0.0-SNAPSHOT/maven-metadata.xml locally installed metadata up-to-date
-[DEBUG] Skipped remote request for uk.co.instanto:teavm-stomp:1.0.0-SNAPSHOT/maven-metadata.xml locally installed metadata up-to-date
-[DEBUG] Skipped remote request for uk.co.instanto:teavm-stomp:1.0.0-SNAPSHOT/maven-metadata.xml locally installed metadata up-to-date
-[DEBUG] Skipped remote request for uk.co.instanto:tearay-annotation-processor:1.0.0-SNAPSHOT/maven-metadata.xml locally installed metadata up-to-date
-[DEBUG] Skipped remote request for uk.co.instanto:tearay-annotation-processor:1.0.0-SNAPSHOT/maven-metadata.xml locally installed metadata up-to-date
-[DEBUG] Skipped remote request for uk.co.instanto:tearay-annotation-processor:1.0.0-SNAPSHOT/maven-metadata.xml locally installed metadata up-to-date
-[DEBUG] Skipped remote request for uk.co.instanto:tearay-annotation-processor:1.0.0-SNAPSHOT/maven-metadata.xml locally installed metadata up-to-date
+[DEBUG] Skipped remote request for dev.verrai:verrai-rpc-common:1.0.0-SNAPSHOT/maven-metadata.xml locally installed metadata up-to-date
+[DEBUG] Skipped remote request for dev.verrai:verrai-rpc-common:1.0.0-SNAPSHOT/maven-metadata.xml locally installed metadata up-to-date
+[DEBUG] Skipped remote request for dev.verrai:verrai-rpc-common:1.0.0-SNAPSHOT/maven-metadata.xml locally installed metadata up-to-date
+[DEBUG] Skipped remote request for dev.verrai:verrai-rpc-common:1.0.0-SNAPSHOT/maven-metadata.xml locally installed metadata up-to-date
+[DEBUG] Skipped remote request for dev.verrai:verrai-parent-pom:1.0.0-SNAPSHOT/maven-metadata.xml locally installed metadata up-to-date
+[DEBUG] Skipped remote request for dev.verrai:verrai-parent-pom:1.0.0-SNAPSHOT/maven-metadata.xml locally installed metadata up-to-date
+[DEBUG] Skipped remote request for dev.verrai:verrai-rpc-core:1.0.0-SNAPSHOT/maven-metadata.xml locally installed metadata up-to-date
+[DEBUG] Skipped remote request for dev.verrai:verrai-rpc-core:1.0.0-SNAPSHOT/maven-metadata.xml locally installed metadata up-to-date
+[DEBUG] Skipped remote request for dev.verrai:verrai-rpc-core:1.0.0-SNAPSHOT/maven-metadata.xml locally installed metadata up-to-date
+[DEBUG] Skipped remote request for dev.verrai:verrai-rpc-core:1.0.0-SNAPSHOT/maven-metadata.xml locally installed metadata up-to-date
+[DEBUG] Skipped remote request for dev.verrai:teavm-stomp:1.0.0-SNAPSHOT/maven-metadata.xml locally installed metadata up-to-date
+[DEBUG] Skipped remote request for dev.verrai:teavm-stomp:1.0.0-SNAPSHOT/maven-metadata.xml locally installed metadata up-to-date
+[DEBUG] Skipped remote request for dev.verrai:teavm-stomp:1.0.0-SNAPSHOT/maven-metadata.xml locally installed metadata up-to-date
+[DEBUG] Skipped remote request for dev.verrai:teavm-stomp:1.0.0-SNAPSHOT/maven-metadata.xml locally installed metadata up-to-date
+[DEBUG] Skipped remote request for dev.verrai:verrai-annotation-processor:1.0.0-SNAPSHOT/maven-metadata.xml locally installed metadata up-to-date
+[DEBUG] Skipped remote request for dev.verrai:verrai-annotation-processor:1.0.0-SNAPSHOT/maven-metadata.xml locally installed metadata up-to-date
+[DEBUG] Skipped remote request for dev.verrai:verrai-annotation-processor:1.0.0-SNAPSHOT/maven-metadata.xml locally installed metadata up-to-date
+[DEBUG] Skipped remote request for dev.verrai:verrai-annotation-processor:1.0.0-SNAPSHOT/maven-metadata.xml locally installed metadata up-to-date
 [DEBUG] Dependency collection stats {ConflictMarker.analyzeTime=303042, ConflictMarker.markTime=131250, ConflictMarker.nodeCount=179, ConflictIdSorter.graphTime=193125, ConflictIdSorter.topsortTime=84667, ConflictIdSorter.conflictIdCount=64, ConflictIdSorter.conflictIdCycleCount=0, ConflictResolver.totalTime=2584500, ConflictResolver.conflictItemCount=146, DfDependencyCollector.collectTime=61871083, DfDependencyCollector.transformTime=3738208}
-[DEBUG] uk.co.instanto:tearay-integration-tests:jar:1.0.0-SNAPSHOT
-[DEBUG]    uk.co.instanto:tearay-rpc-common:jar:1.0.0-SNAPSHOT:compile
+[DEBUG] dev.verrai:verrai-integration-tests:jar:1.0.0-SNAPSHOT
+[DEBUG]    dev.verrai:verrai-rpc-common:jar:1.0.0-SNAPSHOT:compile
 [DEBUG]       com.squareup.okio:okio-jvm:jar:3.9.0:compile
 [DEBUG]          org.jetbrains.kotlin:kotlin-stdlib:jar:1.9.21:compile
 [DEBUG]             org.jetbrains:annotations:jar:13.0:compile
 [DEBUG]       org.slf4j:slf4j-api:jar:2.0.12:compile (version managed from 2.0.12)
-[DEBUG]    uk.co.instanto:tearay-rpc-core:jar:1.0.0-SNAPSHOT:compile
+[DEBUG]    dev.verrai:verrai-rpc-core:jar:1.0.0-SNAPSHOT:compile
 [DEBUG]       org.teavm:teavm-classlib:jar:0.10.0:compile (version managed from 0.10.0)
 [DEBUG]          org.teavm:teavm-platform:jar:0.10.0:compile
 [DEBUG]          org.teavm:teavm-jso-impl:jar:0.10.0:compile
@@ -265,7 +265,7 @@ OS name: "mac os x", version: "26.2", arch: "aarch64", family: "mac"
 [DEBUG]       org.teavm:teavm-jso:jar:0.10.0:compile (version managed from 0.10.0)
 [DEBUG]       org.teavm:teavm-jso-apis:jar:0.10.0:compile (version managed from 0.10.0)
 [DEBUG]          org.teavm:teavm-interop:jar:0.10.0:compile
-[DEBUG]       uk.co.instanto:teavm-stomp:jar:1.0.0-SNAPSHOT:compile
+[DEBUG]       dev.verrai:teavm-stomp:jar:1.0.0-SNAPSHOT:compile
 [DEBUG]          org.teavm:teavm-extras-slf4j:jar:0.10.0:compile (version managed from 0.10.0)
 [DEBUG]    com.squareup.wire:wire-runtime-jvm:jar:4.9.3:compile
 [DEBUG]       org.jetbrains.kotlin:kotlin-stdlib-jdk8:jar:1.9.10:compile
@@ -274,7 +274,7 @@ OS name: "mac os x", version: "26.2", arch: "aarch64", family: "mac"
 [DEBUG]    junit:junit:jar:4.13.2:test
 [DEBUG]       org.hamcrest:hamcrest-core:jar:1.3:test
 [DEBUG]    org.slf4j:slf4j-simple:jar:2.0.12:test
-[DEBUG]    uk.co.instanto:tearay-annotation-processor:jar:1.0.0-SNAPSHOT:provided
+[DEBUG]    dev.verrai:verrai-annotation-processor:jar:1.0.0-SNAPSHOT:provided
 [DEBUG]       com.squareup:javapoet:jar:1.13.0:provided
 [DEBUG]       com.squareup.wire:wire-schema:jar:4.9.3:provided
 [DEBUG]          com.squareup.wire:wire-runtime:jar:4.9.3:provided
@@ -308,7 +308,7 @@ OS name: "mac os x", version: "26.2", arch: "aarch64", family: "mac"
 [DEBUG]             com.google.errorprone:error_prone_annotations:jar:2.18.0:provided
 [DEBUG]             com.google.j2objc:j2objc-annotations:jar:2.8:provided
 [INFO] 
-[INFO] --- clean:3.2.0:clean (default-clean) @ tearay-integration-tests ---
+[INFO] --- clean:3.2.0:clean (default-clean) @ verrai-integration-tests ---
 [DEBUG] Dependency collection stats {ConflictMarker.analyzeTime=7083, ConflictMarker.markTime=23667, ConflictMarker.nodeCount=3, ConflictIdSorter.graphTime=21000, ConflictIdSorter.topsortTime=4000, ConflictIdSorter.conflictIdCount=3, ConflictIdSorter.conflictIdCycleCount=0, ConflictResolver.totalTime=84250, ConflictResolver.conflictItemCount=3, DfDependencyCollector.collectTime=5555917, DfDependencyCollector.transformTime=145583}
 [DEBUG] org.apache.maven.plugins:maven-clean-plugin:jar:3.2.0
 [DEBUG]    org.apache.maven.shared:maven-shared-utils:jar:3.3.4:compile
@@ -322,35 +322,35 @@ OS name: "mac os x", version: "26.2", arch: "aarch64", family: "mac"
 [DEBUG]   Included: commons-io:commons-io:jar:2.6
 [DEBUG] Loading mojo org.apache.maven.plugins:maven-clean-plugin:3.2.0:clean from plugin realm ClassRealm[plugin>org.apache.maven.plugins:maven-clean-plugin:3.2.0, parent: jdk.internal.loader.ClassLoaders$AppClassLoader@5bc2b487]
 [DEBUG] Configuring mojo execution 'org.apache.maven.plugins:maven-clean-plugin:3.2.0:clean:default-clean' with basic configurator -->
-[DEBUG]   (f) directory = /Users/carls/Documents/InstantoSDK/tearay-integration-tests/target
+[DEBUG]   (f) directory = /Users/carls/Documents/InstantoSDK/verrai-integration-tests/target
 [DEBUG]   (f) excludeDefaultDirectories = false
 [DEBUG]   (f) failOnError = true
 [DEBUG]   (f) fast = false
 [DEBUG]   (f) fastMode = background
 [DEBUG]   (f) followSymLinks = false
-[DEBUG]   (f) outputDirectory = /Users/carls/Documents/InstantoSDK/tearay-integration-tests/target/classes
-[DEBUG]   (f) reportDirectory = /Users/carls/Documents/InstantoSDK/tearay-integration-tests/target/classes
+[DEBUG]   (f) outputDirectory = /Users/carls/Documents/InstantoSDK/verrai-integration-tests/target/classes
+[DEBUG]   (f) reportDirectory = /Users/carls/Documents/InstantoSDK/verrai-integration-tests/target/classes
 [DEBUG]   (f) retryOnError = true
 [DEBUG]   (f) session = org.apache.maven.execution.MavenSession@5c448433
 [DEBUG]   (f) skip = false
-[DEBUG]   (f) testOutputDirectory = /Users/carls/Documents/InstantoSDK/tearay-integration-tests/target/test-classes
+[DEBUG]   (f) testOutputDirectory = /Users/carls/Documents/InstantoSDK/verrai-integration-tests/target/test-classes
 [DEBUG] -- end configuration --
-[INFO] Deleting /Users/carls/Documents/InstantoSDK/tearay-integration-tests/target
-[INFO] Deleting file /Users/carls/Documents/InstantoSDK/tearay-integration-tests/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst
-[INFO] Deleting file /Users/carls/Documents/InstantoSDK/tearay-integration-tests/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst
-[INFO] Deleting directory /Users/carls/Documents/InstantoSDK/tearay-integration-tests/target/maven-status/maven-compiler-plugin/compile/default-compile
-[INFO] Deleting directory /Users/carls/Documents/InstantoSDK/tearay-integration-tests/target/maven-status/maven-compiler-plugin/compile
-[INFO] Deleting directory /Users/carls/Documents/InstantoSDK/tearay-integration-tests/target/maven-status/maven-compiler-plugin
-[INFO] Deleting directory /Users/carls/Documents/InstantoSDK/tearay-integration-tests/target/maven-status
-[INFO] Deleting directory /Users/carls/Documents/InstantoSDK/tearay-integration-tests/target/classes
-[INFO] Deleting directory /Users/carls/Documents/InstantoSDK/tearay-integration-tests/target/generated-sources/annotations
-[INFO] Deleting directory /Users/carls/Documents/InstantoSDK/tearay-integration-tests/target/generated-sources
-[INFO] Deleting directory /Users/carls/Documents/InstantoSDK/tearay-integration-tests/target
-[DEBUG] Skipping non-existing directory /Users/carls/Documents/InstantoSDK/tearay-integration-tests/target/classes
-[DEBUG] Skipping non-existing directory /Users/carls/Documents/InstantoSDK/tearay-integration-tests/target/test-classes
-[DEBUG] Skipping non-existing directory /Users/carls/Documents/InstantoSDK/tearay-integration-tests/target/classes
+[INFO] Deleting /Users/carls/Documents/InstantoSDK/verrai-integration-tests/target
+[INFO] Deleting file /Users/carls/Documents/InstantoSDK/verrai-integration-tests/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst
+[INFO] Deleting file /Users/carls/Documents/InstantoSDK/verrai-integration-tests/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst
+[INFO] Deleting directory /Users/carls/Documents/InstantoSDK/verrai-integration-tests/target/maven-status/maven-compiler-plugin/compile/default-compile
+[INFO] Deleting directory /Users/carls/Documents/InstantoSDK/verrai-integration-tests/target/maven-status/maven-compiler-plugin/compile
+[INFO] Deleting directory /Users/carls/Documents/InstantoSDK/verrai-integration-tests/target/maven-status/maven-compiler-plugin
+[INFO] Deleting directory /Users/carls/Documents/InstantoSDK/verrai-integration-tests/target/maven-status
+[INFO] Deleting directory /Users/carls/Documents/InstantoSDK/verrai-integration-tests/target/classes
+[INFO] Deleting directory /Users/carls/Documents/InstantoSDK/verrai-integration-tests/target/generated-sources/annotations
+[INFO] Deleting directory /Users/carls/Documents/InstantoSDK/verrai-integration-tests/target/generated-sources
+[INFO] Deleting directory /Users/carls/Documents/InstantoSDK/verrai-integration-tests/target
+[DEBUG] Skipping non-existing directory /Users/carls/Documents/InstantoSDK/verrai-integration-tests/target/classes
+[DEBUG] Skipping non-existing directory /Users/carls/Documents/InstantoSDK/verrai-integration-tests/target/test-classes
+[DEBUG] Skipping non-existing directory /Users/carls/Documents/InstantoSDK/verrai-integration-tests/target/classes
 [INFO] 
-[INFO] --- resources:3.3.1:resources (default-resources) @ tearay-integration-tests ---
+[INFO] --- resources:3.3.1:resources (default-resources) @ verrai-integration-tests ---
 [DEBUG] Dependency collection stats {ConflictMarker.analyzeTime=15541, ConflictMarker.markTime=19792, ConflictMarker.nodeCount=13, ConflictIdSorter.graphTime=18875, ConflictIdSorter.topsortTime=5667, ConflictIdSorter.conflictIdCount=9, ConflictIdSorter.conflictIdCycleCount=0, ConflictResolver.totalTime=106250, ConflictResolver.conflictItemCount=13, DfDependencyCollector.collectTime=12166583, DfDependencyCollector.transformTime=174708}
 [DEBUG] org.apache.maven.plugins:maven-resources-plugin:jar:3.3.1
 [DEBUG]    org.codehaus.plexus:plexus-interpolation:jar:1.26:runtime
@@ -380,10 +380,10 @@ OS name: "mac os x", version: "26.2", arch: "aarch64", family: "mac"
 [DEBUG]   (f) escapeWindowsPaths = true
 [DEBUG]   (f) fileNameFiltering = false
 [DEBUG]   (s) includeEmptyDirs = false
-[DEBUG]   (s) outputDirectory = /Users/carls/Documents/InstantoSDK/tearay-integration-tests/target/classes
+[DEBUG]   (s) outputDirectory = /Users/carls/Documents/InstantoSDK/verrai-integration-tests/target/classes
 [DEBUG]   (s) overwrite = false
-[DEBUG]   (f) project = MavenProject: uk.co.instanto:tearay-integration-tests:1.0.0-SNAPSHOT @ /Users/carls/Documents/InstantoSDK/tearay-integration-tests/pom.xml
-[DEBUG]   (s) resources = [Resource {targetPath: null, filtering: false, FileSet {directory: /Users/carls/Documents/InstantoSDK/tearay-integration-tests/src/main/resources, PatternSet [includes: {}, excludes: {}]}}]
+[DEBUG]   (f) project = MavenProject: dev.verrai:verrai-integration-tests:1.0.0-SNAPSHOT @ /Users/carls/Documents/InstantoSDK/verrai-integration-tests/pom.xml
+[DEBUG]   (s) resources = [Resource {targetPath: null, filtering: false, FileSet {directory: /Users/carls/Documents/InstantoSDK/verrai-integration-tests/src/main/resources, PatternSet [includes: {}, excludes: {}]}}]
 [DEBUG]   (f) session = org.apache.maven.execution.MavenSession@5c448433
 [DEBUG]   (f) skip = false
 [DEBUG]   (f) supportMultiLineFiltering = false
@@ -406,7 +406,7 @@ OS name: "mac os x", version: "26.2", arch: "aarch64", family: "mac"
 [DEBUG] env.JAVA_HOME: /opt/homebrew/opt/openjdk/libexec/openjdk.jdk/Contents/Home
 [DEBUG] env.LANG: C.UTF-8
 [DEBUG] env.LOGNAME: carls
-[DEBUG] env.MAVEN_CMD_LINE_ARGS:  clean compile -X -pl tearay-integration-tests
+[DEBUG] env.MAVEN_CMD_LINE_ARGS:  clean compile -X -pl verrai-integration-tests
 [DEBUG] env.MAVEN_PROJECTBASEDIR: /Users/carls/Documents/InstantoSDK
 [DEBUG] env.MallocNanoZone: 0
 [DEBUG] env.OLDPWD: /Users/carls/Documents/InstantoSDK
@@ -482,7 +482,7 @@ OS name: "mac os x", version: "26.2", arch: "aarch64", family: "mac"
 [DEBUG] os.name: Mac OS X
 [DEBUG] os.version: 26.2
 [DEBUG] path.separator: :
-[DEBUG] project.baseUri: file:/Users/carls/Documents/InstantoSDK/tearay-integration-tests/
+[DEBUG] project.baseUri: file:/Users/carls/Documents/InstantoSDK/verrai-integration-tests/
 [DEBUG] project.build.sourceEncoding: UTF-8
 [DEBUG] slf4j.version: 2.0.12
 [DEBUG] socksNonProxyHosts: local|*.local|169.254/16|*.169.254/16
@@ -493,7 +493,7 @@ OS name: "mac os x", version: "26.2", arch: "aarch64", family: "mac"
 [DEBUG] sun.boot.library.path: /opt/homebrew/Cellar/openjdk/25.0.2/libexec/openjdk.jdk/Contents/Home/lib
 [DEBUG] sun.cpu.endian: little
 [DEBUG] sun.io.unicode.encoding: UnicodeBig
-[DEBUG] sun.java.command: org.codehaus.plexus.classworlds.launcher.Launcher clean compile -X -pl tearay-integration-tests
+[DEBUG] sun.java.command: org.codehaus.plexus.classworlds.launcher.Launcher clean compile -X -pl verrai-integration-tests
 [DEBUG] sun.java.launcher: SUN_STANDARD
 [DEBUG] sun.jnu.encoding: UTF-8
 [DEBUG] sun.management.compiler: HotSpot 64-Bit Tiered Compilers
@@ -507,13 +507,13 @@ OS name: "mac os x", version: "26.2", arch: "aarch64", family: "mac"
 [DEBUG] Using 'UTF-8' encoding to copy filtered resources.
 [DEBUG] Using 'UTF-8' encoding to copy filtered properties files.
 [DEBUG] resource with targetPath null
-directory /Users/carls/Documents/InstantoSDK/tearay-integration-tests/src/main/resources
+directory /Users/carls/Documents/InstantoSDK/verrai-integration-tests/src/main/resources
 excludes []
 includes []
-[INFO] skip non existing resourceDirectory /Users/carls/Documents/InstantoSDK/tearay-integration-tests/src/main/resources
+[INFO] skip non existing resourceDirectory /Users/carls/Documents/InstantoSDK/verrai-integration-tests/src/main/resources
 [DEBUG] no user filter components
 [INFO] 
-[INFO] --- compiler:3.8.1:compile (default-compile) @ tearay-integration-tests ---
+[INFO] --- compiler:3.8.1:compile (default-compile) @ verrai-integration-tests ---
 [DEBUG] Using mirror maven-default-http-blocker (http://0.0.0.0/) for apache.snapshots (http://repository.apache.org/snapshots).
 [DEBUG] Using mirror maven-default-http-blocker (http://0.0.0.0/) for codehaus.snapshots (http://snapshots.repository.codehaus.org).
 [DEBUG] Using mirror maven-default-http-blocker (http://0.0.0.0/) for ow2-snapshot (http://repository.ow2.org/nexus/content/repositories/snapshots).
@@ -574,14 +574,14 @@ includes []
 [DEBUG]   Included: org.codehaus.plexus:plexus-compiler-javac:jar:2.8.4
 [DEBUG] Loading mojo org.apache.maven.plugins:maven-compiler-plugin:3.8.1:compile from plugin realm ClassRealm[plugin>org.apache.maven.plugins:maven-compiler-plugin:3.8.1, parent: jdk.internal.loader.ClassLoaders$AppClassLoader@5bc2b487]
 [DEBUG] Configuring mojo execution 'org.apache.maven.plugins:maven-compiler-plugin:3.8.1:compile:default-compile' with basic configurator -->
-[DEBUG]   (s) groupId = uk.co.instanto
-[DEBUG]   (s) artifactId = tearay-annotation-processor
+[DEBUG]   (s) groupId = dev.verrai
+[DEBUG]   (s) artifactId = verrai-annotation-processor
 [DEBUG]   (s) version = 1.0.0-SNAPSHOT
-[DEBUG]   (f) annotationProcessorPaths = [uk.co.instanto:tearay-annotation-processor:1.0.0-SNAPSHOT.jar]
-[DEBUG]   (f) basedir = /Users/carls/Documents/InstantoSDK/tearay-integration-tests
-[DEBUG]   (f) buildDirectory = /Users/carls/Documents/InstantoSDK/tearay-integration-tests/target
-[DEBUG]   (f) compilePath = [/Users/carls/Documents/InstantoSDK/tearay-integration-tests/target/classes, /Users/carls/.m2/repository/dev/verrai-rpc-common/1.0.0-SNAPSHOT/tearay-rpc-common-1.0.0-SNAPSHOT.jar, /Users/carls/.m2/repository/com/squareup/okio/okio-jvm/3.9.0/okio-jvm-3.9.0.jar, /Users/carls/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib/1.9.21/kotlin-stdlib-1.9.21.jar, /Users/carls/.m2/repository/org/jetbrains/annotations/13.0/annotations-13.0.jar, /Users/carls/.m2/repository/org/slf4j/slf4j-api/2.0.12/slf4j-api-2.0.12.jar, /Users/carls/.m2/repository/dev/verrai-rpc-core/1.0.0-SNAPSHOT/tearay-rpc-core-1.0.0-SNAPSHOT.jar, /Users/carls/.m2/repository/org/teavm/teavm-classlib/0.10.0/teavm-classlib-0.10.0.jar, /Users/carls/.m2/repository/org/teavm/teavm-platform/0.10.0/teavm-platform-0.10.0.jar, /Users/carls/.m2/repository/org/teavm/teavm-jso-impl/0.10.0/teavm-jso-impl-0.10.0.jar, /Users/carls/.m2/repository/org/teavm/teavm-metaprogramming-impl/0.10.0/teavm-metaprogramming-impl-0.10.0.jar, /Users/carls/.m2/repository/commons-io/commons-io/2.16.1/commons-io-2.16.1.jar, /Users/carls/.m2/repository/com/jcraft/jzlib/1.1.3/jzlib-1.1.3.jar, /Users/carls/.m2/repository/joda-time/joda-time/2.12.2/joda-time-2.12.2.jar, /Users/carls/.m2/repository/org/teavm/teavm-jso/0.10.0/teavm-jso-0.10.0.jar, /Users/carls/.m2/repository/org/teavm/teavm-jso-apis/0.10.0/teavm-jso-apis-0.10.0.jar, /Users/carls/.m2/repository/org/teavm/teavm-interop/0.10.0/teavm-interop-0.10.0.jar, /Users/carls/.m2/repository/uk/co/instanto/teavm-stomp/1.0.0-SNAPSHOT/teavm-stomp-1.0.0-SNAPSHOT.jar, /Users/carls/.m2/repository/org/teavm/teavm-extras-slf4j/0.10.0/teavm-extras-slf4j-0.10.0.jar, /Users/carls/.m2/repository/com/squareup/wire/wire-runtime-jvm/4.9.3/wire-runtime-jvm-4.9.3.jar, /Users/carls/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib-jdk8/1.9.10/kotlin-stdlib-jdk8-1.9.10.jar, /Users/carls/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib-jdk7/1.9.10/kotlin-stdlib-jdk7-1.9.10.jar, /Users/carls/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib-common/1.9.10/kotlin-stdlib-common-1.9.10.jar, /Users/carls/.m2/repository/dev/verrai-annotation-processor/1.0.0-SNAPSHOT/tearay-annotation-processor-1.0.0-SNAPSHOT.jar, /Users/carls/.m2/repository/com/squareup/javapoet/1.13.0/javapoet-1.13.0.jar, /Users/carls/.m2/repository/com/squareup/wire/wire-schema/4.9.3/wire-schema-4.9.3.jar, /Users/carls/.m2/repository/com/squareup/wire/wire-runtime/4.9.3/wire-runtime-4.9.3.jar, /Users/carls/.m2/repository/com/squareup/okio/okio/3.6.0/okio-3.6.0.jar, /Users/carls/.m2/repository/com/squareup/wire/wire-compiler/4.9.3/wire-compiler-4.9.3.jar, /Users/carls/.m2/repository/com/squareup/wire/wire-schema-jvm/4.9.3/wire-schema-jvm-4.9.3.jar, /Users/carls/.m2/repository/com/squareup/kotlinpoet-jvm/1.15.1/kotlinpoet-jvm-1.15.1.jar, /Users/carls/.m2/repository/org/jetbrains/kotlin/kotlin-reflect/1.9.20/kotlin-reflect-1.9.20.jar, /Users/carls/.m2/repository/com/squareup/wire/wire-kotlin-generator/4.9.3/wire-kotlin-generator-4.9.3.jar, /Users/carls/.m2/repository/com/squareup/wire/wire-grpc-client-jvm/4.9.3/wire-grpc-client-jvm-4.9.3.jar, /Users/carls/.m2/repository/com/squareup/okhttp3/okhttp/4.12.0/okhttp-4.12.0.jar, /Users/carls/.m2/repository/org/jetbrains/kotlinx/kotlinx-coroutines-core-jvm/1.7.3/kotlinx-coroutines-core-jvm-1.7.3.jar, /Users/carls/.m2/repository/com/squareup/wire/wire-grpc-server-generator/4.9.3/wire-grpc-server-generator-4.9.3.jar, /Users/carls/.m2/repository/com/google/protobuf/protobuf-java/3.25.1/protobuf-java-3.25.1.jar, /Users/carls/.m2/repository/com/squareup/wire/wire-grpc-server/4.9.3/wire-grpc-server-4.9.3.jar, /Users/carls/.m2/repository/io/grpc/grpc-stub/1.59.0/grpc-stub-1.59.0.jar, /Users/carls/.m2/repository/io/grpc/grpc-api/1.59.0/grpc-api-1.59.0.jar, /Users/carls/.m2/repository/com/squareup/wire/wire-swift-generator/4.9.3/wire-swift-generator-4.9.3.jar, /Users/carls/.m2/repository/io/outfoxx/swiftpoet/1.5.0/swiftpoet-1.5.0.jar, /Users/carls/.m2/repository/com/squareup/okio/okio-fakefilesystem-jvm/3.6.0/okio-fakefilesystem-jvm-3.6.0.jar, /Users/carls/.m2/repository/org/jetbrains/kotlinx/kotlinx-datetime-jvm/0.4.1/kotlinx-datetime-jvm-0.4.1.jar, /Users/carls/.m2/repository/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.6.1/kotlinx-serialization-core-jvm-1.6.1.jar, /Users/carls/.m2/repository/com/charleskorn/kaml/kaml-jvm/0.55.0/kaml-jvm-0.55.0.jar, /Users/carls/.m2/repository/org/snakeyaml/snakeyaml-engine/2.6/snakeyaml-engine-2.6.jar, /Users/carls/.m2/repository/com/squareup/wire/wire-java-generator/4.9.3/wire-java-generator-4.9.3.jar, /Users/carls/.m2/repository/com/google/guava/guava/32.0.1-jre/guava-32.0.1-jre.jar, /Users/carls/.m2/repository/com/google/guava/failureaccess/1.0.1/failureaccess-1.0.1.jar, /Users/carls/.m2/repository/com/google/guava/listenablefuture/9999.0-empty-to-avoid-conflict-with-guava/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar, /Users/carls/.m2/repository/com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2.jar, /Users/carls/.m2/repository/org/checkerframework/checker-qual/3.33.0/checker-qual-3.33.0.jar, /Users/carls/.m2/repository/com/google/errorprone/error_prone_annotations/2.18.0/error_prone_annotations-2.18.0.jar, /Users/carls/.m2/repository/com/google/j2objc/j2objc-annotations/2.8/j2objc-annotations-2.8.jar]
-[DEBUG]   (f) compileSourceRoots = [/Users/carls/Documents/InstantoSDK/tearay-integration-tests/src/main/java]
+[DEBUG]   (f) annotationProcessorPaths = [dev.verrai:verrai-annotation-processor:1.0.0-SNAPSHOT.jar]
+[DEBUG]   (f) basedir = /Users/carls/Documents/InstantoSDK/verrai-integration-tests
+[DEBUG]   (f) buildDirectory = /Users/carls/Documents/InstantoSDK/verrai-integration-tests/target
+[DEBUG]   (f) compilePath = [/Users/carls/Documents/InstantoSDK/verrai-integration-tests/target/classes, /Users/carls/.m2/repository/dev/verrai-rpc-common/1.0.0-SNAPSHOT/verrai-rpc-common-1.0.0-SNAPSHOT.jar, /Users/carls/.m2/repository/com/squareup/okio/okio-jvm/3.9.0/okio-jvm-3.9.0.jar, /Users/carls/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib/1.9.21/kotlin-stdlib-1.9.21.jar, /Users/carls/.m2/repository/org/jetbrains/annotations/13.0/annotations-13.0.jar, /Users/carls/.m2/repository/org/slf4j/slf4j-api/2.0.12/slf4j-api-2.0.12.jar, /Users/carls/.m2/repository/dev/verrai-rpc-core/1.0.0-SNAPSHOT/verrai-rpc-core-1.0.0-SNAPSHOT.jar, /Users/carls/.m2/repository/org/teavm/teavm-classlib/0.10.0/teavm-classlib-0.10.0.jar, /Users/carls/.m2/repository/org/teavm/teavm-platform/0.10.0/teavm-platform-0.10.0.jar, /Users/carls/.m2/repository/org/teavm/teavm-jso-impl/0.10.0/teavm-jso-impl-0.10.0.jar, /Users/carls/.m2/repository/org/teavm/teavm-metaprogramming-impl/0.10.0/teavm-metaprogramming-impl-0.10.0.jar, /Users/carls/.m2/repository/commons-io/commons-io/2.16.1/commons-io-2.16.1.jar, /Users/carls/.m2/repository/com/jcraft/jzlib/1.1.3/jzlib-1.1.3.jar, /Users/carls/.m2/repository/joda-time/joda-time/2.12.2/joda-time-2.12.2.jar, /Users/carls/.m2/repository/org/teavm/teavm-jso/0.10.0/teavm-jso-0.10.0.jar, /Users/carls/.m2/repository/org/teavm/teavm-jso-apis/0.10.0/teavm-jso-apis-0.10.0.jar, /Users/carls/.m2/repository/org/teavm/teavm-interop/0.10.0/teavm-interop-0.10.0.jar, /Users/carls/.m2/repository/uk/co/instanto/teavm-stomp/1.0.0-SNAPSHOT/teavm-stomp-1.0.0-SNAPSHOT.jar, /Users/carls/.m2/repository/org/teavm/teavm-extras-slf4j/0.10.0/teavm-extras-slf4j-0.10.0.jar, /Users/carls/.m2/repository/com/squareup/wire/wire-runtime-jvm/4.9.3/wire-runtime-jvm-4.9.3.jar, /Users/carls/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib-jdk8/1.9.10/kotlin-stdlib-jdk8-1.9.10.jar, /Users/carls/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib-jdk7/1.9.10/kotlin-stdlib-jdk7-1.9.10.jar, /Users/carls/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib-common/1.9.10/kotlin-stdlib-common-1.9.10.jar, /Users/carls/.m2/repository/dev/verrai-annotation-processor/1.0.0-SNAPSHOT/verrai-annotation-processor-1.0.0-SNAPSHOT.jar, /Users/carls/.m2/repository/com/squareup/javapoet/1.13.0/javapoet-1.13.0.jar, /Users/carls/.m2/repository/com/squareup/wire/wire-schema/4.9.3/wire-schema-4.9.3.jar, /Users/carls/.m2/repository/com/squareup/wire/wire-runtime/4.9.3/wire-runtime-4.9.3.jar, /Users/carls/.m2/repository/com/squareup/okio/okio/3.6.0/okio-3.6.0.jar, /Users/carls/.m2/repository/com/squareup/wire/wire-compiler/4.9.3/wire-compiler-4.9.3.jar, /Users/carls/.m2/repository/com/squareup/wire/wire-schema-jvm/4.9.3/wire-schema-jvm-4.9.3.jar, /Users/carls/.m2/repository/com/squareup/kotlinpoet-jvm/1.15.1/kotlinpoet-jvm-1.15.1.jar, /Users/carls/.m2/repository/org/jetbrains/kotlin/kotlin-reflect/1.9.20/kotlin-reflect-1.9.20.jar, /Users/carls/.m2/repository/com/squareup/wire/wire-kotlin-generator/4.9.3/wire-kotlin-generator-4.9.3.jar, /Users/carls/.m2/repository/com/squareup/wire/wire-grpc-client-jvm/4.9.3/wire-grpc-client-jvm-4.9.3.jar, /Users/carls/.m2/repository/com/squareup/okhttp3/okhttp/4.12.0/okhttp-4.12.0.jar, /Users/carls/.m2/repository/org/jetbrains/kotlinx/kotlinx-coroutines-core-jvm/1.7.3/kotlinx-coroutines-core-jvm-1.7.3.jar, /Users/carls/.m2/repository/com/squareup/wire/wire-grpc-server-generator/4.9.3/wire-grpc-server-generator-4.9.3.jar, /Users/carls/.m2/repository/com/google/protobuf/protobuf-java/3.25.1/protobuf-java-3.25.1.jar, /Users/carls/.m2/repository/com/squareup/wire/wire-grpc-server/4.9.3/wire-grpc-server-4.9.3.jar, /Users/carls/.m2/repository/io/grpc/grpc-stub/1.59.0/grpc-stub-1.59.0.jar, /Users/carls/.m2/repository/io/grpc/grpc-api/1.59.0/grpc-api-1.59.0.jar, /Users/carls/.m2/repository/com/squareup/wire/wire-swift-generator/4.9.3/wire-swift-generator-4.9.3.jar, /Users/carls/.m2/repository/io/outfoxx/swiftpoet/1.5.0/swiftpoet-1.5.0.jar, /Users/carls/.m2/repository/com/squareup/okio/okio-fakefilesystem-jvm/3.6.0/okio-fakefilesystem-jvm-3.6.0.jar, /Users/carls/.m2/repository/org/jetbrains/kotlinx/kotlinx-datetime-jvm/0.4.1/kotlinx-datetime-jvm-0.4.1.jar, /Users/carls/.m2/repository/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.6.1/kotlinx-serialization-core-jvm-1.6.1.jar, /Users/carls/.m2/repository/com/charleskorn/kaml/kaml-jvm/0.55.0/kaml-jvm-0.55.0.jar, /Users/carls/.m2/repository/org/snakeyaml/snakeyaml-engine/2.6/snakeyaml-engine-2.6.jar, /Users/carls/.m2/repository/com/squareup/wire/wire-java-generator/4.9.3/wire-java-generator-4.9.3.jar, /Users/carls/.m2/repository/com/google/guava/guava/32.0.1-jre/guava-32.0.1-jre.jar, /Users/carls/.m2/repository/com/google/guava/failureaccess/1.0.1/failureaccess-1.0.1.jar, /Users/carls/.m2/repository/com/google/guava/listenablefuture/9999.0-empty-to-avoid-conflict-with-guava/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar, /Users/carls/.m2/repository/com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2.jar, /Users/carls/.m2/repository/org/checkerframework/checker-qual/3.33.0/checker-qual-3.33.0.jar, /Users/carls/.m2/repository/com/google/errorprone/error_prone_annotations/2.18.0/error_prone_annotations-2.18.0.jar, /Users/carls/.m2/repository/com/google/j2objc/j2objc-annotations/2.8/j2objc-annotations-2.8.jar]
+[DEBUG]   (f) compileSourceRoots = [/Users/carls/Documents/InstantoSDK/verrai-integration-tests/src/main/java]
 [DEBUG]   (f) compilerId = javac
 [DEBUG]   (f) debug = true
 [DEBUG]   (f) encoding = UTF-8
@@ -589,13 +589,13 @@ includes []
 [DEBUG]   (f) failOnWarning = false
 [DEBUG]   (f) forceJavacCompilerUse = false
 [DEBUG]   (f) fork = false
-[DEBUG]   (f) generatedSourcesDirectory = /Users/carls/Documents/InstantoSDK/tearay-integration-tests/target/generated-sources/annotations
+[DEBUG]   (f) generatedSourcesDirectory = /Users/carls/Documents/InstantoSDK/verrai-integration-tests/target/generated-sources/annotations
 [DEBUG]   (f) mojoExecution = org.apache.maven.plugins:maven-compiler-plugin:3.8.1:compile {execution: default-compile}
 [DEBUG]   (f) optimize = false
-[DEBUG]   (f) outputDirectory = /Users/carls/Documents/InstantoSDK/tearay-integration-tests/target/classes
+[DEBUG]   (f) outputDirectory = /Users/carls/Documents/InstantoSDK/verrai-integration-tests/target/classes
 [DEBUG]   (f) parameters = false
-[DEBUG]   (f) project = MavenProject: uk.co.instanto:tearay-integration-tests:1.0.0-SNAPSHOT @ /Users/carls/Documents/InstantoSDK/tearay-integration-tests/pom.xml
-[DEBUG]   (f) projectArtifact = uk.co.instanto:tearay-integration-tests:jar:1.0.0-SNAPSHOT
+[DEBUG]   (f) project = MavenProject: dev.verrai:verrai-integration-tests:1.0.0-SNAPSHOT @ /Users/carls/Documents/InstantoSDK/verrai-integration-tests/pom.xml
+[DEBUG]   (f) projectArtifact = dev.verrai:verrai-integration-tests:jar:1.0.0-SNAPSHOT
 [DEBUG]   (s) release = 17
 [DEBUG]   (f) session = org.apache.maven.execution.MavenSession@5c448433
 [DEBUG]   (f) showDeprecation = false
@@ -608,29 +608,29 @@ includes []
 [DEBUG]   (f) verbose = false
 [DEBUG] -- end configuration --
 [DEBUG] Using compiler 'javac'.
-[DEBUG] Adding /Users/carls/Documents/InstantoSDK/tearay-integration-tests/target/generated-sources/annotations to compile source roots:
-  /Users/carls/Documents/InstantoSDK/tearay-integration-tests/src/main/java
+[DEBUG] Adding /Users/carls/Documents/InstantoSDK/verrai-integration-tests/target/generated-sources/annotations to compile source roots:
+  /Users/carls/Documents/InstantoSDK/verrai-integration-tests/src/main/java
 [DEBUG] New compile source roots:
-  /Users/carls/Documents/InstantoSDK/tearay-integration-tests/src/main/java
-  /Users/carls/Documents/InstantoSDK/tearay-integration-tests/target/generated-sources/annotations
+  /Users/carls/Documents/InstantoSDK/verrai-integration-tests/src/main/java
+  /Users/carls/Documents/InstantoSDK/verrai-integration-tests/target/generated-sources/annotations
 [DEBUG] CompilerReuseStrategy: reuseCreated
 [DEBUG] useIncrementalCompilation enabled
-[DEBUG] Stale source detected: /Users/carls/Documents/InstantoSDK/tearay-integration-tests/src/main/java/uk/co/instanto/integration/service/dto/MyData.java
-[DEBUG] Stale source detected: /Users/carls/Documents/InstantoSDK/tearay-integration-tests/src/main/java/uk/co/instanto/integration/service/dto/Address.java
-[DEBUG] Stale source detected: /Users/carls/Documents/InstantoSDK/tearay-integration-tests/src/main/java/uk/co/instanto/integration/service/MyDataService.java
-[DEBUG] Stale source detected: /Users/carls/Documents/InstantoSDK/tearay-integration-tests/src/main/java/uk/co/instanto/integration/service/dto/Organization.java
-[DEBUG] Stale source detected: /Users/carls/Documents/InstantoSDK/tearay-integration-tests/src/main/java/uk/co/instanto/integration/service/dto/Employee.java
-[DEBUG] Stale source detected: /Users/carls/Documents/InstantoSDK/tearay-integration-tests/src/main/java/uk/co/instanto/integration/service/dto/EmployeeHiredEvent.java
-[DEBUG] Stale source detected: /Users/carls/Documents/InstantoSDK/tearay-integration-tests/src/main/java/uk/co/instanto/integration/service/dto/Department.java
+[DEBUG] Stale source detected: /Users/carls/Documents/InstantoSDK/verrai-integration-tests/src/main/java/uk/co/instanto/integration/service/dto/MyData.java
+[DEBUG] Stale source detected: /Users/carls/Documents/InstantoSDK/verrai-integration-tests/src/main/java/uk/co/instanto/integration/service/dto/Address.java
+[DEBUG] Stale source detected: /Users/carls/Documents/InstantoSDK/verrai-integration-tests/src/main/java/uk/co/instanto/integration/service/MyDataService.java
+[DEBUG] Stale source detected: /Users/carls/Documents/InstantoSDK/verrai-integration-tests/src/main/java/uk/co/instanto/integration/service/dto/Organization.java
+[DEBUG] Stale source detected: /Users/carls/Documents/InstantoSDK/verrai-integration-tests/src/main/java/uk/co/instanto/integration/service/dto/Employee.java
+[DEBUG] Stale source detected: /Users/carls/Documents/InstantoSDK/verrai-integration-tests/src/main/java/uk/co/instanto/integration/service/dto/EmployeeHiredEvent.java
+[DEBUG] Stale source detected: /Users/carls/Documents/InstantoSDK/verrai-integration-tests/src/main/java/uk/co/instanto/integration/service/dto/Department.java
 [INFO] Changes detected - recompiling the module!
 [DEBUG] Classpath:
-[DEBUG]  /Users/carls/Documents/InstantoSDK/tearay-integration-tests/target/classes
-[DEBUG]  /Users/carls/.m2/repository/dev/verrai-rpc-common/1.0.0-SNAPSHOT/tearay-rpc-common-1.0.0-SNAPSHOT.jar
+[DEBUG]  /Users/carls/Documents/InstantoSDK/verrai-integration-tests/target/classes
+[DEBUG]  /Users/carls/.m2/repository/dev/verrai-rpc-common/1.0.0-SNAPSHOT/verrai-rpc-common-1.0.0-SNAPSHOT.jar
 [DEBUG]  /Users/carls/.m2/repository/com/squareup/okio/okio-jvm/3.9.0/okio-jvm-3.9.0.jar
 [DEBUG]  /Users/carls/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib/1.9.21/kotlin-stdlib-1.9.21.jar
 [DEBUG]  /Users/carls/.m2/repository/org/jetbrains/annotations/13.0/annotations-13.0.jar
 [DEBUG]  /Users/carls/.m2/repository/org/slf4j/slf4j-api/2.0.12/slf4j-api-2.0.12.jar
-[DEBUG]  /Users/carls/.m2/repository/dev/verrai-rpc-core/1.0.0-SNAPSHOT/tearay-rpc-core-1.0.0-SNAPSHOT.jar
+[DEBUG]  /Users/carls/.m2/repository/dev/verrai-rpc-core/1.0.0-SNAPSHOT/verrai-rpc-core-1.0.0-SNAPSHOT.jar
 [DEBUG]  /Users/carls/.m2/repository/org/teavm/teavm-classlib/0.10.0/teavm-classlib-0.10.0.jar
 [DEBUG]  /Users/carls/.m2/repository/org/teavm/teavm-platform/0.10.0/teavm-platform-0.10.0.jar
 [DEBUG]  /Users/carls/.m2/repository/org/teavm/teavm-jso-impl/0.10.0/teavm-jso-impl-0.10.0.jar
@@ -647,7 +647,7 @@ includes []
 [DEBUG]  /Users/carls/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib-jdk8/1.9.10/kotlin-stdlib-jdk8-1.9.10.jar
 [DEBUG]  /Users/carls/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib-jdk7/1.9.10/kotlin-stdlib-jdk7-1.9.10.jar
 [DEBUG]  /Users/carls/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib-common/1.9.10/kotlin-stdlib-common-1.9.10.jar
-[DEBUG]  /Users/carls/.m2/repository/dev/verrai-annotation-processor/1.0.0-SNAPSHOT/tearay-annotation-processor-1.0.0-SNAPSHOT.jar
+[DEBUG]  /Users/carls/.m2/repository/dev/verrai-annotation-processor/1.0.0-SNAPSHOT/verrai-annotation-processor-1.0.0-SNAPSHOT.jar
 [DEBUG]  /Users/carls/.m2/repository/com/squareup/javapoet/1.13.0/javapoet-1.13.0.jar
 [DEBUG]  /Users/carls/.m2/repository/com/squareup/wire/wire-schema/4.9.3/wire-schema-4.9.3.jar
 [DEBUG]  /Users/carls/.m2/repository/com/squareup/wire/wire-runtime/4.9.3/wire-runtime-4.9.3.jar
@@ -681,34 +681,34 @@ includes []
 [DEBUG]  /Users/carls/.m2/repository/com/google/errorprone/error_prone_annotations/2.18.0/error_prone_annotations-2.18.0.jar
 [DEBUG]  /Users/carls/.m2/repository/com/google/j2objc/j2objc-annotations/2.8/j2objc-annotations-2.8.jar
 [DEBUG] Source roots:
-[DEBUG]  /Users/carls/Documents/InstantoSDK/tearay-integration-tests/src/main/java
-[DEBUG]  /Users/carls/Documents/InstantoSDK/tearay-integration-tests/target/generated-sources/annotations
+[DEBUG]  /Users/carls/Documents/InstantoSDK/verrai-integration-tests/src/main/java
+[DEBUG]  /Users/carls/Documents/InstantoSDK/verrai-integration-tests/target/generated-sources/annotations
 [DEBUG] Command line options:
-[DEBUG] -d /Users/carls/Documents/InstantoSDK/tearay-integration-tests/target/classes -classpath /Users/carls/Documents/InstantoSDK/tearay-integration-tests/target/classes:/Users/carls/.m2/repository/dev/verrai-rpc-common/1.0.0-SNAPSHOT/tearay-rpc-common-1.0.0-SNAPSHOT.jar:/Users/carls/.m2/repository/com/squareup/okio/okio-jvm/3.9.0/okio-jvm-3.9.0.jar:/Users/carls/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib/1.9.21/kotlin-stdlib-1.9.21.jar:/Users/carls/.m2/repository/org/jetbrains/annotations/13.0/annotations-13.0.jar:/Users/carls/.m2/repository/org/slf4j/slf4j-api/2.0.12/slf4j-api-2.0.12.jar:/Users/carls/.m2/repository/dev/verrai-rpc-core/1.0.0-SNAPSHOT/tearay-rpc-core-1.0.0-SNAPSHOT.jar:/Users/carls/.m2/repository/org/teavm/teavm-classlib/0.10.0/teavm-classlib-0.10.0.jar:/Users/carls/.m2/repository/org/teavm/teavm-platform/0.10.0/teavm-platform-0.10.0.jar:/Users/carls/.m2/repository/org/teavm/teavm-jso-impl/0.10.0/teavm-jso-impl-0.10.0.jar:/Users/carls/.m2/repository/org/teavm/teavm-metaprogramming-impl/0.10.0/teavm-metaprogramming-impl-0.10.0.jar:/Users/carls/.m2/repository/commons-io/commons-io/2.16.1/commons-io-2.16.1.jar:/Users/carls/.m2/repository/com/jcraft/jzlib/1.1.3/jzlib-1.1.3.jar:/Users/carls/.m2/repository/joda-time/joda-time/2.12.2/joda-time-2.12.2.jar:/Users/carls/.m2/repository/org/teavm/teavm-jso/0.10.0/teavm-jso-0.10.0.jar:/Users/carls/.m2/repository/org/teavm/teavm-jso-apis/0.10.0/teavm-jso-apis-0.10.0.jar:/Users/carls/.m2/repository/org/teavm/teavm-interop/0.10.0/teavm-interop-0.10.0.jar:/Users/carls/.m2/repository/uk/co/instanto/teavm-stomp/1.0.0-SNAPSHOT/teavm-stomp-1.0.0-SNAPSHOT.jar:/Users/carls/.m2/repository/org/teavm/teavm-extras-slf4j/0.10.0/teavm-extras-slf4j-0.10.0.jar:/Users/carls/.m2/repository/com/squareup/wire/wire-runtime-jvm/4.9.3/wire-runtime-jvm-4.9.3.jar:/Users/carls/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib-jdk8/1.9.10/kotlin-stdlib-jdk8-1.9.10.jar:/Users/carls/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib-jdk7/1.9.10/kotlin-stdlib-jdk7-1.9.10.jar:/Users/carls/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib-common/1.9.10/kotlin-stdlib-common-1.9.10.jar:/Users/carls/.m2/repository/dev/verrai-annotation-processor/1.0.0-SNAPSHOT/tearay-annotation-processor-1.0.0-SNAPSHOT.jar:/Users/carls/.m2/repository/com/squareup/javapoet/1.13.0/javapoet-1.13.0.jar:/Users/carls/.m2/repository/com/squareup/wire/wire-schema/4.9.3/wire-schema-4.9.3.jar:/Users/carls/.m2/repository/com/squareup/wire/wire-runtime/4.9.3/wire-runtime-4.9.3.jar:/Users/carls/.m2/repository/com/squareup/okio/okio/3.6.0/okio-3.6.0.jar:/Users/carls/.m2/repository/com/squareup/wire/wire-compiler/4.9.3/wire-compiler-4.9.3.jar:/Users/carls/.m2/repository/com/squareup/wire/wire-schema-jvm/4.9.3/wire-schema-jvm-4.9.3.jar:/Users/carls/.m2/repository/com/squareup/kotlinpoet-jvm/1.15.1/kotlinpoet-jvm-1.15.1.jar:/Users/carls/.m2/repository/org/jetbrains/kotlin/kotlin-reflect/1.9.20/kotlin-reflect-1.9.20.jar:/Users/carls/.m2/repository/com/squareup/wire/wire-kotlin-generator/4.9.3/wire-kotlin-generator-4.9.3.jar:/Users/carls/.m2/repository/com/squareup/wire/wire-grpc-client-jvm/4.9.3/wire-grpc-client-jvm-4.9.3.jar:/Users/carls/.m2/repository/com/squareup/okhttp3/okhttp/4.12.0/okhttp-4.12.0.jar:/Users/carls/.m2/repository/org/jetbrains/kotlinx/kotlinx-coroutines-core-jvm/1.7.3/kotlinx-coroutines-core-jvm-1.7.3.jar:/Users/carls/.m2/repository/com/squareup/wire/wire-grpc-server-generator/4.9.3/wire-grpc-server-generator-4.9.3.jar:/Users/carls/.m2/repository/com/google/protobuf/protobuf-java/3.25.1/protobuf-java-3.25.1.jar:/Users/carls/.m2/repository/com/squareup/wire/wire-grpc-server/4.9.3/wire-grpc-server-4.9.3.jar:/Users/carls/.m2/repository/io/grpc/grpc-stub/1.59.0/grpc-stub-1.59.0.jar:/Users/carls/.m2/repository/io/grpc/grpc-api/1.59.0/grpc-api-1.59.0.jar:/Users/carls/.m2/repository/com/squareup/wire/wire-swift-generator/4.9.3/wire-swift-generator-4.9.3.jar:/Users/carls/.m2/repository/io/outfoxx/swiftpoet/1.5.0/swiftpoet-1.5.0.jar:/Users/carls/.m2/repository/com/squareup/okio/okio-fakefilesystem-jvm/3.6.0/okio-fakefilesystem-jvm-3.6.0.jar:/Users/carls/.m2/repository/org/jetbrains/kotlinx/kotlinx-datetime-jvm/0.4.1/kotlinx-datetime-jvm-0.4.1.jar:/Users/carls/.m2/repository/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.6.1/kotlinx-serialization-core-jvm-1.6.1.jar:/Users/carls/.m2/repository/com/charleskorn/kaml/kaml-jvm/0.55.0/kaml-jvm-0.55.0.jar:/Users/carls/.m2/repository/org/snakeyaml/snakeyaml-engine/2.6/snakeyaml-engine-2.6.jar:/Users/carls/.m2/repository/com/squareup/wire/wire-java-generator/4.9.3/wire-java-generator-4.9.3.jar:/Users/carls/.m2/repository/com/google/guava/guava/32.0.1-jre/guava-32.0.1-jre.jar:/Users/carls/.m2/repository/com/google/guava/failureaccess/1.0.1/failureaccess-1.0.1.jar:/Users/carls/.m2/repository/com/google/guava/listenablefuture/9999.0-empty-to-avoid-conflict-with-guava/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar:/Users/carls/.m2/repository/com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2.jar:/Users/carls/.m2/repository/org/checkerframework/checker-qual/3.33.0/checker-qual-3.33.0.jar:/Users/carls/.m2/repository/com/google/errorprone/error_prone_annotations/2.18.0/error_prone_annotations-2.18.0.jar:/Users/carls/.m2/repository/com/google/j2objc/j2objc-annotations/2.8/j2objc-annotations-2.8.jar: -sourcepath /Users/carls/Documents/InstantoSDK/tearay-integration-tests/src/main/java:/Users/carls/Documents/InstantoSDK/tearay-integration-tests/target/generated-sources/annotations: -s /Users/carls/Documents/InstantoSDK/tearay-integration-tests/target/generated-sources/annotations -processorpath /Users/carls/.m2/repository/dev/verrai-annotation-processor/1.0.0-SNAPSHOT/tearay-annotation-processor-1.0.0-SNAPSHOT.jar:/Users/carls/.m2/repository/com/squareup/javapoet/1.13.0/javapoet-1.13.0.jar:/Users/carls/.m2/repository/com/google/auto/service/auto-service/1.1.1/auto-service-1.1.1.jar:/Users/carls/.m2/repository/com/google/auto/service/auto-service-annotations/1.1.1/auto-service-annotations-1.1.1.jar:/Users/carls/.m2/repository/com/google/auto/auto-common/1.2.1/auto-common-1.2.1.jar:/Users/carls/.m2/repository/com/google/guava/guava/32.0.1-jre/guava-32.0.1-jre.jar:/Users/carls/.m2/repository/com/google/guava/failureaccess/1.0.1/failureaccess-1.0.1.jar:/Users/carls/.m2/repository/com/google/guava/listenablefuture/9999.0-empty-to-avoid-conflict-with-guava/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar:/Users/carls/.m2/repository/com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2.jar:/Users/carls/.m2/repository/org/checkerframework/checker-qual/3.33.0/checker-qual-3.33.0.jar:/Users/carls/.m2/repository/com/google/errorprone/error_prone_annotations/2.18.0/error_prone_annotations-2.18.0.jar:/Users/carls/.m2/repository/com/google/j2objc/j2objc-annotations/2.8/j2objc-annotations-2.8.jar:/Users/carls/.m2/repository/dev/verrai-rpc-common/1.0.0-SNAPSHOT/tearay-rpc-common-1.0.0-SNAPSHOT.jar:/Users/carls/.m2/repository/com/squareup/okio/okio-jvm/3.9.0/okio-jvm-3.9.0.jar:/Users/carls/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib/1.9.21/kotlin-stdlib-1.9.21.jar:/Users/carls/.m2/repository/org/jetbrains/annotations/13.0/annotations-13.0.jar:/Users/carls/.m2/repository/org/slf4j/slf4j-api/2.0.12/slf4j-api-2.0.12.jar:/Users/carls/.m2/repository/com/squareup/wire/wire-schema/4.9.3/wire-schema-4.9.3.jar:/Users/carls/.m2/repository/com/squareup/wire/wire-runtime/4.9.3/wire-runtime-4.9.3.jar:/Users/carls/.m2/repository/com/squareup/okio/okio/3.6.0/okio-3.6.0.jar:/Users/carls/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib-common/1.9.10/kotlin-stdlib-common-1.9.10.jar:/Users/carls/.m2/repository/com/squareup/wire/wire-compiler/4.9.3/wire-compiler-4.9.3.jar:/Users/carls/.m2/repository/com/squareup/wire/wire-schema-jvm/4.9.3/wire-schema-jvm-4.9.3.jar:/Users/carls/.m2/repository/com/squareup/kotlinpoet-jvm/1.15.1/kotlinpoet-jvm-1.15.1.jar:/Users/carls/.m2/repository/org/jetbrains/kotlin/kotlin-reflect/1.9.20/kotlin-reflect-1.9.20.jar:/Users/carls/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib-jdk8/1.9.10/kotlin-stdlib-jdk8-1.9.10.jar:/Users/carls/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib-jdk7/1.9.10/kotlin-stdlib-jdk7-1.9.10.jar:/Users/carls/.m2/repository/com/squareup/wire/wire-runtime-jvm/4.9.3/wire-runtime-jvm-4.9.3.jar:/Users/carls/.m2/repository/com/squareup/wire/wire-kotlin-generator/4.9.3/wire-kotlin-generator-4.9.3.jar:/Users/carls/.m2/repository/com/squareup/wire/wire-grpc-client-jvm/4.9.3/wire-grpc-client-jvm-4.9.3.jar:/Users/carls/.m2/repository/com/squareup/okhttp3/okhttp/4.12.0/okhttp-4.12.0.jar:/Users/carls/.m2/repository/org/jetbrains/kotlinx/kotlinx-coroutines-core-jvm/1.7.3/kotlinx-coroutines-core-jvm-1.7.3.jar:/Users/carls/.m2/repository/com/squareup/wire/wire-grpc-server-generator/4.9.3/wire-grpc-server-generator-4.9.3.jar:/Users/carls/.m2/repository/com/google/protobuf/protobuf-java/3.25.1/protobuf-java-3.25.1.jar:/Users/carls/.m2/repository/com/squareup/wire/wire-grpc-server/4.9.3/wire-grpc-server-4.9.3.jar:/Users/carls/.m2/repository/io/grpc/grpc-stub/1.59.0/grpc-stub-1.59.0.jar:/Users/carls/.m2/repository/io/grpc/grpc-api/1.59.0/grpc-api-1.59.0.jar:/Users/carls/.m2/repository/com/squareup/wire/wire-java-generator/4.9.3/wire-java-generator-4.9.3.jar:/Users/carls/.m2/repository/com/squareup/wire/wire-swift-generator/4.9.3/wire-swift-generator-4.9.3.jar:/Users/carls/.m2/repository/io/outfoxx/swiftpoet/1.5.0/swiftpoet-1.5.0.jar:/Users/carls/.m2/repository/com/squareup/okio/okio-fakefilesystem-jvm/3.6.0/okio-fakefilesystem-jvm-3.6.0.jar:/Users/carls/.m2/repository/org/jetbrains/kotlinx/kotlinx-datetime-jvm/0.4.1/kotlinx-datetime-jvm-0.4.1.jar:/Users/carls/.m2/repository/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.6.1/kotlinx-serialization-core-jvm-1.6.1.jar:/Users/carls/.m2/repository/com/charleskorn/kaml/kaml-jvm/0.55.0/kaml-jvm-0.55.0.jar:/Users/carls/.m2/repository/org/snakeyaml/snakeyaml-engine/2.6/snakeyaml-engine-2.6.jar: -g -nowarn --release 17 -encoding UTF-8
+[DEBUG] -d /Users/carls/Documents/InstantoSDK/verrai-integration-tests/target/classes -classpath /Users/carls/Documents/InstantoSDK/verrai-integration-tests/target/classes:/Users/carls/.m2/repository/dev/verrai-rpc-common/1.0.0-SNAPSHOT/verrai-rpc-common-1.0.0-SNAPSHOT.jar:/Users/carls/.m2/repository/com/squareup/okio/okio-jvm/3.9.0/okio-jvm-3.9.0.jar:/Users/carls/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib/1.9.21/kotlin-stdlib-1.9.21.jar:/Users/carls/.m2/repository/org/jetbrains/annotations/13.0/annotations-13.0.jar:/Users/carls/.m2/repository/org/slf4j/slf4j-api/2.0.12/slf4j-api-2.0.12.jar:/Users/carls/.m2/repository/dev/verrai-rpc-core/1.0.0-SNAPSHOT/verrai-rpc-core-1.0.0-SNAPSHOT.jar:/Users/carls/.m2/repository/org/teavm/teavm-classlib/0.10.0/teavm-classlib-0.10.0.jar:/Users/carls/.m2/repository/org/teavm/teavm-platform/0.10.0/teavm-platform-0.10.0.jar:/Users/carls/.m2/repository/org/teavm/teavm-jso-impl/0.10.0/teavm-jso-impl-0.10.0.jar:/Users/carls/.m2/repository/org/teavm/teavm-metaprogramming-impl/0.10.0/teavm-metaprogramming-impl-0.10.0.jar:/Users/carls/.m2/repository/commons-io/commons-io/2.16.1/commons-io-2.16.1.jar:/Users/carls/.m2/repository/com/jcraft/jzlib/1.1.3/jzlib-1.1.3.jar:/Users/carls/.m2/repository/joda-time/joda-time/2.12.2/joda-time-2.12.2.jar:/Users/carls/.m2/repository/org/teavm/teavm-jso/0.10.0/teavm-jso-0.10.0.jar:/Users/carls/.m2/repository/org/teavm/teavm-jso-apis/0.10.0/teavm-jso-apis-0.10.0.jar:/Users/carls/.m2/repository/org/teavm/teavm-interop/0.10.0/teavm-interop-0.10.0.jar:/Users/carls/.m2/repository/uk/co/instanto/teavm-stomp/1.0.0-SNAPSHOT/teavm-stomp-1.0.0-SNAPSHOT.jar:/Users/carls/.m2/repository/org/teavm/teavm-extras-slf4j/0.10.0/teavm-extras-slf4j-0.10.0.jar:/Users/carls/.m2/repository/com/squareup/wire/wire-runtime-jvm/4.9.3/wire-runtime-jvm-4.9.3.jar:/Users/carls/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib-jdk8/1.9.10/kotlin-stdlib-jdk8-1.9.10.jar:/Users/carls/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib-jdk7/1.9.10/kotlin-stdlib-jdk7-1.9.10.jar:/Users/carls/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib-common/1.9.10/kotlin-stdlib-common-1.9.10.jar:/Users/carls/.m2/repository/dev/verrai-annotation-processor/1.0.0-SNAPSHOT/verrai-annotation-processor-1.0.0-SNAPSHOT.jar:/Users/carls/.m2/repository/com/squareup/javapoet/1.13.0/javapoet-1.13.0.jar:/Users/carls/.m2/repository/com/squareup/wire/wire-schema/4.9.3/wire-schema-4.9.3.jar:/Users/carls/.m2/repository/com/squareup/wire/wire-runtime/4.9.3/wire-runtime-4.9.3.jar:/Users/carls/.m2/repository/com/squareup/okio/okio/3.6.0/okio-3.6.0.jar:/Users/carls/.m2/repository/com/squareup/wire/wire-compiler/4.9.3/wire-compiler-4.9.3.jar:/Users/carls/.m2/repository/com/squareup/wire/wire-schema-jvm/4.9.3/wire-schema-jvm-4.9.3.jar:/Users/carls/.m2/repository/com/squareup/kotlinpoet-jvm/1.15.1/kotlinpoet-jvm-1.15.1.jar:/Users/carls/.m2/repository/org/jetbrains/kotlin/kotlin-reflect/1.9.20/kotlin-reflect-1.9.20.jar:/Users/carls/.m2/repository/com/squareup/wire/wire-kotlin-generator/4.9.3/wire-kotlin-generator-4.9.3.jar:/Users/carls/.m2/repository/com/squareup/wire/wire-grpc-client-jvm/4.9.3/wire-grpc-client-jvm-4.9.3.jar:/Users/carls/.m2/repository/com/squareup/okhttp3/okhttp/4.12.0/okhttp-4.12.0.jar:/Users/carls/.m2/repository/org/jetbrains/kotlinx/kotlinx-coroutines-core-jvm/1.7.3/kotlinx-coroutines-core-jvm-1.7.3.jar:/Users/carls/.m2/repository/com/squareup/wire/wire-grpc-server-generator/4.9.3/wire-grpc-server-generator-4.9.3.jar:/Users/carls/.m2/repository/com/google/protobuf/protobuf-java/3.25.1/protobuf-java-3.25.1.jar:/Users/carls/.m2/repository/com/squareup/wire/wire-grpc-server/4.9.3/wire-grpc-server-4.9.3.jar:/Users/carls/.m2/repository/io/grpc/grpc-stub/1.59.0/grpc-stub-1.59.0.jar:/Users/carls/.m2/repository/io/grpc/grpc-api/1.59.0/grpc-api-1.59.0.jar:/Users/carls/.m2/repository/com/squareup/wire/wire-swift-generator/4.9.3/wire-swift-generator-4.9.3.jar:/Users/carls/.m2/repository/io/outfoxx/swiftpoet/1.5.0/swiftpoet-1.5.0.jar:/Users/carls/.m2/repository/com/squareup/okio/okio-fakefilesystem-jvm/3.6.0/okio-fakefilesystem-jvm-3.6.0.jar:/Users/carls/.m2/repository/org/jetbrains/kotlinx/kotlinx-datetime-jvm/0.4.1/kotlinx-datetime-jvm-0.4.1.jar:/Users/carls/.m2/repository/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.6.1/kotlinx-serialization-core-jvm-1.6.1.jar:/Users/carls/.m2/repository/com/charleskorn/kaml/kaml-jvm/0.55.0/kaml-jvm-0.55.0.jar:/Users/carls/.m2/repository/org/snakeyaml/snakeyaml-engine/2.6/snakeyaml-engine-2.6.jar:/Users/carls/.m2/repository/com/squareup/wire/wire-java-generator/4.9.3/wire-java-generator-4.9.3.jar:/Users/carls/.m2/repository/com/google/guava/guava/32.0.1-jre/guava-32.0.1-jre.jar:/Users/carls/.m2/repository/com/google/guava/failureaccess/1.0.1/failureaccess-1.0.1.jar:/Users/carls/.m2/repository/com/google/guava/listenablefuture/9999.0-empty-to-avoid-conflict-with-guava/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar:/Users/carls/.m2/repository/com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2.jar:/Users/carls/.m2/repository/org/checkerframework/checker-qual/3.33.0/checker-qual-3.33.0.jar:/Users/carls/.m2/repository/com/google/errorprone/error_prone_annotations/2.18.0/error_prone_annotations-2.18.0.jar:/Users/carls/.m2/repository/com/google/j2objc/j2objc-annotations/2.8/j2objc-annotations-2.8.jar: -sourcepath /Users/carls/Documents/InstantoSDK/verrai-integration-tests/src/main/java:/Users/carls/Documents/InstantoSDK/verrai-integration-tests/target/generated-sources/annotations: -s /Users/carls/Documents/InstantoSDK/verrai-integration-tests/target/generated-sources/annotations -processorpath /Users/carls/.m2/repository/dev/verrai-annotation-processor/1.0.0-SNAPSHOT/verrai-annotation-processor-1.0.0-SNAPSHOT.jar:/Users/carls/.m2/repository/com/squareup/javapoet/1.13.0/javapoet-1.13.0.jar:/Users/carls/.m2/repository/com/google/auto/service/auto-service/1.1.1/auto-service-1.1.1.jar:/Users/carls/.m2/repository/com/google/auto/service/auto-service-annotations/1.1.1/auto-service-annotations-1.1.1.jar:/Users/carls/.m2/repository/com/google/auto/auto-common/1.2.1/auto-common-1.2.1.jar:/Users/carls/.m2/repository/com/google/guava/guava/32.0.1-jre/guava-32.0.1-jre.jar:/Users/carls/.m2/repository/com/google/guava/failureaccess/1.0.1/failureaccess-1.0.1.jar:/Users/carls/.m2/repository/com/google/guava/listenablefuture/9999.0-empty-to-avoid-conflict-with-guava/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar:/Users/carls/.m2/repository/com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2.jar:/Users/carls/.m2/repository/org/checkerframework/checker-qual/3.33.0/checker-qual-3.33.0.jar:/Users/carls/.m2/repository/com/google/errorprone/error_prone_annotations/2.18.0/error_prone_annotations-2.18.0.jar:/Users/carls/.m2/repository/com/google/j2objc/j2objc-annotations/2.8/j2objc-annotations-2.8.jar:/Users/carls/.m2/repository/dev/verrai-rpc-common/1.0.0-SNAPSHOT/verrai-rpc-common-1.0.0-SNAPSHOT.jar:/Users/carls/.m2/repository/com/squareup/okio/okio-jvm/3.9.0/okio-jvm-3.9.0.jar:/Users/carls/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib/1.9.21/kotlin-stdlib-1.9.21.jar:/Users/carls/.m2/repository/org/jetbrains/annotations/13.0/annotations-13.0.jar:/Users/carls/.m2/repository/org/slf4j/slf4j-api/2.0.12/slf4j-api-2.0.12.jar:/Users/carls/.m2/repository/com/squareup/wire/wire-schema/4.9.3/wire-schema-4.9.3.jar:/Users/carls/.m2/repository/com/squareup/wire/wire-runtime/4.9.3/wire-runtime-4.9.3.jar:/Users/carls/.m2/repository/com/squareup/okio/okio/3.6.0/okio-3.6.0.jar:/Users/carls/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib-common/1.9.10/kotlin-stdlib-common-1.9.10.jar:/Users/carls/.m2/repository/com/squareup/wire/wire-compiler/4.9.3/wire-compiler-4.9.3.jar:/Users/carls/.m2/repository/com/squareup/wire/wire-schema-jvm/4.9.3/wire-schema-jvm-4.9.3.jar:/Users/carls/.m2/repository/com/squareup/kotlinpoet-jvm/1.15.1/kotlinpoet-jvm-1.15.1.jar:/Users/carls/.m2/repository/org/jetbrains/kotlin/kotlin-reflect/1.9.20/kotlin-reflect-1.9.20.jar:/Users/carls/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib-jdk8/1.9.10/kotlin-stdlib-jdk8-1.9.10.jar:/Users/carls/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib-jdk7/1.9.10/kotlin-stdlib-jdk7-1.9.10.jar:/Users/carls/.m2/repository/com/squareup/wire/wire-runtime-jvm/4.9.3/wire-runtime-jvm-4.9.3.jar:/Users/carls/.m2/repository/com/squareup/wire/wire-kotlin-generator/4.9.3/wire-kotlin-generator-4.9.3.jar:/Users/carls/.m2/repository/com/squareup/wire/wire-grpc-client-jvm/4.9.3/wire-grpc-client-jvm-4.9.3.jar:/Users/carls/.m2/repository/com/squareup/okhttp3/okhttp/4.12.0/okhttp-4.12.0.jar:/Users/carls/.m2/repository/org/jetbrains/kotlinx/kotlinx-coroutines-core-jvm/1.7.3/kotlinx-coroutines-core-jvm-1.7.3.jar:/Users/carls/.m2/repository/com/squareup/wire/wire-grpc-server-generator/4.9.3/wire-grpc-server-generator-4.9.3.jar:/Users/carls/.m2/repository/com/google/protobuf/protobuf-java/3.25.1/protobuf-java-3.25.1.jar:/Users/carls/.m2/repository/com/squareup/wire/wire-grpc-server/4.9.3/wire-grpc-server-4.9.3.jar:/Users/carls/.m2/repository/io/grpc/grpc-stub/1.59.0/grpc-stub-1.59.0.jar:/Users/carls/.m2/repository/io/grpc/grpc-api/1.59.0/grpc-api-1.59.0.jar:/Users/carls/.m2/repository/com/squareup/wire/wire-java-generator/4.9.3/wire-java-generator-4.9.3.jar:/Users/carls/.m2/repository/com/squareup/wire/wire-swift-generator/4.9.3/wire-swift-generator-4.9.3.jar:/Users/carls/.m2/repository/io/outfoxx/swiftpoet/1.5.0/swiftpoet-1.5.0.jar:/Users/carls/.m2/repository/com/squareup/okio/okio-fakefilesystem-jvm/3.6.0/okio-fakefilesystem-jvm-3.6.0.jar:/Users/carls/.m2/repository/org/jetbrains/kotlinx/kotlinx-datetime-jvm/0.4.1/kotlinx-datetime-jvm-0.4.1.jar:/Users/carls/.m2/repository/org/jetbrains/kotlinx/kotlinx-serialization-core-jvm/1.6.1/kotlinx-serialization-core-jvm-1.6.1.jar:/Users/carls/.m2/repository/com/charleskorn/kaml/kaml-jvm/0.55.0/kaml-jvm-0.55.0.jar:/Users/carls/.m2/repository/org/snakeyaml/snakeyaml-engine/2.6/snakeyaml-engine-2.6.jar: -g -nowarn --release 17 -encoding UTF-8
 [DEBUG] incrementalBuildHelper#beforeRebuildExecution
-[INFO] Compiling 7 source files to /Users/carls/Documents/InstantoSDK/tearay-integration-tests/target/classes
-DEBUG: TearayProcessor initialized
-DEBUG: TearayProcessor process round. Annotations: 2
-DEBUG: Running WireCompiler with args: [--proto_path=/Users/carls/Documents/InstantoSDK/target/tearay_protos_debug, --java_out=/Users/carls/Documents/InstantoSDK/target/tearay_protos_debug/generated_java, uk/co/instanto/integration/service/dto/proto/Employee.proto, uk/co/instanto/integration/service/dto/proto/Address.proto, uk/co/instanto/integration/service/dto/proto/Organization.proto, uk/co/instanto/integration/service/dto/proto/Department.proto, uk/co/instanto/integration/service/dto/proto/MyData.proto]
+[INFO] Compiling 7 source files to /Users/carls/Documents/InstantoSDK/verrai-integration-tests/target/classes
+DEBUG: VerraiProcessor initialized
+DEBUG: VerraiProcessor process round. Annotations: 2
+DEBUG: Running WireCompiler with args: [--proto_path=/Users/carls/Documents/InstantoSDK/target/verrai_protos_debug, --java_out=/Users/carls/Documents/InstantoSDK/target/verrai_protos_debug/generated_java, uk/co/instanto/integration/service/dto/proto/Employee.proto, uk/co/instanto/integration/service/dto/proto/Address.proto, uk/co/instanto/integration/service/dto/proto/Organization.proto, uk/co/instanto/integration/service/dto/proto/Department.proto, uk/co/instanto/integration/service/dto/proto/MyData.proto]
 WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
 WARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper (file:/Users/carls/.m2/repository/com/google/guava/guava/32.0.1-jre/guava-32.0.1-jre.jar)
 WARNING: Please consider reporting this to the maintainers of class com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper
 WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
-Writing uk.co.instanto.integration.service.dto.proto.Address to /Users/carls/Documents/InstantoSDK/target/tearay_protos_debug/generated_java (target=Java)
-Writing uk.co.instanto.integration.service.dto.proto.Department to /Users/carls/Documents/InstantoSDK/target/tearay_protos_debug/generated_java (target=Java)
-Writing uk.co.instanto.integration.service.dto.proto.Employee to /Users/carls/Documents/InstantoSDK/target/tearay_protos_debug/generated_java (target=Java)
-Writing uk.co.instanto.integration.service.dto.proto.MyData to /Users/carls/Documents/InstantoSDK/target/tearay_protos_debug/generated_java (target=Java)
-Writing uk.co.instanto.integration.service.dto.proto.Organization to /Users/carls/Documents/InstantoSDK/target/tearay_protos_debug/generated_java (target=Java)
-DEBUG: Generated uk.co.instanto.integration.service.dto.proto.MyData
-DEBUG: Generated uk.co.instanto.integration.service.dto.proto.Organization
-DEBUG: Generated uk.co.instanto.integration.service.dto.proto.Department
-DEBUG: Generated uk.co.instanto.integration.service.dto.proto.Address
-DEBUG: Generated uk.co.instanto.integration.service.dto.proto.Employee
-DEBUG: TearayProcessor process round. Annotations: 0
-DEBUG: TearayProcessor process round. Annotations: 0
+Writing dev.verrai.integration.service.dto.proto.Address to /Users/carls/Documents/InstantoSDK/target/verrai_protos_debug/generated_java (target=Java)
+Writing dev.verrai.integration.service.dto.proto.Department to /Users/carls/Documents/InstantoSDK/target/verrai_protos_debug/generated_java (target=Java)
+Writing dev.verrai.integration.service.dto.proto.Employee to /Users/carls/Documents/InstantoSDK/target/verrai_protos_debug/generated_java (target=Java)
+Writing dev.verrai.integration.service.dto.proto.MyData to /Users/carls/Documents/InstantoSDK/target/verrai_protos_debug/generated_java (target=Java)
+Writing dev.verrai.integration.service.dto.proto.Organization to /Users/carls/Documents/InstantoSDK/target/verrai_protos_debug/generated_java (target=Java)
+DEBUG: Generated dev.verrai.integration.service.dto.proto.MyData
+DEBUG: Generated dev.verrai.integration.service.dto.proto.Organization
+DEBUG: Generated dev.verrai.integration.service.dto.proto.Department
+DEBUG: Generated dev.verrai.integration.service.dto.proto.Address
+DEBUG: Generated dev.verrai.integration.service.dto.proto.Employee
+DEBUG: VerraiProcessor process round. Annotations: 0
+DEBUG: VerraiProcessor process round. Annotations: 0
 [DEBUG] incrementalBuildHelper#afterRebuildExecution
-[INFO] /Users/carls/Documents/InstantoSDK/tearay-integration-tests/target/generated-sources/annotations/uk/co/instanto/integration/service/MyDataService_Dispatcher.java: /Users/carls/Documents/InstantoSDK/tearay-integration-tests/target/generated-sources/annotations/uk/co/instanto/integration/service/MyDataService_Dispatcher.java uses unchecked or unsafe operations.
-[INFO] /Users/carls/Documents/InstantoSDK/tearay-integration-tests/target/generated-sources/annotations/uk/co/instanto/integration/service/MyDataService_Dispatcher.java: Recompile with -Xlint:unchecked for details.
+[INFO] /Users/carls/Documents/InstantoSDK/verrai-integration-tests/target/generated-sources/annotations/uk/co/instanto/integration/service/MyDataService_Dispatcher.java: /Users/carls/Documents/InstantoSDK/verrai-integration-tests/target/generated-sources/annotations/uk/co/instanto/integration/service/MyDataService_Dispatcher.java uses unchecked or unsafe operations.
+[INFO] /Users/carls/Documents/InstantoSDK/verrai-integration-tests/target/generated-sources/annotations/uk/co/instanto/integration/service/MyDataService_Dispatcher.java: Recompile with -Xlint:unchecked for details.
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------

@@ -1,15 +1,15 @@
-# Widget Integration Strategy: Porting GWTBootstrap to Tearay
+# Widget Integration Strategy: Porting GWTBootstrap to Verrai
 
 ## Executive Summary
 Porting **GWTBootstrap** (which relies on GWT Widgets and Generators) directly is not feasible because TeaVM does not support GWT Generators and has a different DOM overlay system.
 
-However, we can replicate the *functionality* and *developer experience* of GWTBootstrap by building a **Component Library** using the Tearay framework.
+However, we can replicate the *functionality* and *developer experience* of GWTBootstrap by building a **Component Library** using the Verrai framework.
 
 ## Strategies
 
 ### 1. The "Native HTML" Approach (CSS-only components)
 For simple widgets like Buttons, Labels, and Alerts, GWTBootstrap mostly just applies CSS classes.
-In Tearay, we can achieve this directly in the HTML template.
+In Verrai, we can achieve this directly in the HTML template.
 
 **GWT:**
 ```java
@@ -17,7 +17,7 @@ Button b = new Button("Click me");
 b.setType(ButtonType.PRIMARY);
 ```
 
-**Tearay:**
+**Verrai:**
 ```html
 <button class="btn btn-primary">Click me</button>
 ```

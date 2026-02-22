@@ -27,8 +27,8 @@ javac -d "$CLASSES_DIR" \
 # Run Generator
 echo "Generating Proto for MyData..."
 java -cp "$CLASSES_DIR:$HOME/.m2/repository/io/protostuff/protostuff-core/1.8.0/protostuff-core-1.8.0.jar:$HOME/.m2/repository/io/protostuff/protostuff-runtime/1.8.0/protostuff-runtime-1.8.0.jar:$HOME/.m2/repository/io/protostuff/protostuff-api/1.8.0/protostuff-api-1.8.0.jar:$HOME/.m2/repository/io/protostuff/protostuff-collectionschema/1.8.0/protostuff-collectionschema-1.8.0.jar" \
-    uk.co.instanto.common.tool.JavaToProtoGenerator \
+    dev.verrai.common.tool.JavaToProtoGenerator \
     "$OUTPUT_PROTO_DIR" \
-    "uk.co.instanto.common.service.MyData"
+    "dev.verrai.common.service.MyData"
 
 echo "Done."
