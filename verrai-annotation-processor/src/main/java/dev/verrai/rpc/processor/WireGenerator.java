@@ -28,8 +28,12 @@ public class WireGenerator {
     private final Path tempDir;
 
     public WireGenerator(ProcessingEnvironment processingEnv) {
+        this(processingEnv, java.nio.file.Paths.get("target/tearay_protos_debug").toAbsolutePath());
+    }
+
+    public WireGenerator(ProcessingEnvironment processingEnv, Path tempDir) {
         this.processingEnv = processingEnv;
-        this.tempDir = java.nio.file.Paths.get("target/tearay_protos_debug").toAbsolutePath();
+        this.tempDir = tempDir;
     }
 
     public void addProtoFile(String path, String content) {
