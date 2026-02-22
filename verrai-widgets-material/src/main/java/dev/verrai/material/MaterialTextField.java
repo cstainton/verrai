@@ -5,6 +5,7 @@ import org.teavm.jso.JSObject;
 import org.teavm.jso.browser.Window;
 import org.teavm.jso.dom.html.HTMLElement;
 import org.teavm.jso.dom.html.HTMLInputElement;
+import java.util.UUID;
 import dev.verrai.api.TakesValue;
 import dev.verrai.api.Dependent;
 
@@ -37,7 +38,7 @@ public class MaterialTextField extends MaterialWidget implements TakesValue<Stri
         this.input = (HTMLInputElement) Window.current().getDocument().createElement("input");
         this.input.setClassName("mdc-text-field__input");
         this.input.setAttribute("type", "text");
-        String id = "mdc-input-" + (int)(Math.random() * 10000);
+        String id = "mdc-input-" + UUID.randomUUID().toString();
         this.input.setAttribute("aria-labelledby", id);
         this.label.setAttribute("id", id);
         this.element.appendChild(this.input);
