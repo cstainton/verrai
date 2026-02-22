@@ -99,13 +99,24 @@ public class NavigationImplWriter implements PageVisitor {
 
         // Security Check
         RestrictedAccess restricted = page.getRestrictedAccess();
-        if (restricted != null && securityProviderImpl != null) {
-            goToMethod.addCode("  if (this.securityProvider != null) {\n");
-            for (String reqRole : restricted.roles()) {
-                goToMethod.addStatement("    if (!this.securityProvider.hasRole($S)) { $T.alert($S); return; }",
-                        reqRole, windowClass, "Access Denied: Missing role " + reqRole);
+        if (restricted != null) {
+            if (securityProviderImpl == null) {
+                // Compile-time check: If restricted but no provider is available, fail closed.
+                // We generate code that alerts and returns to prevent access.
+                goToMethod.addStatement("$T.alert($S)", windowClass, "Access Denied: Security provider not configured");
+                goToMethod.addStatement("return");
+                return;
+            } else {
+                // Runtime check: Ensure securityProvider is not null before checking roles.
+                // If it is null, we fail closed (deny access).
+                goToMethod.addCode("  if (this.securityProvider == null) { $T.alert($S); return; }\n",
+                        windowClass, "Access Denied: Security provider missing");
+
+                for (String reqRole : restricted.roles()) {
+                    goToMethod.addStatement("    if (!this.securityProvider.hasRole($S)) { $T.alert($S); return; }",
+                            reqRole, windowClass, "Access Denied: Missing role " + reqRole);
+                }
             }
-            goToMethod.addCode("  }\n");
         }
 
         // Instantiate
