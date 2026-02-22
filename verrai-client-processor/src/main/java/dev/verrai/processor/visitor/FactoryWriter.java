@@ -104,13 +104,8 @@ public class FactoryWriter implements BeanVisitor {
                              String implPackage = processingEnv.getElementUtils().getPackageOf(implElement).getQualifiedName().toString();
                              dependencyFactory = ClassName.get(implPackage, implElement.getSimpleName() + "_Factory");
                              createMethod.addStatement("bean.$L = () -> $T.getInstance()", field.getSimpleName(), dependencyFactory);
-                        } else if (typeArgName.startsWith("dev.verrai.widgets.")) {
-                           // Provider of widget? Maybe rare but possible. Widgets are usually new'd.
-                           // But usually widgets are dependent scoped so maybe new'd is correct.
-                           // If it's a widget, we probably just return () -> new Widget().
-                           createMethod.addStatement("bean.$L = () -> new $T()", field.getSimpleName(), ClassName.bestGuess(typeArgName));
                         } else {
-                             // Regular bean provider
+                             // Regular bean provider — relies on generated _Factory
                              dependencyFactory = ClassName.bestGuess(typeArgName + "_Factory");
                              createMethod.addStatement("bean.$L = () -> $T.getInstance()", field.getSimpleName(), dependencyFactory);
                         }
@@ -133,9 +128,6 @@ public class FactoryWriter implements BeanVisitor {
                 if (rawTypeName.equals("dev.verrai.api.Navigation")) {
                     dependencyFactory = ClassName.get("dev.verrai.impl", "NavigationImpl_Factory");
                     createMethod.addStatement("bean.$L = $T.getInstance()", field.getSimpleName(), dependencyFactory);
-                } else if (rawTypeName.startsWith("dev.verrai.widgets.")) {
-                    // Direct instantiation for widgets
-                    createMethod.addStatement("bean.$L = new $T()", field.getSimpleName(), ClassName.bestGuess(rawTypeName));
                 } else if (resolutionMap.containsKey(key)) {
                     // Found in resolution map - use the implementation's factory
                     TypeElement implElement = resolutionMap.get(key);

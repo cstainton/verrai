@@ -552,8 +552,11 @@ public class TemplatedProcessorTest {
 
         assertTrue("Binder should call validateField", binderSource.contains("validateField"));
         assertTrue("Binder should check _vr.isValid()", binderSource.contains("_vr.isValid()"));
-        assertTrue("Binder should call setErrorMessage", binderSource.contains("setErrorMessage"));
-        assertTrue("Binder should use Object cast for type safety", binderSource.contains("_widgetRef_"));
+        // Duck-typed: direct call on the concrete field type, no instanceof or Object cast
+        assertTrue("Binder should call setErrorMessage directly", binderSource.contains("setErrorMessage"));
+        assertFalse("Binder should not use _widgetRef_ Object cast", binderSource.contains("_widgetRef_"));
+        assertFalse("Binder should not reference bootstrap package", binderSource.contains("dev.verrai.bootstrap"));
+        assertFalse("Binder should not reference material package", binderSource.contains("dev.verrai.material"));
     }
 
     /**
@@ -617,6 +620,85 @@ public class TemplatedProcessorTest {
             .generatedSourceFile("dev.verrai.processor.PlainPage_Binder")
             .contentsAsUtf8String()
             .doesNotContain("validateField");
+    }
+
+    /**
+     * When a @Bound field with an active validator is declared as an interface type (e.g. IsWidget),
+     * the processor cannot find setErrorMessage/clearErrorMessage at compile time.
+     * It must still compile successfully but emit a WARNING about suppressed error display.
+     */
+    @Test
+    public void testValidationWarning_whenFieldDeclaredAsInterface() {
+        // Widget declared only as IsWidget — no setErrorMessage method visible
+        JavaFileObject widget = JavaFileObjects.forSourceLines(
+            "dev.verrai.processor.IWidget",
+            "package dev.verrai.processor;",
+            "import dev.verrai.api.IsWidget;",
+            "import dev.verrai.api.TakesValue;",
+            "import org.teavm.jso.dom.html.HTMLElement;",
+            "public interface IWidget extends IsWidget, TakesValue<String> {}"
+        );
+
+        JavaFileObject model = JavaFileObjects.forSourceLines(
+            "dev.verrai.processor.WarnModel",
+            "package dev.verrai.processor;",
+            "import dev.verrai.api.Bindable;",
+            "@Bindable",
+            "public class WarnModel {",
+            "    private String name;",
+            "    public String getName() { return name; }",
+            "    public void setName(String v) { this.name = v; }",
+            "}"
+        );
+
+        JavaFileObject validator = JavaFileObjects.forSourceLines(
+            "dev.verrai.processor.WarnModel_Validator",
+            "package dev.verrai.processor;",
+            "import dev.verrai.api.validation.ValidationResult;",
+            "import dev.verrai.api.validation.Validator;",
+            "import java.util.ArrayList; import java.util.List;",
+            "public class WarnModel_Validator implements Validator<WarnModel> {",
+            "    public static ValidationResult validateField(String f, Object v) {",
+            "        return ValidationResult.valid();",
+            "    }",
+            "    public ValidationResult validate(WarnModel m) { return ValidationResult.valid(); }",
+            "}"
+        );
+
+        JavaFileObject page = JavaFileObjects.forSourceLines(
+            "dev.verrai.processor.WarnPage",
+            "package dev.verrai.processor;",
+            "import dev.verrai.api.Templated;",
+            "import dev.verrai.api.DataField;",
+            "import dev.verrai.api.Model;",
+            "import dev.verrai.api.Bound;",
+            "import jakarta.inject.Inject;",
+            "@Templated(\"SimplePage.html\")",
+            "public class WarnPage {",
+            "    @Inject @Model",
+            "    public WarnModel model;",
+            "    @Inject @DataField @Bound",
+            "    public IWidget name;",   // interface type — no setErrorMessage visible
+            "}"
+        );
+
+        Compilation compilation = javac()
+            .withProcessors(new TemplatedProcessor())
+            .compile(widget, model, validator, page);
+
+        assertThat(compilation).succeeded();
+        // Warning must be present about suppressed error display
+        assertThat(compilation).hadWarningContaining("setErrorMessage");
+        // Generated binder must NOT contain setErrorMessage (since it can't be found)
+        assertThat(compilation)
+            .generatedSourceFile("dev.verrai.processor.WarnPage_Binder")
+            .contentsAsUtf8String()
+            .doesNotContain("setErrorMessage");
+        // Validation still runs (validateField is emitted)
+        assertThat(compilation)
+            .generatedSourceFile("dev.verrai.processor.WarnPage_Binder")
+            .contentsAsUtf8String()
+            .contains("validateField");
     }
 
     @Test

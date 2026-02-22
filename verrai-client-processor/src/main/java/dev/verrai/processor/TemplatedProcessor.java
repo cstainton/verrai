@@ -598,30 +598,48 @@ public class TemplatedProcessor extends AbstractProcessor {
                         TypeElement validatorType = processingEnv.getElementUtils()
                                 .getTypeElement(modelFQN + "_Validator");
                         if (validatorType != null && segments.length == 1) {
+                            // Duck-type: check whether the field's concrete type exposes
+                            // setErrorMessage/clearErrorMessage — no knowledge of any widget
+                            // library is required; any type with those methods works.
+                            TypeElement fieldTypeEl = fieldAsTypeElement(field);
+                            boolean hasSetError = fieldTypeEl != null
+                                    && hasMethod(fieldTypeEl, "setErrorMessage", 1);
+                            boolean hasClear = fieldTypeEl != null
+                                    && hasMethod(fieldTypeEl, "clearErrorMessage", 0);
+
+                            if (!hasSetError) {
+                                // Warn: validation will run but errors can't be displayed.
+                                // Common cause: field declared as IsWidget or another interface.
+                                String typeName = fieldTypeEl != null
+                                        ? "'" + fieldTypeEl.getSimpleName() + "'"
+                                        : "(unknown type)";
+                                String hint = (fieldTypeEl != null
+                                        && fieldTypeEl.getKind() == ElementKind.INTERFACE)
+                                        ? " (interface types do not expose implementation methods;"
+                                          + " declare the field as the concrete widget class)"
+                                        : " (add setErrorMessage(String)/clearErrorMessage() to the widget)";
+                                processingEnv.getMessager().printMessage(Diagnostic.Kind.WARNING,
+                                        "@Bound field '" + field.getSimpleName()
+                                        + "' has active validation constraints but its type "
+                                        + typeName + " does not declare setErrorMessage(String)"
+                                        + " — validation errors will be silently suppressed." + hint,
+                                        field);
+                            }
+
                             String fieldVar = "target." + field.getSimpleName();
-                            // Cast through Object so the instanceof checks compile regardless of
-                            // the static field type (avoids "incompatible types" when the field
-                            // is declared as a concrete Widget subclass that is unrelated to
-                            // MaterialWidget, or vice versa).
                             bindMethod.addCode(
                                     "  dev.verrai.api.validation.ValidationResult _vr = $L.validateField($S, $L.getValue());\n",
                                     modelFQN + "_Validator", segments[0], fieldVar);
-                            bindMethod.addCode("  Object _widgetRef_$L = $L;\n",
-                                    field.getSimpleName(), fieldVar);
                             bindMethod.addCode("  if (!_vr.isValid()) {\n");
-                            bindMethod.addCode(
-                                    "    if (_widgetRef_$L instanceof dev.verrai.bootstrap.Widget) ((dev.verrai.bootstrap.Widget)_widgetRef_$L).setErrorMessage(_vr.getMessages().get(0));\n",
-                                    field.getSimpleName(), field.getSimpleName());
-                            bindMethod.addCode(
-                                    "    else if (_widgetRef_$L instanceof dev.verrai.material.MaterialWidget) ((dev.verrai.material.MaterialWidget)_widgetRef_$L).setErrorMessage(_vr.getMessages().get(0));\n",
-                                    field.getSimpleName(), field.getSimpleName());
+                            if (hasSetError) {
+                                bindMethod.addCode("    target.$L.setErrorMessage(_vr.getMessages().get(0));\n",
+                                        field.getSimpleName());
+                            }
                             bindMethod.addCode("  } else {\n");
-                            bindMethod.addCode(
-                                    "    if (_widgetRef_$L instanceof dev.verrai.bootstrap.Widget) ((dev.verrai.bootstrap.Widget)_widgetRef_$L).clearErrorMessage();\n",
-                                    field.getSimpleName(), field.getSimpleName());
-                            bindMethod.addCode(
-                                    "    else if (_widgetRef_$L instanceof dev.verrai.material.MaterialWidget) ((dev.verrai.material.MaterialWidget)_widgetRef_$L).clearErrorMessage();\n",
-                                    field.getSimpleName(), field.getSimpleName());
+                            if (hasClear) {
+                                bindMethod.addCode("    target.$L.clearErrorMessage();\n",
+                                        field.getSimpleName());
+                            }
                             bindMethod.addStatement("    target.$L$L.$L(target.$L.getValue())",
                                     modelField.getSimpleName(), getterChain, finalSetter, field.getSimpleName());
                             bindMethod.addCode("  }\n");
@@ -791,6 +809,30 @@ public class TemplatedProcessor extends AbstractProcessor {
         }
         TypeMirror erasure = processingEnv.getTypeUtils().erasure(type);
         return erasure.toString() + ".class";
+    }
+
+    /** Returns the TypeElement for a field's declared type, or null for primitives/arrays. */
+    private TypeElement fieldAsTypeElement(VariableElement field) {
+        TypeMirror mirror = field.asType();
+        if (mirror instanceof DeclaredType) {
+            javax.lang.model.element.Element el = ((DeclaredType) mirror).asElement();
+            if (el instanceof TypeElement) {
+                return (TypeElement) el;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns true if {@code typeEl} or any of its supertypes/interfaces (as seen by APT)
+     * declares a method with the given name and parameter count.
+     */
+    private boolean hasMethod(TypeElement typeEl, String name, int paramCount) {
+        return processingEnv.getElementUtils().getAllMembers(typeEl).stream()
+                .filter(m -> m.getKind() == ElementKind.METHOD)
+                .map(m -> (ExecutableElement) m)
+                .anyMatch(m -> m.getSimpleName().contentEquals(name)
+                        && m.getParameters().size() == paramCount);
     }
 
     private String getInputEventName(VariableElement field) {
