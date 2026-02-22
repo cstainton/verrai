@@ -592,8 +592,38 @@ public class TemplatedProcessor extends AbstractProcessor {
                         bindMethod.addCode(
                                 "((dev.verrai.api.IsWidget)target.$L).getElement().addEventListener($S, e -> {\n",
                                 field.getSimpleName(), inputEventName);
-                        bindMethod.addStatement("  target.$L$L.$L(target.$L.getValue())", modelField.getSimpleName(),
-                                getterChain, finalSetter, field.getSimpleName());
+
+                        // Inline validation — only for direct (non-nested) properties
+                        String modelFQN = modelType.getQualifiedName().toString();
+                        TypeElement validatorType = processingEnv.getElementUtils()
+                                .getTypeElement(modelFQN + "_Validator");
+                        if (validatorType != null && segments.length == 1) {
+                            String fieldVar = "target." + field.getSimpleName();
+                            bindMethod.addCode(
+                                    "  dev.verrai.api.validation.ValidationResult _vr = $L.validateField($S, $L.getValue());\n",
+                                    modelFQN + "_Validator", segments[0], fieldVar);
+                            bindMethod.addCode("  if (!_vr.isValid()) {\n");
+                            bindMethod.addCode(
+                                    "    if ($L instanceof dev.verrai.bootstrap.Widget) ((dev.verrai.bootstrap.Widget)$L).setErrorMessage(_vr.getMessages().get(0));\n",
+                                    fieldVar, fieldVar);
+                            bindMethod.addCode(
+                                    "    else if ($L instanceof dev.verrai.material.MaterialWidget) ((dev.verrai.material.MaterialWidget)$L).setErrorMessage(_vr.getMessages().get(0));\n",
+                                    fieldVar, fieldVar);
+                            bindMethod.addCode("  } else {\n");
+                            bindMethod.addCode(
+                                    "    if ($L instanceof dev.verrai.bootstrap.Widget) ((dev.verrai.bootstrap.Widget)$L).clearErrorMessage();\n",
+                                    fieldVar, fieldVar);
+                            bindMethod.addCode(
+                                    "    else if ($L instanceof dev.verrai.material.MaterialWidget) ((dev.verrai.material.MaterialWidget)$L).clearErrorMessage();\n",
+                                    fieldVar, fieldVar);
+                            bindMethod.addStatement("    target.$L$L.$L(target.$L.getValue())",
+                                    modelField.getSimpleName(), getterChain, finalSetter, field.getSimpleName());
+                            bindMethod.addCode("  }\n");
+                        } else {
+                            bindMethod.addStatement("  target.$L$L.$L(target.$L.getValue())",
+                                    modelField.getSimpleName(), getterChain, finalSetter, field.getSimpleName());
+                        }
+
                         bindMethod.addCode("});\n");
 
                         if (needsConversion) {

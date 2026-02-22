@@ -52,6 +52,11 @@ public class NavigationImplWriter implements PageVisitor {
                 .addModifiers(Modifier.PRIVATE)
                 .build());
 
+        // Role of the previously active page — used for CanActivate rollback
+        navBuilder.addField(FieldSpec.builder(String.class, "previousRole")
+                .addModifiers(Modifier.PRIVATE)
+                .build());
+
         // Flag to suppress duplicate history.pushState when navigating from popstate
         navBuilder.addField(FieldSpec.builder(boolean.class, "isPopstate")
                 .addModifiers(Modifier.PRIVATE)
@@ -170,12 +175,24 @@ public class NavigationImplWriter implements PageVisitor {
         method.addStatement("  return");
         method.endControlFlow();
 
-        // 2. Outgoing page lifecycle — null-guarded so the first navigation is clean
+        // 2. CanDeactivate guard — abort if current page refuses to leave
+        // Always emitted; instanceof is safe even when no page implements the interface.
         method.addStatement("$T body = $T.current().getDocument().getBody()", htmlElementClass, windowClass);
+        method.beginControlFlow("if (this.currentPage instanceof dev.verrai.api.CanDeactivate)");
+        method.beginControlFlow("if (!((dev.verrai.api.CanDeactivate) this.currentPage).canDeactivate())");
+        method.addStatement("return");
+        method.endControlFlow();
+        method.endControlFlow();
+
+        // 3. Outgoing page lifecycle — null-guarded so the first navigation is clean
         method.beginControlFlow("if (this.currentPage != null)");
         method.addStatement("callPageHiding(this.currentPage)");
         method.beginControlFlow("if (this.currentPage instanceof dev.verrai.api.binding.BinderLifecycle)");
+        method.beginControlFlow("try");
         method.addStatement("((dev.verrai.api.binding.BinderLifecycle) this.currentPage).clearBindings()");
+        method.nextControlFlow("catch ($T _t)", Throwable.class);
+        method.addStatement("dev.verrai.api.ErrorBus.dispatch($S, _t)", "navigation.clearBindings");
+        method.endControlFlow();
         method.endControlFlow();
         method.addStatement("callPageHidden(this.currentPage)");
         method.endControlFlow();
@@ -237,10 +254,13 @@ public class NavigationImplWriter implements PageVisitor {
             method.addCode("  }\n");
         }
 
+        // Instantiate + mount inside try-catch so errors are dispatched to ErrorBus
+        method.addCode("  try {\n");
+
         // Instantiate
         ClassName factoryClass = ClassName.bestGuess(typeElement.getQualifiedName().toString() + "_Factory");
         ClassName pageClass = ClassName.get(typeElement);
-        method.addStatement("  $T page_$L = $T.getInstance()", pageClass, varName, factoryClass);
+        method.addStatement("    $T page_$L = $T.getInstance()", pageClass, varName, factoryClass);
 
         // @PageState injection
         for (VariableElement field : page.getPageStateFields()) {
@@ -249,29 +269,51 @@ public class NavigationImplWriter implements PageVisitor {
             if (paramName.isEmpty())
                 paramName = field.getSimpleName().toString();
 
-            method.addCode("  {\n");
-            method.addStatement("    String val = state.get($S)", paramName);
-            method.addStatement("    if (val != null) page_$L.$L = val", varName, field.getSimpleName());
-            method.addCode("  }\n");
+            method.addCode("    {\n");
+            method.addStatement("      String val = state.get($S)", paramName);
+            method.addStatement("      if (val != null) page_$L.$L = val", varName, field.getSimpleName());
+            method.addCode("    }\n");
+        }
+
+        // CanActivate guard — abort (and optionally roll back) if the new page refuses entry
+        if (page.isCanActivate()) {
+            method.addCode("    if (!page_$L.canActivate(role, state)) {\n", varName);
+            if (startingPageRole != null) {
+                method.addCode("      if (this.previousRole != null && !this.previousRole.equals(role)) {\n");
+                method.addCode("        goTo(this.previousRole, $T.emptyMap());\n", Collections.class);
+                method.addCode("      }\n");
+            }
+            method.addCode("      break;\n");
+            method.addCode("    }\n");
         }
 
         // Update currentPage before @PageShowing so that if @PageShowing calls goTo(),
         // the outgoing lifecycle fires on the correct page and not on the stale old one.
-        method.addStatement("  this.currentPage = page_$L", varName);
+        method.addStatement("    this.currentPage = page_$L", varName);
 
         // @PageShowing lifecycle
         for (ExecutableElement m : page.getPageShowingMethods()) {
-            method.addStatement("  page_$L.$L()", varName, m.getSimpleName());
+            method.addStatement("    page_$L.$L()", varName, m.getSimpleName());
         }
 
         // Only mount if @PageShowing did not navigate away (currentPage identity check)
         // Fire onNavigated only when the mount actually completes
         method.addCode(
-                "  if (this.currentPage == page_$L && page_$L.element != null) {\n"
-                + "    body.appendChild(page_$L.element);\n"
-                + "    for (dev.verrai.api.NavigationListener l : this.listeners) l.onNavigated($S);\n"
-                + "  }\n",
-                varName, varName, varName, role);
+                "    if (this.currentPage == page_$L && page_$L.element != null) {\n"
+                + "      body.appendChild(page_$L.element);\n"
+                + "      for (dev.verrai.api.NavigationListener l : this.listeners) l.onNavigated($S);\n"
+                + "      this.previousRole = $S;\n"
+                + "    }\n",
+                varName, varName, varName, role, role);
+
+        method.addCode("  } catch (Throwable _t) {\n");
+        method.addStatement("    dev.verrai.api.ErrorBus.dispatch($S, _t)", "navigation.goTo." + role);
+        if (startingPageRole != null && !role.equals(startingPageRole)) {
+            method.addCode("    if (this.currentPage == null) goTo($S, $T.emptyMap());\n",
+                    startingPageRole, Collections.class);
+        }
+        method.addCode("  }\n");
+
         method.addStatement("  break");
     }
 
@@ -279,12 +321,22 @@ public class NavigationImplWriter implements PageVisitor {
      * Generates the start() method required by the Navigation interface.
      * Navigates to the current URL hash if present, otherwise to the declared startingPage.
      * Emits a runtime alert if no startingPage was declared and no hash is present.
+     * Registers a default ErrorBus handler if none is registered, then wraps navigation in try-catch.
      */
     private MethodSpec buildStartMethod(ClassName windowClass) {
         MethodSpec.Builder method = MethodSpec.methodBuilder("start")
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(Override.class);
 
+        // Register a default error handler if none has been registered
+        method.beginControlFlow("if (!dev.verrai.api.ErrorBus.hasHandlers())");
+        method.addCode("dev.verrai.api.ErrorBus.register((ctx, t) -> {\n");
+        method.addCode("  String msg = t.getMessage() != null ? t.getMessage() : t.getClass().getName();\n");
+        method.addCode("  $T.current().alert(\"Error in [\" + ctx + \"]: \" + msg);\n", windowClass);
+        method.addCode("});\n");
+        method.endControlFlow();
+
+        method.beginControlFlow("try");
         method.addStatement("$T hash = $T.current().getLocation().getHash()", String.class, windowClass);
         method.beginControlFlow("if (hash != null && !hash.isEmpty() && !hash.equals($S))", "#");
         method.addStatement("navigateToHash(hash)");
@@ -295,6 +347,9 @@ public class NavigationImplWriter implements PageVisitor {
             method.addStatement("$T.alert($S)", windowClass,
                     "No starting page declared. Annotate a @Page with startingPage=true.");
         }
+        method.endControlFlow();
+        method.nextControlFlow("catch ($T _t)", Throwable.class);
+        method.addStatement("dev.verrai.api.ErrorBus.dispatch($S, _t)", "navigation.start");
         method.endControlFlow();
 
         return method.build();

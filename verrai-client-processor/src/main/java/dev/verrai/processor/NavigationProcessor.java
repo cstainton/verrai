@@ -68,6 +68,17 @@ public class NavigationProcessor extends AbstractProcessor {
                 boolean isStartingPage = pageAnno.startingPage();
                 RestrictedAccess restricted = typeElement.getAnnotation(RestrictedAccess.class);
 
+                // Detect CanActivate / CanDeactivate guard interfaces
+                Types types = processingEnv.getTypeUtils();
+                TypeElement canActEl = processingEnv.getElementUtils()
+                        .getTypeElement("dev.verrai.api.CanActivate");
+                TypeElement canDeactEl = processingEnv.getElementUtils()
+                        .getTypeElement("dev.verrai.api.CanDeactivate");
+                boolean hasCA = canActEl != null
+                        && types.isAssignable(typeElement.asType(), types.erasure(canActEl.asType()));
+                boolean hasCD = canDeactEl != null
+                        && types.isAssignable(typeElement.asType(), types.erasure(canDeactEl.asType()));
+
                 List<VariableElement> pageStateFields = new ArrayList<>();
                 for (VariableElement field : ElementFilter.fieldsIn(typeElement.getEnclosedElements())) {
                     if (field.getAnnotation(PageState.class) != null) {
@@ -101,7 +112,7 @@ public class NavigationProcessor extends AbstractProcessor {
 
                 pageDefinitions.add(new PageDefinition(typeElement, role, restricted,
                         pageStateFields, pageShowingMethods, pageHidingMethods,
-                        pageHiddenMethods, isStartingPage));
+                        pageHiddenMethods, isStartingPage, hasCA, hasCD));
             }
 
             // Gap 1: Multiple startingPage=true is a compile error — last one would silently win

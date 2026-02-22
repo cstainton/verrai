@@ -16,11 +16,13 @@ public class PageDefinition {
     private final List<ExecutableElement> pageHiddenMethods;
     private final boolean startingPage;
     private final String varName;
+    private final boolean canActivate;
+    private final boolean canDeactivate;
 
     public PageDefinition(TypeElement typeElement, String role, RestrictedAccess restrictedAccess,
             List<VariableElement> pageStateFields, List<ExecutableElement> pageShowingMethods,
             List<ExecutableElement> pageHidingMethods, List<ExecutableElement> pageHiddenMethods,
-            boolean startingPage) {
+            boolean startingPage, boolean canActivate, boolean canDeactivate) {
         this.typeElement = typeElement;
         this.role = role;
         this.restrictedAccess = restrictedAccess;
@@ -30,6 +32,8 @@ public class PageDefinition {
         this.pageHiddenMethods = pageHiddenMethods;
         this.startingPage = startingPage;
         this.varName = role.replaceAll("[^a-zA-Z0-9_]", "_");
+        this.canActivate = canActivate;
+        this.canDeactivate = canDeactivate;
     }
 
     public TypeElement getTypeElement() {
@@ -66,5 +70,13 @@ public class PageDefinition {
 
     public String getVarName() {
         return varName;
+    }
+
+    public boolean isCanActivate() {
+        return canActivate;
+    }
+
+    public boolean isCanDeactivate() {
+        return canDeactivate;
     }
 }
