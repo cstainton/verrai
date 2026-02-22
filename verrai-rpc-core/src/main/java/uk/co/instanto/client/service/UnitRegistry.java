@@ -18,6 +18,8 @@ public class UnitRegistry {
 
     // Remote service ID -> Node ID
     private final Map<String, String> serviceToNode = new HashMap<>();
+    // Node ID -> Set of Services (Secondary Index)
+    private final Map<String, Set<String>> nodeToServices = new HashMap<>();
     // Node ID -> Transport
     private final Map<String, Transport> nodeToTransport = new HashMap<>();
     // Node ID -> Last heartbeat timestamp
@@ -218,7 +220,18 @@ public class UnitRegistry {
     }
 
     public void registerRemote(String serviceId, String nodeId, Transport transport) {
-        serviceToNode.put(serviceId, nodeId);
+        String oldNodeId = serviceToNode.put(serviceId, nodeId);
+        if (oldNodeId != null && !oldNodeId.equals(nodeId)) {
+            Set<String> oldServices = nodeToServices.get(oldNodeId);
+            if (oldServices != null) {
+                oldServices.remove(serviceId);
+                if (oldServices.isEmpty()) {
+                    nodeToServices.remove(oldNodeId);
+                }
+            }
+        }
+        nodeToServices.computeIfAbsent(nodeId, k -> new HashSet<>()).add(serviceId);
+
         nodeToTransport.put(nodeId, transport);
         updateHeartbeat(nodeId);
 
@@ -411,13 +424,16 @@ public class UnitRegistry {
             logger.info("Cleaning up stale node: {}", nodeId);
             removeNode(nodeId);
         }
-
-        serviceToNode.entrySet().removeIf(entry -> staleNodes.contains(entry.getValue()));
     }
 
     public void removeNode(String nodeId) {
         removeNodeState(nodeId);
-        serviceToNode.entrySet().removeIf(entry -> entry.getValue().equals(nodeId));
+        Set<String> services = nodeToServices.remove(nodeId);
+        if (services != null) {
+            for (String serviceId : services) {
+                serviceToNode.remove(serviceId);
+            }
+        }
         // We should also invalidate stubs if needed, but for now simple removal
         // suffices
     }
@@ -431,6 +447,7 @@ public class UnitRegistry {
     public void reset() {
         localServices.clear();
         serviceToNode.clear();
+        nodeToServices.clear();
         nodeToTransport.clear();
         lastHeartbeats.clear();
         localNodeId = null;
