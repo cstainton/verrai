@@ -141,10 +141,11 @@ public class EventBus {
                     .build();
 
             byte[] finalBytes = RpcPacket.ADAPTER.encode(rpcPacket);
+            byte[] wrappedBytes = RpcProtocol.wrap(finalBytes);
 
             // Send via all transports
             for (Transport transport : transports) {
-                transport.send(finalBytes);
+                transport.send(wrappedBytes);
             }
 
             logger.debug("Published event: {} from {}", eventClass.getSimpleName(), publisherId);
@@ -168,9 +169,13 @@ public class EventBus {
      */
     @SuppressWarnings("unchecked")
     private void handleIncomingBytes(byte[] bytes) {
+        if (!RpcProtocol.isRpcPacket(bytes)) {
+            return;
+        }
+
         try {
             // Decode as RpcPacket first
-            RpcPacket rpcPacket = RpcPacket.ADAPTER.decode(bytes);
+            RpcPacket rpcPacket = RpcPacket.ADAPTER.decode(RpcProtocol.getPayloadStream(bytes));
 
             // Only process EVENT packets
             if (rpcPacket.type != RpcPacket.Type.EVENT) {

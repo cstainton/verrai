@@ -49,8 +49,12 @@ public class RpcClient {
     }
 
     private void handleIncomingBytes(byte[] data) {
+        if (!RpcProtocol.isRpcPacket(data)) {
+            return;
+        }
+
         try {
-            RpcPacket packet = RpcPacket.ADAPTER.decode(data);
+            RpcPacket packet = RpcPacket.ADAPTER.decode(RpcProtocol.getPayloadStream(data));
 
             if (packet.type == RpcPacket.Type.RESPONSE) {
                 RpcResponseFuture future = pendingRequests.remove(packet.requestId);
@@ -114,7 +118,7 @@ public class RpcClient {
         RpcResponseFuture future = new RpcResponseFuture();
         pendingRequests.put(requestId, future);
 
-        transport.send(RpcPacket.ADAPTER.encode(packet));
+        transport.send(RpcProtocol.wrap(RpcPacket.ADAPTER.encode(packet)));
 
         return (AsyncResult<T>) future;
     }
@@ -125,7 +129,7 @@ public class RpcClient {
                 .requestId(requestId)
                 .payload(okio.ByteString.encodeUtf8(String.valueOf(n)))
                 .build();
-        transport.send(RpcPacket.ADAPTER.encode(packet));
+        transport.send(RpcProtocol.wrap(RpcPacket.ADAPTER.encode(packet)));
     }
 
     @SuppressWarnings("unchecked")
@@ -151,7 +155,7 @@ public class RpcClient {
         AsyncStreamResultImpl<T> result = new AsyncStreamResultImpl<>(this, requestId);
         pendingStreams.put(requestId, result);
 
-        transport.send(RpcPacket.ADAPTER.encode(packet));
+        transport.send(RpcProtocol.wrap(RpcPacket.ADAPTER.encode(packet)));
 
         return result;
     }

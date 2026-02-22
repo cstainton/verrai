@@ -39,10 +39,11 @@ public class RpcServerTest {
             .build();
 
         byte[] bytes = RpcPacket.ADAPTER.encode(packet);
+        byte[] wrapped = RpcProtocol.wrap(bytes);
 
         // Simulate incoming message
         if (transport.handler != null) {
-            transport.handler.onMessage(bytes);
+            transport.handler.onMessage(wrapped);
         } else {
             fail("Handler not registered");
         }
@@ -81,9 +82,10 @@ public class RpcServerTest {
             .build();
 
         byte[] bytes = RpcPacket.ADAPTER.encode(packet);
+        byte[] wrapped = RpcProtocol.wrap(bytes);
 
         if (transport.handler != null) {
-            transport.handler.onMessage(bytes);
+            transport.handler.onMessage(wrapped);
         } else {
             fail("Handler not registered");
         }
@@ -121,9 +123,10 @@ public class RpcServerTest {
             .build();
 
         byte[] bytes = RpcPacket.ADAPTER.encode(packet);
+        byte[] wrapped = RpcProtocol.wrap(bytes);
 
         if (transport.handler != null) {
-            transport.handler.onMessage(bytes);
+            transport.handler.onMessage(wrapped);
         } else {
             fail("Handler not registered");
         }
@@ -152,18 +155,20 @@ public class RpcServerTest {
             .build();
 
         byte[] requestBytes = RpcPacket.ADAPTER.encode(request);
+        byte[] wrapped = RpcProtocol.wrap(requestBytes);
 
         // Simulate incoming message
         if (transport.handler != null) {
-            transport.handler.onMessage(requestBytes);
+            transport.handler.onMessage(wrapped);
         } else {
             fail("Handler not registered");
         }
 
         // Verify that an ERROR packet was sent
         assertNotNull("Should have sent a response", transport.lastSentMessage);
+        assertTrue("Response should have RPC header", RpcProtocol.isRpcPacket(transport.lastSentMessage));
 
-        RpcPacket response = RpcPacket.ADAPTER.decode(transport.lastSentMessage);
+        RpcPacket response = RpcPacket.ADAPTER.decode(RpcProtocol.getPayloadStream(transport.lastSentMessage));
         assertEquals("Should be ERROR type", RpcPacket.Type.ERROR, response.type);
         assertEquals("Should match requestId", "req-123", response.requestId);
         assertEquals("Should have error message", "Authentication failed", response.payload.utf8());

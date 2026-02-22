@@ -3,6 +3,7 @@ package uk.co.instanto.client.service;
 import uk.co.instanto.client.service.proto.RpcPacket;
 import uk.co.instanto.client.service.transport.ServiceDispatcher;
 import dev.verrai.rpc.common.transport.Transport;
+import dev.verrai.rpc.common.transport.MessageHandler;
 import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;
@@ -36,9 +37,13 @@ public class RpcServer {
     }
 
     private void handleIncomingBytes(byte[] bytes) {
+        if (!RpcProtocol.isRpcPacket(bytes)) {
+            return;
+        }
+
         RpcPacket packet = null;
         try {
-            packet = RpcPacket.ADAPTER.decode(bytes);
+            packet = RpcPacket.ADAPTER.decode(RpcProtocol.getPayloadStream(bytes));
         } catch (Exception e) {
             // Ignore if not an RpcPacket or other decoding error
             logger.debug("Failed to decode incoming packet", e);
@@ -57,7 +62,18 @@ public class RpcServer {
                 if (impl != null) {
                     ServiceDispatcher dispatcher = dispatchers.get(packet.serviceId);
                     if (dispatcher != null) {
-                        dispatcher.dispatch(packet, impl, transport);
+                        Transport wrappedTransport = new Transport() {
+                            @Override
+                            public void send(byte[] data) {
+                                transport.send(RpcProtocol.wrap(data));
+                            }
+
+                            @Override
+                            public void addMessageHandler(MessageHandler handler) {
+                                transport.addMessageHandler(handler);
+                            }
+                        };
+                        dispatcher.dispatch(packet, impl, wrappedTransport);
                     } else {
                         logger.warn("No dispatcher found for service: {}", packet.serviceId);
                         sendError(packet, "Service not found");
@@ -89,7 +105,7 @@ public class RpcServer {
             }
 
             RpcPacket response = builder.build();
-            transport.send(RpcPacket.ADAPTER.encode(response));
+            transport.send(RpcProtocol.wrap(RpcPacket.ADAPTER.encode(response)));
         } catch (Exception e) {
             logger.error("Failed to send error response", e);
         }
