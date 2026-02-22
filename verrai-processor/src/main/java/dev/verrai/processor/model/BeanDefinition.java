@@ -2,7 +2,6 @@ package dev.verrai.processor.model;
 
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.element.VariableElement;
 import java.util.List;
 import java.util.Map;
 
