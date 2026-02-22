@@ -194,19 +194,19 @@ public class EntityManagerImpl implements EntityManager {
             IDBTransaction tx = db.transaction(mapper.getEntityName(), "readonly");
             IDBObjectStore store = tx.objectStore(mapper.getEntityName());
 
-            IDBRequest request = store.openCursor();
+            IDBRequest request = getAll(store);
             List<T> list = new ArrayList<>();
 
             setOnSuccess(request, evt -> {
-                IDBCursor cursor = (IDBCursor) ((IDBRequestResult) (Object) request).getResult();
-                if (cursor != null && !JSObjects.isUndefined(cursor)) {
-                    IDBCursorWithValue valueCursor = (IDBCursorWithValue) (Object) cursor;
-                    JSObject value = valueCursor.getValue();
-                    list.add(mapper.fromJSO(value));
-                    continueCursor(cursor);
-                } else {
-                    callback.accept(list);
+                JSObject result = ((IDBRequestResult) (Object) request).getResult();
+                if (result != null && !JSObjects.isUndefined(result)) {
+                    JSArray<JSObject> array = (JSArray<JSObject>) result;
+                    int len = array.getLength();
+                    for (int i = 0; i < len; i++) {
+                        list.add(mapper.fromJSO(array.get(i)));
+                    }
                 }
+                callback.accept(list);
             });
 
              setOnError(request, evt -> {
@@ -305,6 +305,9 @@ public class EntityManagerImpl implements EntityManager {
 
     @JSBody(params = {"autoIncrement"}, script = "return { autoIncrement: autoIncrement };")
     private static native IDBObjectStoreParameters createParams(boolean autoIncrement);
+
+    @JSBody(params = "store", script = "return store.getAll();")
+    private static native IDBRequest getAll(IDBObjectStore store);
 
     @JSBody(params = {"cursor", "count"}, script = "cursor.advance(count);")
     private static native void advanceCursor(IDBCursor cursor, int count);
