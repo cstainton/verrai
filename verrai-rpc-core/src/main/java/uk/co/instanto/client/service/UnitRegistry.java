@@ -215,6 +215,22 @@ public class UnitRegistry {
 
     public void registerLocal(String name, Object serviceInstance) {
         localServices.put(name, serviceInstance);
+
+        // Check pending callbacks
+        List<ServiceReadyCallback<?>> callbacks;
+        synchronized (pendingCallbacks) {
+            callbacks = pendingCallbacks.remove(name);
+        }
+
+        if (callbacks != null) {
+            try {
+                for (ServiceReadyCallback<?> cb : callbacks) {
+                    ((ServiceReadyCallback<Object>) cb).onServiceReady(serviceInstance);
+                }
+            } catch (Exception e) {
+                logger.error("Error processing pending callbacks for local service: {}", name, e);
+            }
+        }
     }
 
     public void registerRemote(String serviceId, String nodeId, Transport transport) {
