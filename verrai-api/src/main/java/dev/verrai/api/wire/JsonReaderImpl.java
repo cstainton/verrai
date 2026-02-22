@@ -1,6 +1,7 @@
 package dev.verrai.api.wire;
 
-import java.util.Stack;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import org.teavm.jso.JSBody;
 import org.teavm.jso.JSObject;
 import org.teavm.jso.core.JSArray;
@@ -10,7 +11,7 @@ import org.teavm.jso.core.JSNumber;
 import org.teavm.jso.core.JSBoolean;
 
 public class JsonReaderImpl implements JsonReader {
-    private final Stack<Context> stack = new Stack<>();
+    private final Deque<Context> stack = new ArrayDeque<>();
     private JSObject current;
 
     public JsonReaderImpl(String json) {
