@@ -37,7 +37,14 @@ public class WebWorkerService {
     }
 
     @JSBody(params = { "target",
-            "client" }, script = "target.onmessage = function(e) { client.@uk.co.instanto.client.service.WebWorkerService::handleMessage(*)(e); };")
+            "client" }, script = "target.onmessage = function(e) {" +
+            "    var isWindow = typeof window !== 'undefined' && target === window;" +
+            "    if (isWindow && e.origin !== window.location.origin) {" +
+            "        console.warn('Blocked cross-origin message from ' + e.origin);" +
+            "        return;" +
+            "    }" +
+            "    client.@dev.verrai.rpc.teavm.WebWorkerService::handleMessage(*)(e);" +
+            "};")
     private static native void listenToWorker(JSObject target, WebWorkerService client);
 
     private void listenToWorker(JSObject worker) {
