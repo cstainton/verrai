@@ -12,10 +12,6 @@ import jakarta.inject.Inject;
 import java.util.HashMap;
 import java.util.Map;
 
-import jakarta.inject.Inject;
-import java.util.HashMap;
-import java.util.Map;
-
 @Page(role = "login", startingPage = true)
 @Templated
 public class LoginPage {
