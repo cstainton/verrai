@@ -17,6 +17,9 @@ public class ReflectionFreeJsonSerializer implements Serializer {
     public <T> T decode(byte[] bytes, Class<T> clazz) {
         if (bytes == null || bytes.length == 0)
             return null;
+        if (clazz == null) {
+            throw new IllegalArgumentException("Class cannot be null");
+        }
         JsonCodec<T> codec = JsonCodecRegistry.get(clazz);
         if (codec == null) {
             throw new RuntimeException("No JsonCodec registered for " + clazz.getName());
