@@ -1,12 +1,13 @@
 package dev.verrai.api.wire;
 
-import java.util.Stack;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 public class JsonWriterImpl implements JsonWriter {
     private final StringBuilder sb;
     private enum Scope { OBJECT, ARRAY }
-    private final Stack<Scope> scopes = new Stack<>();
-    private final Stack<Boolean> firsts = new Stack<>();
+    private final Deque<Scope> scopes = new ArrayDeque<>();
+    private final Deque<Boolean> firsts = new ArrayDeque<>();
 
     public JsonWriterImpl(StringBuilder sb) {
         this.sb = sb;
