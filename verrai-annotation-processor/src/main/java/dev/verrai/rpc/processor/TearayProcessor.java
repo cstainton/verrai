@@ -35,6 +35,7 @@ public class TearayProcessor extends AbstractProcessor {
     private WireGenerator wireGenerator;
     private Filer filer;
     private Messager messager;
+    private CodecRegistryGenerator codecRegistryGenerator;
     private final Set<String> generatedLoaders = new HashSet<>();
 
     @Override
