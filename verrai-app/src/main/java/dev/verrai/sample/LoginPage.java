@@ -10,8 +10,6 @@ import org.teavm.jso.dom.html.HTMLElement;
 import org.teavm.jso.dom.html.HTMLButtonElement;
 import org.teavm.jso.browser.Window;
 import uk.co.instanto.client.service.UnitRegistry;
-import uk.co.instanto.client.service.transport.TeaVMStompClientAdapter;
-import uk.co.instanto.teavm.stomp.StompClient;
 import dev.verrai.rpc.teavm.WebWorkerTransport;
 import uk.co.instanto.client.service.dto.LogonRequest;
 
