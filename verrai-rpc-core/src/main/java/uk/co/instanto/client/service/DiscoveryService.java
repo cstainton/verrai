@@ -4,8 +4,6 @@ import uk.co.instanto.client.service.dto.proto.NodeAnnouncedEvent;
 import uk.co.instanto.client.service.dto.proto.NodeHeartbeatEvent;
 import uk.co.instanto.client.service.dto.proto.NodeDepartedEvent;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,14 +30,14 @@ public class DiscoveryService {
 
     private void setup() {
         // Subscribe to events
-        eventBus.subscribe(uk.co.instanto.client.service.dto.proto.NodeAnnouncedEvent.class, this::onNodeAnnounced);
-        eventBus.subscribe(uk.co.instanto.client.service.dto.proto.NodeHeartbeatEvent.class, this::onHeartbeat);
-        eventBus.subscribe(uk.co.instanto.client.service.dto.proto.NodeDepartedEvent.class, this::onNodeDeparted);
+        eventBus.subscribe(NodeAnnouncedEvent.class, this::onNodeAnnounced);
+        eventBus.subscribe(NodeHeartbeatEvent.class, this::onHeartbeat);
+        eventBus.subscribe(NodeDepartedEvent.class, this::onNodeDeparted);
     }
 
     public void announce() {
         logger.info("Announcing node: " + nodeId);
-        uk.co.instanto.client.service.dto.proto.NodeAnnouncedEvent event = new uk.co.instanto.client.service.dto.proto.NodeAnnouncedEvent.Builder()
+        NodeAnnouncedEvent event = new NodeAnnouncedEvent.Builder()
                 .nodeId(nodeId)
                 .serviceIds(new ArrayList<>(registry.getDiscoverableServiceIdsInstance()))
                 .timestamp(System.currentTimeMillis())
@@ -48,7 +46,7 @@ public class DiscoveryService {
     }
 
     public void heartbeat() {
-        uk.co.instanto.client.service.dto.proto.NodeHeartbeatEvent event = new uk.co.instanto.client.service.dto.proto.NodeHeartbeatEvent.Builder()
+        NodeHeartbeatEvent event = new NodeHeartbeatEvent.Builder()
                 .nodeId(nodeId)
                 .timestamp(System.currentTimeMillis())
                 .build();
@@ -56,14 +54,14 @@ public class DiscoveryService {
     }
 
     public void bye() {
-        uk.co.instanto.client.service.dto.proto.NodeDepartedEvent event = new uk.co.instanto.client.service.dto.proto.NodeDepartedEvent.Builder()
+        NodeDepartedEvent event = new NodeDepartedEvent.Builder()
                 .nodeId(nodeId)
                 .timestamp(System.currentTimeMillis())
                 .build();
         eventBus.publish(event);
     }
 
-    private void onNodeAnnounced(uk.co.instanto.client.service.dto.proto.NodeAnnouncedEvent event) {
+    private void onNodeAnnounced(NodeAnnouncedEvent event) {
         if (event.nodeId.equals(nodeId))
             return;
         logger.info("Node {} announced services: {}", event.nodeId, event.serviceIds);
@@ -98,13 +96,13 @@ public class DiscoveryService {
         }
     }
 
-    private void onHeartbeat(uk.co.instanto.client.service.dto.proto.NodeHeartbeatEvent event) {
+    private void onHeartbeat(NodeHeartbeatEvent event) {
         if (event.nodeId.equals(nodeId))
             return;
         registry.registerRemote(null, event.nodeId, null); // Just update heartbeat
     }
 
-    private void onNodeDeparted(uk.co.instanto.client.service.dto.proto.NodeDepartedEvent event) {
+    private void onNodeDeparted(NodeDepartedEvent event) {
         if (event.nodeId.equals(nodeId))
             return;
         registry.removeNode(event.nodeId);
