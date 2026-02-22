@@ -45,7 +45,7 @@ public class CodecRegistryGenerator {
                 .addAnnotation(Override.class);
 
         for (TypeElement element : elements) {
-            ClassName typeName = ClassName.get(element);
+            ClassName typeName = getClassName(element);
             // Assuming JsonCodec is generated in the same package as the type with Name + "JsonCodec"
             ClassName codecClass = ClassName.get(typeName.packageName(), typeName.simpleName() + "JsonCodec");
 
@@ -59,5 +59,9 @@ public class CodecRegistryGenerator {
         javaFile.writeTo(filer);
 
         return packageName + "." + className;
+    }
+
+    protected ClassName getClassName(TypeElement element) {
+        return ClassName.get(element);
     }
 }
