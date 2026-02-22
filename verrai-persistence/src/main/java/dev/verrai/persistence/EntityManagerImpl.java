@@ -8,7 +8,6 @@ import org.teavm.jso.JSFunctor;
 import org.teavm.jso.browser.Window;
 import org.teavm.jso.indexeddb.*;
 import org.teavm.jso.core.JSObjects;
-import org.teavm.jso.core.JSArray;
 import org.teavm.jso.dom.events.Event;
 import java.util.ArrayList;
 import java.util.List;
