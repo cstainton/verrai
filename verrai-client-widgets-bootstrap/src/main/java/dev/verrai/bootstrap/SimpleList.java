@@ -40,4 +40,8 @@ public class SimpleList extends Widget {
     public void clear() {
         listElement.setInnerText("");
     }
+
+    public boolean isOrdered() {
+        return ordered;
+    }
 }

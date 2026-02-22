@@ -7,6 +7,8 @@ import javax.tools.JavaFileObject;
 
 import static com.google.testing.compile.Compiler.javac;
 import static com.google.testing.compile.CompilationSubject.assertThat;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class TemplatedProcessorTest {
 
@@ -432,6 +434,189 @@ public class TemplatedProcessorTest {
             .generatedSourceFile("dev.verrai.processor.NestedPage_Binder")
             .contentsAsUtf8String()
             .contains("nestedSub_street");
+    }
+
+    /**
+     * Verifies that when a pre-compiled {@code *_Validator} is available on the classpath
+     * (simulating a multi-module build where the model was compiled in a prior module),
+     * the TemplatedProcessor weaves inline validation into the change handler.
+     */
+    @Test
+    public void testValidationWovenIn_whenValidatorAvailable() {
+        // Stub Bootstrap Widget so ValWidget can extend it — required for the
+        // instanceof cast in the generated validation wiring to be type-safe.
+        JavaFileObject bootstrapWidget = JavaFileObjects.forSourceLines(
+            "dev.verrai.bootstrap.Widget",
+            "package dev.verrai.bootstrap;",
+            "import dev.verrai.api.IsWidget;",
+            "import dev.verrai.api.TakesValue;",
+            "import org.teavm.jso.dom.html.HTMLElement;",
+            "public class Widget implements IsWidget, TakesValue<String> {",
+            "    public HTMLElement element;",
+            "    public HTMLElement getElement() { return element; }",
+            "    public void setValue(String v) {}",
+            "    public String getValue() { return null; }",
+            "    public void setErrorMessage(String msg) {}",
+            "    public void clearErrorMessage() {}",
+            "}"
+        );
+
+        // ValWidget extends Widget so the generated `instanceof Widget` cast succeeds.
+        JavaFileObject widget = JavaFileObjects.forSourceLines(
+            "dev.verrai.processor.ValWidget",
+            "package dev.verrai.processor;",
+            "import org.teavm.jso.dom.html.HTMLElement;",
+            "public class ValWidget extends dev.verrai.bootstrap.Widget {",
+            "    @Override public String getValue() { return null; }",
+            "}"
+        );
+
+        JavaFileObject model = JavaFileObjects.forSourceLines(
+            "dev.verrai.processor.ValidatedModel",
+            "package dev.verrai.processor;",
+            "import dev.verrai.api.Bindable;",
+            "@Bindable",
+            "public class ValidatedModel {",
+            "    private String name;",
+            "    public String getName() { return name; }",
+            "    public void setName(String v) { this.name = v; }",
+            "}"
+        );
+
+        // Provide a pre-written validator, simulating what BindableProcessor would generate
+        // in a prior compilation (e.g., the model module compiled before the UI module).
+        JavaFileObject validator = JavaFileObjects.forSourceLines(
+            "dev.verrai.processor.ValidatedModel_Validator",
+            "package dev.verrai.processor;",
+            "import dev.verrai.api.validation.ValidationResult;",
+            "import dev.verrai.api.validation.Validator;",
+            "import java.util.ArrayList;",
+            "import java.util.List;",
+            "public class ValidatedModel_Validator implements Validator<ValidatedModel> {",
+            "    public static ValidationResult validateField(String fieldName, Object value) {",
+            "        List<String> errors = new ArrayList<>();",
+            "        switch (fieldName) {",
+            "            case \"name\":",
+            "                if (value == null) errors.add(\"must not be null\");",
+            "                break;",
+            "            default: break;",
+            "        }",
+            "        return errors.isEmpty() ? ValidationResult.valid() : ValidationResult.invalid(errors);",
+            "    }",
+            "    @Override",
+            "    public ValidationResult validate(ValidatedModel model) {",
+            "        return validateField(\"name\", model.getName());",
+            "    }",
+            "}"
+        );
+
+        JavaFileObject page = JavaFileObjects.forSourceLines(
+            "dev.verrai.processor.ValidatedPage",
+            "package dev.verrai.processor;",
+            "import dev.verrai.api.Templated;",
+            "import dev.verrai.api.DataField;",
+            "import dev.verrai.api.Model;",
+            "import dev.verrai.api.Bound;",
+            "import jakarta.inject.Inject;",
+            "@Templated(\"SimplePage.html\")",
+            "public class ValidatedPage {",
+            "    @Inject @Model",
+            "    public ValidatedModel model;",
+            "    @Inject @DataField @Bound",
+            "    public ValWidget name;",
+            "}"
+        );
+
+        // MaterialWidget stub needed so the generated binder's material branch compiles
+        JavaFileObject materialWidget = JavaFileObjects.forSourceLines(
+            "dev.verrai.material.MaterialWidget",
+            "package dev.verrai.material;",
+            "import dev.verrai.api.IsWidget;",
+            "import org.teavm.jso.dom.html.HTMLElement;",
+            "public abstract class MaterialWidget implements IsWidget {",
+            "    protected HTMLElement element;",
+            "    public HTMLElement getElement() { return element; }",
+            "    public void setErrorMessage(String msg) {}",
+            "    public void clearErrorMessage() {}",
+            "}"
+        );
+
+        Compilation compilation = javac()
+            .withProcessors(new TemplatedProcessor())
+            .compile(bootstrapWidget, widget, model, validator, page, materialWidget);
+
+        assertThat(compilation).succeeded();
+
+        String binderSource = ProcessorTestHelper.generatedSource(compilation,
+            "dev.verrai.processor.ValidatedPage_Binder");
+
+        assertTrue("Binder should call validateField", binderSource.contains("validateField"));
+        assertTrue("Binder should check _vr.isValid()", binderSource.contains("_vr.isValid()"));
+        assertTrue("Binder should call setErrorMessage", binderSource.contains("setErrorMessage"));
+        assertTrue("Binder should use Object cast for type safety", binderSource.contains("_widgetRef_"));
+    }
+
+    /**
+     * Verifies that when no {@code *_Validator} exists (model has no constraints),
+     * the TemplatedProcessor generates a plain setter call with no validation wrapping.
+     */
+    @Test
+    public void testNoValidation_whenValidatorAbsent() {
+        JavaFileObject widget = JavaFileObjects.forSourceLines(
+            "dev.verrai.processor.PlainWidget",
+            "package dev.verrai.processor;",
+            "import dev.verrai.api.IsWidget;",
+            "import dev.verrai.api.TakesValue;",
+            "import org.teavm.jso.dom.html.HTMLElement;",
+            "import org.teavm.jso.dom.events.Event;",
+            "public class PlainWidget implements IsWidget, TakesValue<String> {",
+            "    public HTMLElement getElement() { return null; }",
+            "    public void setValue(String value) {}",
+            "    public String getValue() { return null; }",
+            "    public void onBrowserEvent(Event e) {}",
+            "}"
+        );
+
+        JavaFileObject model = JavaFileObjects.forSourceLines(
+            "dev.verrai.processor.PlainModel",
+            "package dev.verrai.processor;",
+            "import dev.verrai.api.Bindable;",
+            "@Bindable",
+            "public class PlainModel {",
+            "    private String name;",
+            "    public String getName() { return name; }",
+            "    public void setName(String v) { this.name = v; }",
+            "}"
+        );
+
+        JavaFileObject page = JavaFileObjects.forSourceLines(
+            "dev.verrai.processor.PlainPage",
+            "package dev.verrai.processor;",
+            "import dev.verrai.api.Templated;",
+            "import dev.verrai.api.DataField;",
+            "import dev.verrai.api.Model;",
+            "import dev.verrai.api.Bound;",
+            "import jakarta.inject.Inject;",
+            "@Templated(\"SimplePage.html\")",
+            "public class PlainPage {",
+            "    @Inject @Model",
+            "    public PlainModel model;",
+            "    @Inject @DataField @Bound",
+            "    public PlainWidget name;",
+            "}"
+        );
+
+        // No validator source provided and model has no constraints → no _Validator generated
+        Compilation compilation = javac()
+            .withProcessors(new TemplatedProcessor(), new BindableProcessor())
+            .compile(widget, model, page);
+
+        assertThat(compilation).succeeded();
+
+        assertThat(compilation)
+            .generatedSourceFile("dev.verrai.processor.PlainPage_Binder")
+            .contentsAsUtf8String()
+            .doesNotContain("validateField");
     }
 
     @Test

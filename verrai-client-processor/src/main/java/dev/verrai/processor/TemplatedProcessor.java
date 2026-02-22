@@ -599,23 +599,29 @@ public class TemplatedProcessor extends AbstractProcessor {
                                 .getTypeElement(modelFQN + "_Validator");
                         if (validatorType != null && segments.length == 1) {
                             String fieldVar = "target." + field.getSimpleName();
+                            // Cast through Object so the instanceof checks compile regardless of
+                            // the static field type (avoids "incompatible types" when the field
+                            // is declared as a concrete Widget subclass that is unrelated to
+                            // MaterialWidget, or vice versa).
                             bindMethod.addCode(
                                     "  dev.verrai.api.validation.ValidationResult _vr = $L.validateField($S, $L.getValue());\n",
                                     modelFQN + "_Validator", segments[0], fieldVar);
+                            bindMethod.addCode("  Object _widgetRef_$L = $L;\n",
+                                    field.getSimpleName(), fieldVar);
                             bindMethod.addCode("  if (!_vr.isValid()) {\n");
                             bindMethod.addCode(
-                                    "    if ($L instanceof dev.verrai.bootstrap.Widget) ((dev.verrai.bootstrap.Widget)$L).setErrorMessage(_vr.getMessages().get(0));\n",
-                                    fieldVar, fieldVar);
+                                    "    if (_widgetRef_$L instanceof dev.verrai.bootstrap.Widget) ((dev.verrai.bootstrap.Widget)_widgetRef_$L).setErrorMessage(_vr.getMessages().get(0));\n",
+                                    field.getSimpleName(), field.getSimpleName());
                             bindMethod.addCode(
-                                    "    else if ($L instanceof dev.verrai.material.MaterialWidget) ((dev.verrai.material.MaterialWidget)$L).setErrorMessage(_vr.getMessages().get(0));\n",
-                                    fieldVar, fieldVar);
+                                    "    else if (_widgetRef_$L instanceof dev.verrai.material.MaterialWidget) ((dev.verrai.material.MaterialWidget)_widgetRef_$L).setErrorMessage(_vr.getMessages().get(0));\n",
+                                    field.getSimpleName(), field.getSimpleName());
                             bindMethod.addCode("  } else {\n");
                             bindMethod.addCode(
-                                    "    if ($L instanceof dev.verrai.bootstrap.Widget) ((dev.verrai.bootstrap.Widget)$L).clearErrorMessage();\n",
-                                    fieldVar, fieldVar);
+                                    "    if (_widgetRef_$L instanceof dev.verrai.bootstrap.Widget) ((dev.verrai.bootstrap.Widget)_widgetRef_$L).clearErrorMessage();\n",
+                                    field.getSimpleName(), field.getSimpleName());
                             bindMethod.addCode(
-                                    "    else if ($L instanceof dev.verrai.material.MaterialWidget) ((dev.verrai.material.MaterialWidget)$L).clearErrorMessage();\n",
-                                    fieldVar, fieldVar);
+                                    "    else if (_widgetRef_$L instanceof dev.verrai.material.MaterialWidget) ((dev.verrai.material.MaterialWidget)_widgetRef_$L).clearErrorMessage();\n",
+                                    field.getSimpleName(), field.getSimpleName());
                             bindMethod.addStatement("    target.$L$L.$L(target.$L.getValue())",
                                     modelField.getSimpleName(), getterChain, finalSetter, field.getSimpleName());
                             bindMethod.addCode("  }\n");

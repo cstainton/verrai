@@ -43,6 +43,26 @@ public class Image extends Widget {
         updateClass();
     }
 
+    public String getSrc() {
+        return this.img.getSrc();
+    }
+
+    public String getAlt() {
+        return this.img.getAlt();
+    }
+
+    public boolean isFluid() {
+        return fluid;
+    }
+
+    public boolean isThumbnail() {
+        return thumbnail;
+    }
+
+    public boolean isRounded() {
+        return rounded;
+    }
+
     private void updateClass() {
         StringBuilder sb = new StringBuilder();
         if (fluid) {

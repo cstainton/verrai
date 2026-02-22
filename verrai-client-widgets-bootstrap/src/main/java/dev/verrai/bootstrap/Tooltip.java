@@ -32,6 +32,14 @@ public class Tooltip {
         this.target.element.setAttribute("data-bs-placement", placement.getValue());
     }
 
+    public String getTitle() {
+        return this.target.element.getAttribute("title");
+    }
+
+    public String getPlacement() {
+        return this.target.element.getAttribute("data-bs-placement");
+    }
+
     public void init() {
         BootstrapTooltipJSO.getOrCreateInstance(this.target.element);
     }

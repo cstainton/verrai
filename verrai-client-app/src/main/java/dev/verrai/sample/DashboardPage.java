@@ -45,6 +45,9 @@ public class DashboardPage {
     @Inject @DataField
     public Button tableDemoBtn;
 
+    @Inject @DataField
+    public Button materialDemoBtn;
+
     @EventHandler("qualifierBtn")
     public void onQualifierDemo() {
         navigation.goTo("qualifier");
@@ -63,6 +66,11 @@ public class DashboardPage {
     @EventHandler("tableDemoBtn")
     public void onTableDemo() {
         navigation.goTo("tabledemo");
+    }
+
+    @EventHandler("materialDemoBtn")
+    public void onMaterialDemo() {
+        navigation.goTo("material-demo");
     }
 
     @PageShowing

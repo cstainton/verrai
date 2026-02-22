@@ -1,0 +1,69 @@
+<div class="mdc-typography">
+    <!-- Drawer -->
+    <aside data-field="drawer"></aside>
+
+    <div class="mdc-drawer-app-content">
+        <!-- App Bar -->
+        <header class="mdc-top-app-bar">
+          <div class="mdc-top-app-bar__row">
+            <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
+              <span class="mdc-top-app-bar__title">Material Demo</span>
+            </section>
+            <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end">
+              <button data-field="backBtn" class="mdc-button">
+                <span class="mdc-button__label">Back</span>
+              </button>
+            </section>
+          </div>
+        </header>
+
+        <main class="mdc-top-app-bar--fixed-adjust" style="padding: 1rem;">
+            <div class="mdc-layout-grid">
+              <div class="mdc-layout-grid__inner">
+
+                <!-- Controls column -->
+                <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4">
+                    <h3>Controls</h3>
+                    <div data-field="toggleButton"></div>
+                    <br>
+                    <div data-field="nameInput"></div>
+                    <br>
+                    <div data-field="openDialogBtn"></div>
+                </div>
+
+                <!-- Card column -->
+                <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4">
+                    <h3>Card</h3>
+                    <div data-field="demoCard"></div>
+                    <br>
+                    <h3>Progress</h3>
+                    <div data-field="progressBar"></div>
+                </div>
+
+                <!-- Chips + List column -->
+                <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-4">
+                    <h3>Chips</h3>
+                    <div class="mdc-chip-set" data-field="chipSet"></div>
+                    <br>
+                    <h3>List</h3>
+                    <div data-field="demoList"></div>
+                    <br>
+                    <h3>Alert (Snackbar)</h3>
+                    <div data-field="snackbarAlert"></div>
+                    <div data-field="showAlertBtn"></div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Dialog (appended to body dynamically) -->
+            <div data-field="confirmDialog" style="display:none;"></div>
+
+            <!-- FAB -->
+            <div data-field="fab" style="position: fixed; bottom: 2rem; right: 2rem;"></div>
+
+            <!-- Menu -->
+            <div data-field="menu" style="position: fixed; bottom: 5rem; right: 2rem;"></div>
+        </main>
+    </div>
+</div>
