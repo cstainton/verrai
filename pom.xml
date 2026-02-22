@@ -2,28 +2,21 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>uk.co.instanto</groupId>
+  <groupId>dev.verrai</groupId>
   <artifactId>verrai-parent-pom</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <modules>
-    <module>teavm-stomp</module>
-    <module>verrai-rpc-common</module>
-    <module>verrai-rpc-core</module>
-    <module>verrai-proto-generator</module>
-    <module>verrai-annotation-processor</module>
-    <module>verrai-rpc-teavm</module>
-    <module>verrai-integration-tests</module>
-    <module>verrai-demo</module>
-    <module>verrai-rpc-client</module>
-    <module>verrai-api</module>
-    <module>verrai-processor</module>
-    <module>verrai-widgets-bootstrap</module>
-    <module>verrai-widgets-material</module>
-    <module>verrai-ui</module>
-    <module>verrai-persistence</module>
-    <module>verrai-app</module>
+    <module>verrai-client-api</module>
+    <module>verrai-client-processor</module>
+    <module>verrai-client-annotation-processor</module>
+    <module>verrai-client-widgets-bootstrap</module>
+    <module>verrai-client-widgets-material</module>
+    <module>verrai-client-ui</module>
+    <module>verrai-client-persistence</module>
+    <module>verrai-client-security</module>
+    <module>verrai-client-app</module>
   </modules>
 
   <properties>
@@ -32,14 +25,42 @@
     <maven.compiler.release>21</maven.compiler.release>
     <wire.version>4.9.3</wire.version>
     <slf4j.version>2.0.12</slf4j.version>
+    <jakarta.inject.version>2.0.1</jakarta.inject.version>
+    <jakarta.cdi.version>4.1.0</jakarta.cdi.version>
   </properties>
 
   <dependencyManagement>
     <dependencies>
       <dependency>
+          <groupId>jakarta.inject</groupId>
+          <artifactId>jakarta.inject-api</artifactId>
+          <version>${jakarta.inject.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>jakarta.enterprise</groupId>
+          <artifactId>jakarta.enterprise.cdi-api</artifactId>
+          <version>${jakarta.cdi.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>jakarta.annotation</groupId>
+          <artifactId>jakarta.annotation-api</artifactId>
+          <version>3.0.0</version>
+      </dependency>
+      <dependency>
         <groupId>org.teavm</groupId>
         <artifactId>teavm-classlib</artifactId>
         <version>${teavm.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>dev.verrai</groupId>
+        <artifactId>verrai-client-ui</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>dev.verrai</groupId>
+        <artifactId>verrai-client-security</artifactId>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.teavm</groupId>

@@ -162,7 +162,7 @@ public class FactoryWriter implements BeanVisitor {
             for (ExecutableElement method : bean.getObserverMethods()) {
                 // Find parameter annotated with @Observes
                 for (VariableElement param : method.getParameters()) {
-                    if (param.getAnnotation(dev.verrai.api.Observes.class) != null) {
+                    if (param.getAnnotation(jakarta.enterprise.event.Observes.class) != null) {
                         TypeMirror eventType = param.asType();
                         String subVar = "eventSub_" + method.getSimpleName();
                         // Register and capture Subscription for lifecycle cleanup

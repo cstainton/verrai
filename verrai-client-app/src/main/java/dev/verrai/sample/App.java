@@ -1,7 +1,7 @@
 package dev.verrai.sample;
 
 import dev.verrai.api.EntryPoint;
-import dev.verrai.api.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import dev.verrai.api.Navigation;
 import jakarta.inject.Inject;
 
