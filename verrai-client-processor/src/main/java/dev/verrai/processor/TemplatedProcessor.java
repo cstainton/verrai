@@ -598,30 +598,34 @@ public class TemplatedProcessor extends AbstractProcessor {
                         TypeElement validatorType = processingEnv.getElementUtils()
                                 .getTypeElement(modelFQN + "_Validator");
                         if (validatorType != null && segments.length == 1) {
-                            // Duck-type: check whether the field's concrete type exposes
-                            // setErrorMessage/clearErrorMessage — no knowledge of any widget
-                            // library is required; any type with those methods works.
+                            // Primary path: page implements ValidationAware — it owns routing.
+                            TypeElement validationAwareEl = processingEnv.getElementUtils()
+                                    .getTypeElement("dev.verrai.api.validation.ValidationAware");
+                            boolean pageIsValidationAware = validationAwareEl != null
+                                    && processingEnv.getTypeUtils().isAssignable(
+                                            typeElement.asType(), validationAwareEl.asType());
+
+                            // Fallback path: duck-type the field's concrete type.
                             TypeElement fieldTypeEl = fieldAsTypeElement(field);
                             boolean hasSetError = fieldTypeEl != null
                                     && hasMethod(fieldTypeEl, "setErrorMessage", 1);
                             boolean hasClear = fieldTypeEl != null
                                     && hasMethod(fieldTypeEl, "clearErrorMessage", 0);
 
-                            if (!hasSetError) {
-                                // Warn: validation will run but errors can't be displayed.
-                                // Common cause: field declared as IsWidget or another interface.
-                                String typeName = fieldTypeEl != null
+                            // Warn only when neither path will work at runtime.
+                            if (!pageIsValidationAware && !hasSetError) {
+                                String widgetTypeName = fieldTypeEl != null
                                         ? "'" + fieldTypeEl.getSimpleName() + "'"
                                         : "(unknown type)";
                                 String hint = (fieldTypeEl != null
                                         && fieldTypeEl.getKind() == ElementKind.INTERFACE)
-                                        ? " (interface types do not expose implementation methods;"
-                                          + " declare the field as the concrete widget class)"
-                                        : " (add setErrorMessage(String)/clearErrorMessage() to the widget)";
+                                        ? " Declare the field as the concrete widget class, or implement ValidationAware on the page."
+                                        : " Add setErrorMessage(String)/clearErrorMessage() to the widget, or implement ValidationAware on the page.";
                                 processingEnv.getMessager().printMessage(Diagnostic.Kind.WARNING,
                                         "@Bound field '" + field.getSimpleName()
-                                        + "' has active validation constraints but its type "
-                                        + typeName + " does not declare setErrorMessage(String)"
+                                        + "' has active validation but " + widgetTypeName
+                                        + " does not declare setErrorMessage(String) and the page"
+                                        + " does not implement ValidationAware"
                                         + " — validation errors will be silently suppressed." + hint,
                                         field);
                             }
@@ -630,16 +634,28 @@ public class TemplatedProcessor extends AbstractProcessor {
                             bindMethod.addCode(
                                     "  dev.verrai.api.validation.ValidationResult _vr = $L.validateField($S, $L.getValue());\n",
                                     modelFQN + "_Validator", segments[0], fieldVar);
-                            bindMethod.addCode("  if (!_vr.isValid()) {\n");
-                            if (hasSetError) {
-                                bindMethod.addCode("    target.$L.setErrorMessage(_vr.getMessages().get(0));\n",
-                                        field.getSimpleName());
-                            }
+                            // ValidationAware: let the page handle error routing.
+                            bindMethod.addCode(
+                                    "  if (target instanceof dev.verrai.api.validation.ValidationAware) {\n");
+                            bindMethod.addCode(
+                                    "    ((dev.verrai.api.validation.ValidationAware) target).onValidationResult($S, _vr);\n",
+                                    segments[0]);
                             bindMethod.addCode("  } else {\n");
-                            if (hasClear) {
-                                bindMethod.addCode("    target.$L.clearErrorMessage();\n",
+                            // Duck-typed fallback: call methods directly if available.
+                            bindMethod.addCode("    if (!_vr.isValid()) {\n");
+                            if (hasSetError) {
+                                bindMethod.addCode("      target.$L.setErrorMessage(_vr.getMessages().get(0));\n",
                                         field.getSimpleName());
                             }
+                            bindMethod.addCode("    } else {\n");
+                            if (hasClear) {
+                                bindMethod.addCode("      target.$L.clearErrorMessage();\n",
+                                        field.getSimpleName());
+                            }
+                            bindMethod.addCode("    }\n");
+                            bindMethod.addCode("  }\n");
+                            // Model update only on valid — don't push invalid values into the model.
+                            bindMethod.addCode("  if (_vr.isValid()) {\n");
                             bindMethod.addStatement("    target.$L$L.$L(target.$L.getValue())",
                                     modelField.getSimpleName(), getterChain, finalSetter, field.getSimpleName());
                             bindMethod.addCode("  }\n");

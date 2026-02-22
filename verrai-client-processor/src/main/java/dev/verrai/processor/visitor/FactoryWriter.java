@@ -108,6 +108,16 @@ public class FactoryWriter implements BeanVisitor {
                              // Regular bean provider — relies on generated _Factory
                              dependencyFactory = ClassName.bestGuess(typeArgName + "_Factory");
                              createMethod.addStatement("bean.$L = () -> $T.getInstance()", field.getSimpleName(), dependencyFactory);
+                             TypeElement providerDepType = processingEnv.getElementUtils().getTypeElement(typeArgName);
+                             if (providerDepType != null
+                                     && providerDepType.getAnnotation(jakarta.enterprise.context.Dependent.class) == null
+                                     && providerDepType.getAnnotation(jakarta.enterprise.context.ApplicationScoped.class) == null) {
+                                 processingEnv.getMessager().printMessage(Diagnostic.Kind.WARNING,
+                                         "Provider type argument '" + typeArgName + "' has no @Dependent or"
+                                         + " @ApplicationScoped annotation — no factory will be generated"
+                                         + " in its own module. Injection will fail at runtime.",
+                                         field);
+                             }
                         }
                     } else {
                         // Raw Provider type - log error
@@ -137,6 +147,19 @@ public class FactoryWriter implements BeanVisitor {
                 } else {
                     dependencyFactory = ClassName.bestGuess(rawTypeName + "_Factory");
                     createMethod.addStatement("bean.$L = $T.getInstance()", field.getSimpleName(), dependencyFactory);
+                    // Warn if the type has no recognised scope annotation — its module may not
+                    // have generated a _Factory, causing a ClassNotFoundException at runtime.
+                    TypeElement depType = processingEnv.getElementUtils().getTypeElement(rawTypeName);
+                    if (depType != null
+                            && depType.getAnnotation(jakarta.enterprise.context.Dependent.class) == null
+                            && depType.getAnnotation(jakarta.enterprise.context.ApplicationScoped.class) == null) {
+                        processingEnv.getMessager().printMessage(Diagnostic.Kind.WARNING,
+                                "Injected type '" + rawTypeName + "' has no @Dependent or"
+                                + " @ApplicationScoped annotation — no factory will be generated"
+                                + " in its own module. Injection will fail at runtime with"
+                                + " ClassNotFoundException unless a factory exists on the classpath.",
+                                field);
+                    }
                 }
             }
         }

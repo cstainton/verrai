@@ -552,11 +552,16 @@ public class TemplatedProcessorTest {
 
         assertTrue("Binder should call validateField", binderSource.contains("validateField"));
         assertTrue("Binder should check _vr.isValid()", binderSource.contains("_vr.isValid()"));
-        // Duck-typed: direct call on the concrete field type, no instanceof or Object cast
-        assertTrue("Binder should call setErrorMessage directly", binderSource.contains("setErrorMessage"));
+        // ValidationAware branch emitted first
+        assertTrue("Binder should check ValidationAware", binderSource.contains("ValidationAware"));
+        assertTrue("Binder should call onValidationResult", binderSource.contains("onValidationResult"));
+        // Duck-typed fallback: direct call on the concrete field type (ValWidget extends Widget)
+        assertTrue("Binder should call setErrorMessage in fallback", binderSource.contains("setErrorMessage"));
         assertFalse("Binder should not use _widgetRef_ Object cast", binderSource.contains("_widgetRef_"));
         assertFalse("Binder should not reference bootstrap package", binderSource.contains("dev.verrai.bootstrap"));
         assertFalse("Binder should not reference material package", binderSource.contains("dev.verrai.material"));
+        // Model update gated on valid result
+        assertTrue("Binder should gate model update on isValid", binderSource.contains("_vr.isValid()"));
     }
 
     /**
@@ -623,13 +628,13 @@ public class TemplatedProcessorTest {
     }
 
     /**
-     * When a @Bound field with an active validator is declared as an interface type (e.g. IsWidget),
-     * the processor cannot find setErrorMessage/clearErrorMessage at compile time.
-     * It must still compile successfully but emit a WARNING about suppressed error display.
+     * When a @Bound field with an active validator is declared as an interface type (e.g. IsWidget)
+     * AND the page does not implement ValidationAware, the processor emits a WARNING because
+     * neither error-routing path will work at runtime.
      */
     @Test
-    public void testValidationWarning_whenFieldDeclaredAsInterface() {
-        // Widget declared only as IsWidget — no setErrorMessage method visible
+    public void testValidationWarning_whenNeitherValidationAwareNorSetErrorMessage() {
+        // Interface type — no setErrorMessage visible
         JavaFileObject widget = JavaFileObjects.forSourceLines(
             "dev.verrai.processor.IWidget",
             "package dev.verrai.processor;",
@@ -656,7 +661,6 @@ public class TemplatedProcessorTest {
             "package dev.verrai.processor;",
             "import dev.verrai.api.validation.ValidationResult;",
             "import dev.verrai.api.validation.Validator;",
-            "import java.util.ArrayList; import java.util.List;",
             "public class WarnModel_Validator implements Validator<WarnModel> {",
             "    public static ValidationResult validateField(String f, Object v) {",
             "        return ValidationResult.valid();",
@@ -665,6 +669,7 @@ public class TemplatedProcessorTest {
             "}"
         );
 
+        // Page does NOT implement ValidationAware — warning should fire
         JavaFileObject page = JavaFileObjects.forSourceLines(
             "dev.verrai.processor.WarnPage",
             "package dev.verrai.processor;",
@@ -675,10 +680,8 @@ public class TemplatedProcessorTest {
             "import jakarta.inject.Inject;",
             "@Templated(\"SimplePage.html\")",
             "public class WarnPage {",
-            "    @Inject @Model",
-            "    public WarnModel model;",
-            "    @Inject @DataField @Bound",
-            "    public IWidget name;",   // interface type — no setErrorMessage visible
+            "    @Inject @Model public WarnModel model;",
+            "    @Inject @DataField @Bound public IWidget name;",
             "}"
         );
 
@@ -687,18 +690,107 @@ public class TemplatedProcessorTest {
             .compile(widget, model, validator, page);
 
         assertThat(compilation).succeeded();
-        // Warning must be present about suppressed error display
         assertThat(compilation).hadWarningContaining("setErrorMessage");
-        // Generated binder must NOT contain setErrorMessage (since it can't be found)
+        assertThat(compilation).hadWarningContaining("ValidationAware");
+        // No setErrorMessage in generated binder — fallback is empty
         assertThat(compilation)
             .generatedSourceFile("dev.verrai.processor.WarnPage_Binder")
             .contentsAsUtf8String()
             .doesNotContain("setErrorMessage");
-        // Validation still runs (validateField is emitted)
+        // Validation still runs
         assertThat(compilation)
             .generatedSourceFile("dev.verrai.processor.WarnPage_Binder")
             .contentsAsUtf8String()
             .contains("validateField");
+    }
+
+    /**
+     * When the page implements ValidationAware, no warning is emitted even if the widget
+     * field is declared as an interface (IsWidget) with no setErrorMessage method.
+     */
+    @Test
+    public void testNoWarning_whenPageImplementsValidationAware() {
+        JavaFileObject widget = JavaFileObjects.forSourceLines(
+            "dev.verrai.processor.IWidget",
+            "package dev.verrai.processor;",
+            "import dev.verrai.api.IsWidget;",
+            "import dev.verrai.api.TakesValue;",
+            "import org.teavm.jso.dom.html.HTMLElement;",
+            "public interface IWidget extends IsWidget, TakesValue<String> {}"
+        );
+
+        JavaFileObject model = JavaFileObjects.forSourceLines(
+            "dev.verrai.processor.AwareModel",
+            "package dev.verrai.processor;",
+            "import dev.verrai.api.Bindable;",
+            "@Bindable",
+            "public class AwareModel {",
+            "    private String name;",
+            "    public String getName() { return name; }",
+            "    public void setName(String v) { this.name = v; }",
+            "}"
+        );
+
+        JavaFileObject validator = JavaFileObjects.forSourceLines(
+            "dev.verrai.processor.AwareModel_Validator",
+            "package dev.verrai.processor;",
+            "import dev.verrai.api.validation.ValidationResult;",
+            "import dev.verrai.api.validation.Validator;",
+            "public class AwareModel_Validator implements Validator<AwareModel> {",
+            "    public static ValidationResult validateField(String f, Object v) {",
+            "        return ValidationResult.valid();",
+            "    }",
+            "    public ValidationResult validate(AwareModel m) { return ValidationResult.valid(); }",
+            "}"
+        );
+
+        // Page implements ValidationAware — no warning, binder calls onValidationResult
+        JavaFileObject page = JavaFileObjects.forSourceLines(
+            "dev.verrai.processor.AwarePage",
+            "package dev.verrai.processor;",
+            "import dev.verrai.api.Templated;",
+            "import dev.verrai.api.DataField;",
+            "import dev.verrai.api.Model;",
+            "import dev.verrai.api.Bound;",
+            "import dev.verrai.api.validation.ValidationAware;",
+            "import dev.verrai.api.validation.ValidationResult;",
+            "import jakarta.inject.Inject;",
+            "@Templated(\"SimplePage.html\")",
+            "public class AwarePage implements ValidationAware {",
+            "    @Inject @Model public AwareModel model;",
+            "    @Inject @DataField @Bound public IWidget name;",
+            "    @Override",
+            "    public void onValidationResult(String field, ValidationResult result) {}",
+            "}"
+        );
+
+        Compilation compilation = javac()
+            .withProcessors(new TemplatedProcessor())
+            .compile(widget, model, validator, page);
+
+        assertThat(compilation).succeeded();
+        // No warning about suppressed validation — ValidationAware covers error routing
+        for (javax.tools.Diagnostic<?> d : compilation.diagnostics()) {
+            if (d.getKind() == javax.tools.Diagnostic.Kind.WARNING) {
+                assertFalse("Unexpected validation warning: " + d.getMessage(java.util.Locale.ENGLISH),
+                        d.getMessage(java.util.Locale.ENGLISH).contains("silently suppressed"));
+            }
+        }
+        // Binder calls onValidationResult
+        assertThat(compilation)
+            .generatedSourceFile("dev.verrai.processor.AwarePage_Binder")
+            .contentsAsUtf8String()
+            .contains("onValidationResult");
+        // Binder does NOT call setErrorMessage (no fallback needed)
+        assertThat(compilation)
+            .generatedSourceFile("dev.verrai.processor.AwarePage_Binder")
+            .contentsAsUtf8String()
+            .doesNotContain("setErrorMessage");
+        // Model update only on valid
+        assertThat(compilation)
+            .generatedSourceFile("dev.verrai.processor.AwarePage_Binder")
+            .contentsAsUtf8String()
+            .contains("_vr.isValid()");
     }
 
     @Test
