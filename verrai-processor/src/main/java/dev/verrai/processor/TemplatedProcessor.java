@@ -2,11 +2,8 @@ package dev.verrai.processor;
 
 import dev.verrai.api.DataField;
 import dev.verrai.api.Templated;
-import dev.verrai.api.RootElement;
-import dev.verrai.api.IsWidget;
 import dev.verrai.api.Bound;
 import dev.verrai.api.Model;
-import dev.verrai.api.TakesValue;
 import dev.verrai.api.EventHandler;
 import dev.verrai.api.SinkNative;
 
