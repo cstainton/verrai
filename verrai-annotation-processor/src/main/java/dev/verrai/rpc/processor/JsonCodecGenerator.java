@@ -15,6 +15,10 @@ import java.util.HashMap;
 
 public class JsonCodecGenerator {
 
+    protected ClassName getClassName(TypeElement typeElement) {
+        return ClassName.get(typeElement);
+    }
+
     public JavaFile generate(TypeElement typeElement) {
         String packageName = ((javax.lang.model.element.PackageElement) typeElement.getEnclosingElement())
                 .getQualifiedName().toString();
@@ -23,7 +27,7 @@ public class JsonCodecGenerator {
 
         ParameterizedTypeName codecInterface = ParameterizedTypeName.get(
                 ClassName.get(JsonCodec.class),
-                ClassName.get(typeElement));
+                getClassName(typeElement));
 
         TypeSpec.Builder typeSpec = TypeSpec.classBuilder(codecClassName)
                 .addModifiers(Modifier.PUBLIC)
@@ -34,7 +38,7 @@ public class JsonCodecGenerator {
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(Override.class)
                 .returns(String.class)
-                .addParameter(ClassName.get(typeElement), "object");
+                .addParameter(getClassName(typeElement), "object");
 
         toJson.addStatement("$T sb = new $T()", StringBuilder.class, StringBuilder.class);
         toJson.addStatement("sb.append(\"{\")");
@@ -88,17 +92,17 @@ public class JsonCodecGenerator {
         MethodSpec.Builder fromJson = MethodSpec.methodBuilder("fromJson")
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(Override.class)
-                .returns(ClassName.get(typeElement))
+                .returns(getClassName(typeElement))
                 .addParameter(String.class, "json");
 
         boolean hasBuilder = typeElement.getEnclosedElements().stream()
                 .anyMatch(e -> e.getSimpleName().toString().equals("Builder"));
 
         if (hasBuilder) {
-            fromJson.addStatement("$T.Builder builder = new $T.Builder()", ClassName.get(typeElement),
-                    ClassName.get(typeElement));
+            fromJson.addStatement("$T.Builder builder = new $T.Builder()", getClassName(typeElement),
+                    getClassName(typeElement));
         } else {
-            fromJson.addStatement("$T object = new $T()", ClassName.get(typeElement), ClassName.get(typeElement));
+            fromJson.addStatement("$T object = new $T()", getClassName(typeElement), getClassName(typeElement));
         }
 
         fromJson.addStatement("json = json.trim()");
