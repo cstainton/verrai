@@ -117,19 +117,7 @@ public class UnitRegistryTest {
         assertNull(callbackResult.get());
 
         FutureService service = new FutureService();
-        // Mimic remote registration which triggers callbacks
-        // Note: registerLocal does NOT trigger callbacks in the current implementation of UnitRegistry?
-        // Let's check the code.
-        // Code: registerRemote checks pending callbacks. registerLocal does NOT.
-        // This seems like a potential bug or design choice. The test should respect current behavior.
-
-        // So we must use registerRemote to trigger callback.
-        // registerRemote needs a transport.
-        MockTransport transport = new MockTransport();
-        // It also tries to create a stub using a factory.
-        registry.registerFactory(FutureService.class, client -> service);
-
-        registry.registerRemote(FutureService.class.getName(), "NodeC", transport);
+        registry.registerLocal(FutureService.class.getName(), service);
 
         assertNotNull(callbackResult.get());
         assertSame(service, callbackResult.get());
