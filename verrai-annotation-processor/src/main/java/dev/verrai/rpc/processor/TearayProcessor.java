@@ -32,6 +32,7 @@ public class TearayProcessor extends AbstractProcessor {
     private final CodecGenerator codecGenerator = new CodecGenerator();
     private final ServiceGenerator serviceGenerator = new ServiceGenerator();
     private final JsonCodecGenerator jsonCodecGenerator = new JsonCodecGenerator();
+    private CodecRegistryGenerator codecRegistryGenerator;
     private WireGenerator wireGenerator;
     private Filer filer;
     private Messager messager;
