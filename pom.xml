@@ -2,21 +2,24 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>dev.verrai</groupId>
+  <groupId>uk.co.instanto</groupId>
   <artifactId>verrai-parent-pom</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <modules>
-    <module>verrai-client-api</module>
-    <module>verrai-client-processor</module>
-    <module>verrai-client-annotation-processor</module>
-    <module>verrai-client-widgets-bootstrap</module>
-    <module>verrai-client-widgets-material</module>
-    <module>verrai-client-ui</module>
-    <module>verrai-client-persistence</module>
-    <module>verrai-client-security</module>
-    <module>verrai-client-app</module>
+    <module>verrai-annotation-processor</module>
+    <module>verrai-widgets-bootstrap</module>
+    <module>verrai-widgets-material</module>
+    <module>verrai-ui</module>
+    <module>verrai-persistence</module>
+    <module>verrai-app</module>
+    <module>verrai-rpc-common</module>
+    <module>verrai-rpc-core</module>
+    <module>verrai-rpc-client</module>
+    <module>teavm-stomp</module>
+    <module>verrai-rpc-teavm</module>
+    <module>verrai-proto-generator</module>
   </modules>
 
   <properties>
@@ -58,10 +61,11 @@
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>dev.verrai</groupId>
-        <artifactId>verrai-client-security</artifactId>
+        <groupId>uk.co.instanto</groupId>
+        <artifactId>verrai-ui</artifactId>
         <version>${project.version}</version>
       </dependency>
+
       <dependency>
         <groupId>org.teavm</groupId>
         <artifactId>teavm-jso</artifactId>
